@@ -11,3 +11,5 @@ numpy==1.8.2
 scipy==0.15.1
 gensim==0.12.1
 twython==3.3.0
+django==1.9.2
+

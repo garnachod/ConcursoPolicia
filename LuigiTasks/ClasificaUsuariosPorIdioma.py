@@ -106,7 +106,7 @@ class GeneraTextoPorIdioma_topics(luigi.Task):
 						tweetStemmed = LimpiadorTweets.stemmingByLanguage(tweetSinStopWords, tweet.lang)
 						out_file.write(tweetStemmed)
 						out_file.write(u" ")
-				
+				out_file.write(u"\n")
 
 
 class GeneraTextosPorIdioma_semantic(luigi.Task):

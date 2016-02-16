@@ -13,6 +13,7 @@ import numpy
 
 
 
+
 class LDATwitterUser(luigi.Task):
 	"""
 		Uso:

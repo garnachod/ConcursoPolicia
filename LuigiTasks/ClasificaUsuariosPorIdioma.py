@@ -10,6 +10,8 @@ import json
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from ProcesadoresTexto.LimpiadorTweets import LimpiadorTweets
 
+import datetime
+
 
 class ClasificaUsuariosPorIdioma(luigi.Task):
 	"""
@@ -26,15 +28,22 @@ class ClasificaUsuariosPorIdioma(luigi.Task):
 			PYTHONPATH='' luigi --module ClasificaUsuariosPorIdioma ClasificaUsuariosPorIdioma
 	"""
 	def output(self):
-		return luigi.LocalTarget(path='users_idiomas/ClasificaUsuariosPorIdioma(%s)'%time.strftime("%x"))
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget(path='users_idiomas/ClasificaUsuariosPorIdioma/%s/%s/%s.json'%(anyo, mes, dia))
 
 	def run(self):
 		consultas = ConsultasCassandra()
 		usuarios = consultas.getAllUsers()
 
-		dicUsers = {}
+		dicOld, dicUsers = self.readDicOld()
 
 		for id_twitter, screen_name in usuarios:
+			if str(id_twitter) in dicOld:
+				continue
+
 			tweets = consultas.getTweetsUsuarioCassandra_lang(id_twitter, limit=200)
 			dicIdiomasUser = {}
 			for tweet in tweets:
@@ -60,6 +69,28 @@ class ClasificaUsuariosPorIdioma(luigi.Task):
 		with self.output().open('w') as out_file:
 			out_file.write(json.dumps(dicUsers))
 
+	def readDicOld(self, diffDays = 1):
+		now = datetime.datetime.now() - datetime.timedelta(days=diffDays)
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+
+		path = 'users_idiomas/ClasificaUsuariosPorIdioma/%s/%s/%s.json'%(anyo, mes, dia)
+
+		dicUsers_inverse = {}
+		dicUsers = {}
+		try:
+			with open(path, 'r') as in_file:
+				dicUsers = json.loads(in_file.read())
+				for key in dicUsers:
+					for user in dicUsers[key]:
+						dicUsers_inverse[str(user)] = key
+		except Exception, e:
+			print e
+
+		return dicUsers_inverse, dicUsers
+
+
 
 class GeneraTextoPorIdioma_topics(luigi.Task):
 	"""
@@ -81,7 +112,11 @@ class GeneraTextoPorIdioma_topics(luigi.Task):
 	idioma = luigi.Parameter()
 
 	def output(self):
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_topics(%s_%s)'%(self.idioma,time.strftime("%x")), 
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_topics/%s/%s/%s.json'%(anyo, mes, dia), 
 								format=luigi.format.TextFormat(encoding='utf8'))
 
 	def requires(self):
@@ -125,10 +160,34 @@ class GeneraTextosPorIdioma_semantic(luigi.Task):
 	idioma = luigi.Parameter()
 
 	def output(self):
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextosPorIdioma_semantic(%s_%s)'%(self.idioma,time.strftime("%x")))
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget(path='users_idiomas/GeneraTextosPorIdioma_semantic/%s/%s/%s.json'%(anyo, mes, dia), 
+								format=luigi.format.TextFormat(encoding='utf8'))
 		
 	def requires(self):
 		return ClasificaUsuariosPorIdioma()
+
+	def run(self):
+		dicUsers = {}
+		with self.input().open('r') as in_file:
+			dicUsers = json.loads(in_file.read())
+
+		users_idioma = dicUsers[self.idioma]
+		consultas = ConsultasCassandra()
+		with self.output().open('w') as out_file:
+			for user_id in users_idioma:
+				tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(user_id, limit=5000)
+				out_file.write(u""+str(user_id))
+				out_file.write(u"\n")
+				for tweet in tweets:
+					if tweet.lang == self.idioma:
+						tweetLimpio = LimpiadorTweets.clean(tweet.status)
+						out_file.write(tweetLimpio)
+						out_file.write(u" ")
+				out_file.write(u"\n")
 		
 class GeneraTextosPorIdiomas(luigi.Task):
 	"""
@@ -147,11 +206,11 @@ class GeneraTextosPorIdiomas(luigi.Task):
 	idiomas = luigi.Parameter(default="ar")
 
 	def requires(self):
-		idiomas_split = self.idioma.split(";")
+		idiomas_split = self.idiomas.split(";")
 		tareas = []
 
 		for idioma in idiomas_split:
-			if tipo == "topics":
+			if self.tipo == "topics":
 				tareas.append(GeneraTextoPorIdioma_topics(idioma))
 			else:
 				tareas.append(GeneraTextosPorIdioma_semantic(idioma))
@@ -159,14 +218,18 @@ class GeneraTextosPorIdiomas(luigi.Task):
 		return tareas
 
 	def output(self):
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextosPorIdiomas(%s)'%time.strftime("%x"))
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget(path='users_idiomas/GeneraTextosPorIdiomas/%s/%s/%s.json'%(anyo, mes, dia), 
+								format=luigi.format.TextFormat(encoding='utf8'))
 
 	def run(self):
 		with self.output().open('w') as out_file:
-			out_file.write("OK")
-
-
+			out_file.write(u"OK")
 	
+
 		
 
 if __name__ == '__main__':

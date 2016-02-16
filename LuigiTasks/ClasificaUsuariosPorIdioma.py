@@ -144,7 +144,7 @@ class GeneraTextoPorIdioma_topics(luigi.Task):
 				out_file.write(u"\n")
 
 
-class GeneraTextosPorIdioma_semantic(luigi.Task):
+class GeneraTextoPorIdioma_semantic(luigi.Task):
 	"""
 	Genera un fichero de usuarios con sus tweets y solo en el idioma determinado
 	semantic significa que no se pasan stopwords ni lematizacion para centrarnos como habla el usuario
@@ -164,7 +164,7 @@ class GeneraTextosPorIdioma_semantic(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextosPorIdioma_semantic/%s/%s/%s.json'%(anyo, mes, dia), 
+		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_semantic/%s/%s/%s.json'%(anyo, mes, dia), 
 								format=luigi.format.TextFormat(encoding='utf8'))
 		
 	def requires(self):
@@ -213,7 +213,7 @@ class GeneraTextosPorIdiomas(luigi.Task):
 			if self.tipo == "topics":
 				tareas.append(GeneraTextoPorIdioma_topics(idioma))
 			else:
-				tareas.append(GeneraTextosPorIdioma_semantic(idioma))
+				tareas.append(GeneraTextoPorIdioma_semantic(idioma))
 
 		return tareas
 

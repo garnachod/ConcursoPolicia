@@ -116,7 +116,7 @@ class GeneraTextoPorIdioma_topics(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_topics/%s/%s/%s.json'%(anyo, mes, dia), 
+		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_topics/%s/%s/%s_%s.text'%(anyo, mes, dia, self.idioma), 
 								format=luigi.format.TextFormat(encoding='utf8'))
 
 	def requires(self):
@@ -164,7 +164,7 @@ class GeneraTextoPorIdioma_semantic(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_semantic/%s/%s/%s.json'%(anyo, mes, dia), 
+		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_semantic/%s/%s/%s_%s.text'%(anyo, mes, dia, self.idioma), 
 								format=luigi.format.TextFormat(encoding='utf8'))
 		
 	def requires(self):

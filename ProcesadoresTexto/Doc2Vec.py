@@ -63,7 +63,7 @@ class Doc2Vec(object):
 		dm_ = 1 
 		if method != "DBOW":
 			dm_ = 0
-		model = gensim.models.Doc2Vec(min_count=1, window=7, size=dimension, sample=1e-3, negative=5,workers=6, alpha=0.04)
+		model = gensim.models.Doc2Vec(min_count=1, window=7, size=dimension, dm = dm_, sample=1e-3, negative=5,workers=6, alpha=0.04)
 		
 		print "inicio vocab"
 		model.build_vocab(sentences.to_array())
@@ -88,13 +88,13 @@ class Doc2Vec(object):
 		print "tiempo total:" + str((total_end - total_start)/60.0)
 
 	def simulateVectorsFromUsersFile(self, input_path, modelLocation):
-		d2v = Doc2Vec.load(modelLocation)
-		sentences = LabeledLineSentence(input_path)
+		d2v =  gensim.models.Doc2Vec.load(modelLocation)
+		sentences = LabeledLineSentence(input_path).to_array()
 		dicUser_Vector = {}
 		for sentence in sentences:
 			palabras = sentence[0]
 			user = sentence[1][0]
-			vector = np.array(w2v.infer_vector(palabras, steps=3, alpha=0.1))
+			vector = np.array(d2v.infer_vector(palabras, steps=3, alpha=0.1))
 			dicUser_Vector[str(user)] = vector
 
 		return dicUser_Vector

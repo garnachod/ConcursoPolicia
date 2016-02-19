@@ -6,26 +6,25 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
 from django.conf import settings
 
-
-"""
-Manager de usuarios
-"""
 class UsuarioManager(BaseUserManager):
-
     """
-    Crea y persiste un usuario SIN privilegios de admin
-
-    Parameters
-    ----------
-    email : Correo electronico valido
-    password : Clave
-
-    Returns
-    -------
-    Usuario creado
-
+    Manager de usuarios
     """
+
     def create_user(self, email, password=None):
+        """
+        Crea y persiste un usuario SIN privilegios de admin
+
+        Parameters
+        ----------
+        email : Correo electronico valido
+        password : Clave
+
+        Returns
+        -------
+        Usuario creado
+
+        """
         user = self.model(email=email)
         user.set_password(password)
         user.is_staff = false;
@@ -33,20 +32,20 @@ class UsuarioManager(BaseUserManager):
         user.save()
         return user
 
-    """
-    Crea y persiste un usuario CON privilegios de admin
-
-    Parameters
-    ----------
-    email : Correo electronico valido
-    password : Clave
-
-    Returns
-    -------
-    Usuario creado
-
-    """
     def create_superuser(self, email, password):
+        """
+        Crea y persiste un usuario CON privilegios de admin
+
+        Parameters
+        ----------
+        email : Correo electronico valido
+        password : Clave
+
+        Returns
+        -------
+        Usuario creado
+
+        """
         user = self.model(email=email)
         user.set_password(password)
         user.is_staff = True;
@@ -54,10 +53,10 @@ class UsuarioManager(BaseUserManager):
         user.save()
         return user
 
-"""
-Modelo que representa un usuario
-"""
 class Usuario(AbstractBaseUser):
+    """
+    Modelo que representa un usuario
+    """
     email = models.EmailField(max_length=100, unique=True)
     nombre = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=200)
@@ -66,64 +65,63 @@ class Usuario(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     USERNAME_FIELD = 'email'
 
-    """
-    Identificador largo del usuario
-
-    Returns
-    -------
-    Email del usuario
-
-    """
     def get_full_name(self):
+        """
+        Identificador largo del usuario
+
+        Returns
+        -------
+        Email del usuario
+
+        """
         return self.email
 
-
-    """
-    Identificador corto del usuario
-
-    Returns
-    -------
-    Email del usuario
-
-    """
     def get_short_name(self):
+        """
+        Identificador corto del usuario
+
+        Returns
+        -------
+        Email del usuario
+
+        """
         return self.email
 
-    """
-    Determina si el usuario tiene permiso para manipular un objeto
-
-    Parameters
-    ----------
-    perm : Permisos
-    obj : Objeto
-
-    Returns
-    -------
-    Siempre True (no usamos sistema de permisos)
-
-    """
     def has_perm(self, perm, obj=None):
+        """
+        Determina si el usuario tiene permiso para manipular un objeto
+
+        Parameters
+        ----------
+        perm : Permisos
+        obj : Objeto
+
+        Returns
+        -------
+        Siempre True (no usamos sistema de permisos)
+
+        """
         return True
 
-    """
-    Determina si el usuario tiene permiso para utilizar una aplicacion
-
-    Parameters
-    ----------
-    app_label : Nombre de la aplicacion
-
-    Returns
-    -------
-    Siempre True (no usamos sistema de permisos)
-
-    """
     def has_module_perms(self, app_label):
+        """
+        Determina si el usuario tiene permiso para utilizar una aplicacion
+
+        Parameters
+        ----------
+        app_label : Nombre de la aplicacion
+
+        Returns
+        -------
+        Siempre True (no usamos sistema de permisos)
+
+        """
         return True
 
-"""
-Modelo que representa una tarea lanzada por un usuario
-"""
 class Tarea(models.Model):
+    """
+    Modelo que representa una tarea lanzada por un usuario
+    """
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tipo = models.CharField(max_length=100)
     username = models.CharField(max_length=20)

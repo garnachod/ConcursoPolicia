@@ -7,79 +7,79 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
 from .models import Usuario
 
-"""
-Formulario para la creacion de nuevos usuarios.
-"""
 class UsuarioCreationForm(UserCreationForm):
+    """
+    Formulario para la creacion de nuevos usuarios.
+    """
     password1 = forms.CharField(label='Clave', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repita la clave', widget=forms.PasswordInput)
 
-    """
-    Configuracion del modelo de usuario.
-    """
     class Meta:
+        """
+        Configuracion del modelo de usuario.
+        """
         model = Usuario
         fields = ('email', 'nombre', 'apellidos',)
 
-    """
-    Compara los passwords escritos en el formulario.
-
-    Returns
-    -------
-    Password validado.
-
-    """
     def clean_password2(self):
+        """
+        Compara los passwords escritos en el formulario.
+
+        Returns
+        -------
+        Password validado.
+
+        """
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Las claves no coinciden")
         return password2
 
-    """
-    Crea y opcionalmente persiste un usuario
-
-    Parameters
-    ----------
-    commit : Boolean para persistir o no el usuario
-
-    Returns
-    -------
-    El objeto usuario creado
-
-    """
     def save(self, commit=True):
+        """
+        Crea y opcionalmente persiste un usuario
+
+        Parameters
+        ----------
+        commit : Boolean para persistir o no el usuario
+
+        Returns
+        -------
+        El objeto usuario creado
+
+        """
         user = super(UserCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
 
-"""
-Formulario para modificar datos de un usuario existente
-"""
 class UsuarioChangeForm(forms.ModelForm):
+    """
+    Formulario para modificar datos de un usuario existente
+    """
     password = ReadOnlyPasswordHashField()
 
-    """
-    Configuracion del modelo de usuario.
-    """
     class Meta:
+        """
+        Configuracion del modelo de usuario.
+        """
         model = Usuario
         fields = ('email', 'password', 'nombre', 'apellidos', 'is_active', 'is_staff')
 
-    """
-    Returns
-    -------
-    El password inicial
-    """
     def clean_password(self):
+        """
+        Returns
+        -------
+        El password inicial
+        """
         return self.initial["password"]
 
-"""
-Configuracion del panel de administracion
-"""
 class UsuarioAdmin(UserAdmin):
+    """
+    Configuracion del panel de administracion
+    """
     form = UsuarioChangeForm
     add_form = UsuarioCreationForm
 

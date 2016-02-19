@@ -14,7 +14,18 @@ import datetime
 
 class TrainDoc2VecLang_topics(luigi.Task):
 	"""
-		Uso:
+	Genera el modelo de paragraph vector para los textos dado el contenido.
+	Dimensiones 50
+	Epocas 20
+	Metodo DBOW
+
+	Returns
+	-------
+	fichero .check que solo se usa para comprobar que existe en el resto de tareas.
+	fichero .model modelo paragraph vector de la libreria gensim
+	"""
+	"""
+		Uso manual:
 			PYTHONPATH='' luigi --module TrainText TrainDoc2VecLang_topics --idioma ar
 	"""
 	idioma = luigi.Parameter()
@@ -34,11 +45,22 @@ class TrainDoc2VecLang_topics(luigi.Task):
 		with self.output().open("w") as out:
 			d2v = Doc2Vec()
 			savePath = self.path.replace("check","model")
-			print self.input().path
+			#print self.input().path
 			d2v.train(self.input().path, savePath, dimension = 50, epochs = 20, method="DBOW")
 			out.write("OK")
 
 class TrainDoc2VecLang_semantic(luigi.Task):
+	"""
+	Genera el modelo de paragraph vector para los textos dado el contenido y utilizando tambien la forma de hablar.
+	Dimensiones 50
+	Epocas 20
+	Metodo DM
+
+	Returns
+	-------
+	fichero .check que solo se usa para comprobar que existe en el resto de tareas.
+	fichero .model modelo paragraph vector de la libreria gensim
+	"""
 	"""
 		Uso:
 			PYTHONPATH='' luigi --module TrainText TrainDoc2VecLang_semantic --idioma ar
@@ -65,6 +87,18 @@ class TrainDoc2VecLang_semantic(luigi.Task):
 			out.write("OK")
 
 class GenerateVecsAnnoyLang_topics(luigi.Task):
+	"""
+	Genera a partir del modelo de topics computado, vecinos proximos aproximados para que la busqueda
+	 de usuarios similares sea mucho mas rapida. https://github.com/spotify/annoy
+
+	Cuidado: el identificador que devuelve annoy no es el mismo que el de twitter,
+	 por eso se genera un diccionario JSON que traduce
+
+	Returns
+	-------
+	fichero .json Diccionario que traduce de indice de usuario twitter a indice annoy
+	fichero .annoy modelo en formato annoy
+	"""
 	"""
 		Uso:
 			PYTHONPATH='' luigi --module TrainText GenerateVecsAnnoyLang_topics --idioma ar
@@ -94,7 +128,6 @@ class GenerateVecsAnnoyLang_topics(luigi.Task):
 		####
 		f = 50
 		t = AnnoyIndex(f)
-		print "cargando modelo"
 		d2v = Doc2Vec()
 		dic_users_vectos = d2v.simulateVectorsFromUsersFile(text_loc, ModelLocation)
 		# diccionario que traduce de id para annoy a id de usuario de twitter
@@ -104,7 +137,7 @@ class GenerateVecsAnnoyLang_topics(luigi.Task):
 			t.add_item(count_users, dic_users_vectos[user])
 			dic_users_id[user] = count_users
 			count_users += 1
-		print "entrenando annoy"
+		#entrenamiento de annoy, 20 arboles para vecinos proximos
 		t.build(20)
 		with self.output().open("w") as f_out:
 			f_out.write(json.dumps(dic_users_id))
@@ -116,6 +149,18 @@ class GenerateVecsAnnoyLang_topics(luigi.Task):
 			t.save(path.replace("json","annoy"))
 
 class GenerateVecsAnnoyLang_semantic(luigi.Task):
+	"""
+	Genera a partir del modelo semantico computado, vecinos proximos aproximados para que la busqueda
+	 de usuarios similares sea mucho mas rapida. https://github.com/spotify/annoy
+
+	Cuidado: el identificador que devuelve annoy no es el mismo que el de twitter,
+	 por eso se genera un diccionario JSON que traduce
+
+	Returns
+	-------
+	fichero .json Diccionario que traduce de indice de usuario twitter a indice annoy {"id_usuario":id_annoy}
+	fichero .annoy modelo en formato annoy
+	"""
 	"""
 		Uso:
 			PYTHONPATH='' luigi --module TrainText GenerateVecsAnnoyLang_topics --idioma ar
@@ -145,7 +190,6 @@ class GenerateVecsAnnoyLang_semantic(luigi.Task):
 		####
 		f = 50
 		t = AnnoyIndex(f)
-		print "cargando modelo"
 		d2v = Doc2Vec()
 		dic_users_vectos = d2v.simulateVectorsFromUsersFile(text_loc, ModelLocation)
 		# diccionario que traduce de id para annoy a id de usuario de twitter
@@ -155,7 +199,7 @@ class GenerateVecsAnnoyLang_semantic(luigi.Task):
 			t.add_item(count_users, dic_users_vectos[user])
 			dic_users_id[user] = count_users
 			count_users += 1
-		print "entrenando annoy"
+		# creacion del 
 		t.build(20)
 		with self.output().open("w") as f_out:
 			f_out.write(json.dumps(dic_users_id))

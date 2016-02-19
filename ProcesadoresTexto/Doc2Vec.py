@@ -3,10 +3,9 @@ from gensim import utils, matutils
 from gensim.models.doc2vec import TaggedDocument
 from gensim.models.doc2vec import LabeledSentence
 from gensim.models import Doc2Vec
-import gensim
-
-import random
 from blist import blist
+import gensim
+import random
 import time
 import codecs
 import numpy as np
@@ -22,6 +21,7 @@ class LabeledLineSentence(object):
 		self.source = source
 		self.sentences = None
 		self.ides = ides
+		self.doc2vec = None
 		
 	def to_array(self):
 		if self.sentences is None:
@@ -55,6 +55,7 @@ class Doc2Vec(object):
 	"""docstring for Doc2Vec"""
 	def __init__(self):
 		super(Doc2Vec, self).__init__()
+		self.doc2vec = None
 		
 	def train(self,input_path, save_location, dimension = 50, epochs = 20, method="DBOW"):
 		sentences = LabeledLineSentence(input_path)
@@ -95,6 +96,13 @@ class Doc2Vec(object):
 			palabras = sentence[0]
 			user = sentence[1][0]
 			vector = np.array(d2v.infer_vector(palabras, steps=3, alpha=0.1))
-			dicUser_Vector[str(user)] = vector
+			dicUser_Vector[str(user)] = vector / np.linalg.norm(vector)
 
 		return dicUser_Vector
+
+	def simulateVectorsFromVectorText(self, vectorText, modelLocation):
+		if self.doc2vec is None:
+			self.doc2vec =  gensim.models.Doc2Vec.load(modelLocation)
+		
+		vector = np.array(self.doc2vec.infer_vector(vectorText, steps=3, alpha=0.1))
+		return vector / np.linalg.norm(vector)

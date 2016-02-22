@@ -11,3 +11,4 @@ Conf.py
 *.state
 *.dict
 */textos/*
+.DS_Store

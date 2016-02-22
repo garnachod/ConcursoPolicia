@@ -1,6 +1,8 @@
 from ProcesadoresTexto.GenerateVectorsFromTweets import GenerateVectorsFromTweets
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from AnnoyComparators.AnnoyUserVectorSearcher import AnnoyUserVectorSearcher
+from SocialAPI.TwitterAPI.RecolectorTweetsUser import RecolectorTweetsUser
+from DBbridge.EscritorTweetsCassandra import EscritorTweetsCassandra
 
 class APITextos(object):
 	"""docstring for APITextos"""
@@ -24,12 +26,24 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		(por definir)
 		"""
+		escritorList = []
+		escritorList.append(EscritorTweetsCassandra(-1))
+		recolector = RecolectorTweetsUser(escritorList)
+		recolector.recolecta(query=username)
+
 		consultas = ConsultasCassandra()
 		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
 		generator = GenerateVectorsFromTweets()
 		vector = generator.getVector_topics(tweets, lang)
 		searcher = AnnoyUserVectorSearcher()
-		return searcher.getSimilarUsers_topics(vector, lang, numberOfSim)
+		users = searcher.getSimilarUsers_topics(vector, lang, numberOfSim)
+		users_long = []
+		for user in users:
+			user_long = consultas.getUserByIDLargeCassandra(user)
+			if user_long != False:
+				users_long.append(user_long)
+
+		return users_long
 
 	@staticmethod
 	def getUsersSimilar_user_relations_topic(username, lang, numberOfSim, id_tarea):

@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import sys
+lib_path = os.path.abspath('../')
+sys.path.append(lib_path)
+from Config.Conf import Conf
+
+infoSQL = Conf().getSQLPoliceInfo()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -78,11 +84,11 @@ WSGI_APPLICATION = 'website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'policia',
-        'USER': 'tfg',
-        'PASSWORD': 'postgres_tfg',
-        'HOST': '127.0.0.1',
-        'PORT': '5433'
+        'NAME': infoSQL.database,
+        'USER': infoSQL.user,
+        'PASSWORD': infoSQL.password,
+        'HOST': infoSQL.host,
+        'PORT': infoSQL.port
     }
 }
 

@@ -14,6 +14,7 @@ class Conf():
 			self.sql_user = 'tfg'
 			self.sql_password = 'postgres_tfg'
 			self.sql_host = 'localhost'
+			self.sql_port = '5432'
 			#app
 			self.abspath = '/home/dani/tfg/sources'
 			#SPARK
@@ -36,7 +37,7 @@ class Conf():
 
 		def getSQLPoliceInfo(self):
 			infoSQL = namedtuple('InfoSQL', 'database, user, password, host, port')
-			return infoSQL(self.sql_database_policia, self.sql_user, self.sql_password, self.sql_host, "5433")
+			return infoSQL(self.sql_database_policia, self.sql_user, self.sql_password, self.sql_host, self.sql_port)
 
 		def  getNeo4jPassword(self):
 			return self.neo4j_password

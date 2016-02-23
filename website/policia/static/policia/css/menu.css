@@ -257,7 +257,7 @@ body.fixed-left .side-menu.left {
 }
 #sidebar-menu {
   background-color: #252d2f;
-  padding-top: 30px;
+  padding-top: 0px;
   padding-bottom: 50px;
   width: 100%;
 }
@@ -359,12 +359,8 @@ body.fixed-left .side-menu.left {
   color: #b8c6d6;
 }
 .user-detail {
-  position: absolute;
-  bottom: 64px;
-  padding: 15px 30px;
-  border-top: 1px solid #313A3C;
-  left: 0px;
-  right: 0px;
+    margin-left: 35px;
+    margin-top: 16px;
 }
 .user-detail .dropup {
   float: left;
@@ -491,7 +487,7 @@ body.fixed-left .side-menu.left {
   margin: 0px auto;
   margin-left: 17px;
 }
-#wrapper.enlarged .user-detail h5 {
+#wrapper.enlarged .user-detail h5, #wrapper.enlarged .user-detail h6 {
   display: none;
 }
 #wrapper.enlarged .user-detail p {

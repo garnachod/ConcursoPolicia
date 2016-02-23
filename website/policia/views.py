@@ -10,7 +10,12 @@ from django.shortcuts import redirect
 
 @login_required
 def tareas(request):
-    return render(request, "policia/tareas.html")
+    nombre = request.user.nombre + " " + request.user.apellidos
+    email = request.user.email
+    return render(request, "policia/tareas.html", {
+        'nombre': nombre,
+        'email': email
+    })
 
 def login(request, code=None):
     if code == "0":

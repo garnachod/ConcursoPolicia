@@ -10,6 +10,7 @@ class Conf():
 			self.cassandra_keyspace_instagram = 'instagram'
 			#SQL
 			self.sql_database = 'twitter'
+			self.sql_database_policia = 'policia'
 			self.sql_user = 'tfg'
 			self.sql_password = 'postgres_tfg'
 			self.sql_host = 'localhost'
@@ -32,6 +33,10 @@ class Conf():
 		def getSQLInfo(self):
 			infoSQL = namedtuple('InfoSQL', 'database, user, password, host')
 			return infoSQL(self.sql_database, self.sql_user, self.sql_password, self.sql_host)
+
+		def getSQLPoliceInfo(self):
+			infoSQL = namedtuple('InfoSQL', 'database, user, password, host, port')
+			return infoSQL(self.sql_database_policia, self.sql_user, self.sql_password, self.sql_host, "5433")
 
 		def  getNeo4jPassword(self):
 			return self.neo4j_password

@@ -132,3 +132,6 @@ STATIC_URL = '/static/'
 
 # Substitute User class
 AUTH_USER_MODEL = 'policia.Usuario'
+
+# Custom login URL
+LOGIN_URL = '/login/'

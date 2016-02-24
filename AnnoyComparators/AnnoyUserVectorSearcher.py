@@ -2,12 +2,12 @@ import os.path
 from annoy import AnnoyIndex
 import json
 import datetime
+from Config.Conf import Conf
 
 class AnnoyUserVectorSearcher(object):
 	"""docstring for AnnoyUserVectorSearcher"""
 	def __init__(self):
 		super(AnnoyUserVectorSearcher, self).__init__()
-
 
 	def getSimilarUsers_topics(self,vector, lang, numberSim):
 		now = datetime.datetime.now()
@@ -33,13 +33,14 @@ class AnnoyUserVectorSearcher(object):
 			dic = json.loads(json_fin.read())
 			for key in dic:
 				dicInverse[str(dic[key])] = long(key)
-
-		u = AnnoyIndex(50)
+		conf = Conf()
+		u = AnnoyIndex(conf.getDimVectors())
 		u.load(model_loc)
 
-		similarElem, values = u.get_nns_by_vector(vector, 10000, include_distances=True)
+		similarElem, values = u.get_nns_by_vector(vector, 100000, include_distances=True)
 		best = []
-		for i in xrange(10000 - 1, 10000 - numberSim, -1):
+		
+		for i in xrange(numberSim):
 			best.append(dicInverse[str(similarElem[i])])
 
 		return best
@@ -69,14 +70,14 @@ class AnnoyUserVectorSearcher(object):
 			for key in dic:
 				dicInverse[str(dic[key])] = long(key)
 
-		u = AnnoyIndex(50)
+		conf = Conf()
+		u = AnnoyIndex(conf.getDimVectors())
 		u.load(model_loc)
 
 		similarElem, values = u.get_nns_by_vector(vector, 10000, include_distances=True)
 		best = []
-		for i in xrange(10000 - 1, 10000 - numberSim, -1):
+		for i in xrange(numberSim):
 			best.append(dicInverse[str(similarElem[i])])
-
 		return best
 
 

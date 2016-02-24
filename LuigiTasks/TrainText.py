@@ -11,6 +11,7 @@ from annoy import AnnoyIndex
 
 import json
 import datetime
+from Config.Conf import Conf
 
 class TrainDoc2VecLang_topics(luigi.Task):
 	"""
@@ -46,7 +47,8 @@ class TrainDoc2VecLang_topics(luigi.Task):
 			d2v = Doc2Vec()
 			savePath = self.path.replace("check","model")
 			#print self.input().path
-			d2v.train(self.input().path, savePath, dimension = 50, epochs = 20, method="DBOW")
+			conf = Conf()
+			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 20, method="DBOW")
 			out.write("OK")
 
 class TrainDoc2VecLang_semantic(luigi.Task):
@@ -82,8 +84,8 @@ class TrainDoc2VecLang_semantic(luigi.Task):
 		with self.output().open("w") as out:
 			d2v = Doc2Vec()
 			savePath = self.path.replace("check","model")
-			print self.input().path
-			d2v.train(self.input().path, savePath, dimension = 50, epochs = 20, method="DM")
+			conf = Conf()
+			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 20, method="DM")
 			out.write("OK")
 
 class GenerateVecsAnnoyLang_topics(luigi.Task):
@@ -123,10 +125,8 @@ class GenerateVecsAnnoyLang_topics(luigi.Task):
 			else:
 				ModelLocation = input.path.replace("check","model")
 
-		####
-		# CUIDADO F esta fijado, debe ser igual que las dimensiones del modelo
-		####
-		f = 50
+		conf = Conf()
+		f = conf.getDimVectors()
 		t = AnnoyIndex(f)
 		d2v = Doc2Vec()
 		dic_users_vectos = d2v.simulateVectorsFromUsersFile(text_loc, ModelLocation)
@@ -185,10 +185,8 @@ class GenerateVecsAnnoyLang_semantic(luigi.Task):
 			else:
 				ModelLocation = input.path.replace("check","model")
 
-		####
-		# CUIDADO F esta fijado, debe ser igual que las dimensiones del modelo
-		####
-		f = 50
+		conf = Conf()
+		f = conf.getDimVectors()
 		t = AnnoyIndex(f)
 		d2v = Doc2Vec()
 		dic_users_vectos = d2v.simulateVectorsFromUsersFile(text_loc, ModelLocation)

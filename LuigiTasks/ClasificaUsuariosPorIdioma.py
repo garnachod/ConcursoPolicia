@@ -179,7 +179,7 @@ class GeneraTextoPorIdioma_semantic(luigi.Task):
 		consultas = ConsultasCassandra()
 		with self.output().open('w') as out_file:
 			for user_id in users_idioma:
-				tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(user_id, limit=5000)
+				tweets = consultas.getTweetsUsuarioCassandra_statusAndLang_noRT(user_id, limit=5000)
 				out_file.write(u""+str(user_id))
 				out_file.write(u"\n")
 				for tweet in tweets:

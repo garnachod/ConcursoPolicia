@@ -12,7 +12,7 @@ class _downloadTwitterUser(multiprocessing.Process):
 		super(_downloadTwitterUser, self).__init__()
 		self.username = username
 		self.id_tarea = id_tarea
-		self.daemon = True
+		#self.daemon = True
 		self.stdin_path = '/dev/null'
 		self.stdout_path = '/dev/null'
 

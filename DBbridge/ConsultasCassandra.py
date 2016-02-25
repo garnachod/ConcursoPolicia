@@ -147,6 +147,43 @@ class ConsultasCassandra(object):
 			print e
 			return []
 		
+	def getTweetsUsuarioCassandra_statusAndLang_noRT(self, twitterUser, limit=3200):
+		"""
+		Tweets de un usuario, solo la informacion del texto y el lenguaje
+
+		Parameters
+		----------
+		twitterUser : usuario de twitter identificador o nombre
+		limit : limite de tweets a devolver
+		
+		Returns
+		-------
+		iterator de Row(status, lang)
+		"""
+		user_id = None
+		try:
+			user_id = long(twitterUser)
+		except Exception, e:
+			if twitterUser[0] == "@":
+				twitterUser = twitterUser[1:]
+			user_id = self.getUserIDByScreenNameCassandra(twitterUser)
+
+		if user_id is None:
+			return []
+
+		query = """SELECT status, lang, id_twitter FROM tweets WHERE tuser = %s AND orig_tweet = 0 LIMIT %s;"""
+
+		try:
+			tweets = []
+			for tweet in self.session_cassandra.execute(query, [user_id, limit]):
+				tweets.append(tweet)
+			sortedTweets = sorted(tweets,key=lambda tweet: tweet.id_twitter, reverse=True)
+			return sortedTweets
+		except Exception, e:
+			print "getTweetsUsuarioCassandra_lang"
+			print e
+			return []
+
 	def getUserIDByScreenNameCassandra(self, twitterUser):
 		"""
 			Retorna el user_id asociado a un "usuario"
@@ -340,6 +377,30 @@ class ConsultasCassandra(object):
 				created_at
 		"""
 		query = """SELECT name, screen_name, followers, location, created_at FROM users WHERE id_twitter = %s LIMIT 1;"""
+		try:
+			rows = self.session_cassandra.execute(query, [identificador])
+			if rows is not None and len(rows) > 0:
+				row = rows[0]
+				return row
+			else:
+				return False
+		except Exception, e:
+			print "getUserByIDLargeCassandra"
+			print str(e)
+			return False
+
+	def getUserByIDLargeCassandra_police(self, identificador):
+		"""
+			Retorna la informacion de un usuario dado un identificador, sobre todo para la interfaz web de la policia
+
+			Esta informacion se compone de:
+				name
+				screen_name
+				followers
+				location
+				created_at
+		"""
+		query = """SELECT name, screen_name, followers, following, location, created_at FROM users WHERE id_twitter = %s LIMIT 1;"""
 		try:
 			rows = self.session_cassandra.execute(query, [identificador])
 			if rows is not None and len(rows) > 0:

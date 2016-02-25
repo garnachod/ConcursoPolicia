@@ -5,7 +5,3 @@ fieldset {
 fieldset input, fieldset select, fieldset .radio-inline {
     margin-right: 40px;
 }
-
-#search-button {
-    margin-bottom: -20px;
-}

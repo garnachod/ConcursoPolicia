@@ -1,6 +1,6 @@
 import os
 import luigi
-from LuigiTasks.RecolectorTwitter import RecolectorUsuarioTwitter
+from LuigiTasks.RecolectorTwitter import RecolectorUsuarioTwitter, RecolectorCirculoUsuario
 from DBbridge.ConsultasSQL_police import ConsultasSQL_police
 
 import time
@@ -18,6 +18,20 @@ class _downloadTwitterUser(multiprocessing.Process):
 
 	def run(self):
 		comand = "PYTHONPATH='../LuigiTasks' luigi --module RecolectorTwitter RecolectorUsuarioTwitter --usuario " + self.username
+		#f = os.popen()
+		p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.id_tarea)
+
+class _downloadTwitterRelations(multiprocessing.Process):
+	"""docstring for ClassName"""
+	def __init__(self, username, id_tarea):
+		super(_downloadTwitterRelations, self).__init__()
+		self.username = username
+		self.id_tarea = id_tarea
+
+	def run(self):
+		comand = "PYTHONPATH='../LuigiTasks' luigi --module RecolectorTwitter RecolectorCirculoUsuario --usuario " + self.username
 		#f = os.popen()
 		p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
 		consultas = ConsultasSQL_police()
@@ -48,9 +62,6 @@ class APIDescarga(object):
 			p = _downloadTwitterUser(username, id_tarea)
 			p.start()
 			print "INICIANDO"
-			"""p = multiprocessing.Process(target=worker_downloadTwitterUser, args=(username, id_tarea))
-			p.daemon = True
-			p.start()"""
 			return False
 		else:
 			return True
@@ -72,7 +83,14 @@ class APIDescarga(object):
 		True si la descarga esta realizada False en caso contrario
 
 		"""
-		pass
+		recolector = RecolectorCirculoUsuario(usuario = username)
+		if os.path.isfile(recolector.output().path) == False:
+			p = _downloadTwitterRelations(username, id_tarea)
+			p.start()
+			print "INICIANDO"
+			return False
+		else:
+			return True
 
 	@staticmethod
 	def downloadUserMentions(username, id_tarea):

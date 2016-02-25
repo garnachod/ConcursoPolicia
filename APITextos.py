@@ -64,7 +64,22 @@ class APITextos(object):
 		(por definir)
 
 		"""
-		pass
+		if APIDescarga.downloadTwitterUserRelations(username, id_tarea) == True:
+			consultas = ConsultasCassandra()
+			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
+			generator = GenerateVectorsFromTweets()
+			vector = generator.getVector_topics(tweets, lang)
+			searcher = AnnoyUserVectorSearcher()
+			users = searcher.getSimilarUsers_topics(vector, lang, numberOfSim)
+			users_long = []
+			for user in users:
+				user_long = consultas.getUserByIDLargeCassandra_police(user)
+				if user_long != False:
+					users_long.append(user_long)
+
+			return users_long
+		else:
+			return False
 
 	@staticmethod
 	def getUsersSimilar_user_all_semantic(username, lang, numberOfSim, id_tarea):

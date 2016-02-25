@@ -277,7 +277,7 @@ class RecolectorTweetsSiguendoTwitter(luigi.Task):
 		return luigi.LocalTarget('%s/LuigiTasks/TweetsSiguendo/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def requires(self):
-		return [RecolectorSiguiendoTwitter(self.usuario), RecolectorUsuarioTwitter(self.usuario)]
+		return [RecolectorUsuarioTwitter(self.usuario), RecolectorSiguiendoTwitter(self.usuario)]
 
 	def run(self):
 		consultasNeo4j = ConsultasNeo4j()
@@ -323,7 +323,7 @@ class RecolectorTweetsSeguidoresTwitter(luigi.Task):
 		return luigi.LocalTarget('%s/LuigiTasks/TweetsSeguidores/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def requires(self):
-		return [RecolectorSeguidoresTwitter(self.usuario), RecolectorUsuarioTwitter(self.usuario)]
+		return [RecolectorUsuarioTwitter(self.usuario), RecolectorSeguidoresTwitter(self.usuario)]
 
 	def run(self):
 		consultasNeo4j = ConsultasNeo4j()
@@ -346,6 +346,27 @@ class RecolectorTweetsSeguidoresTwitter(luigi.Task):
 
 		with self.output().open('w') as out_file:
 			out_file.write("OK")
+
+
+class RecolectorCirculoUsuario(luigi.Task):
+	usuario = luigi.Parameter()
+
+	def requires(self):
+		return [RecolectorTweetsSeguidoresTwitter(self.usuario), RecolectorTweetsSiguendoTwitter(self.usuario)]
+
+	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget('%s/LuigiTasks/circulo/%s/%s/%s'%(path, anyo, mes, self.usuario))
+
+	def run(self):
+		with self.output().open('w') as out_file:
+			out_file.write("OK")
+		
 
 		
 if __name__ == "__main__":

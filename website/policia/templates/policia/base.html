@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <link rel="shortcut icon" href="{% static "policia/images/favicon_1.ico" %}">
 
-    <title>Panel de control / {% block titulo %}{% endblock %}</title>
+    <title>Panel de control / {{ titulo }}</title>
 
     <link href="{% static "policia/plugins/sweetalert/dist/sweetalert.css" %}" rel="stylesheet" type="text/css">
     <link href="{% static "policia/plugins/switchery/switchery.min.css" %}" rel="stylesheet" />
@@ -19,6 +19,8 @@
     <link href="{% static "policia/css/pages.css" %}" rel="stylesheet" type="text/css">
     <link href="{% static "policia/css/menu.css" %}" rel="stylesheet" type="text/css">
     <link href="{% static "policia/css/responsive.css" %}" rel="stylesheet" type="text/css">
+
+    {% block stylesheets %}{% endblock %}
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -85,17 +87,25 @@
                             <li class="text-muted menu-title">Acciones</li>
 
                             <li>
-                                <a href="#" class="waves-effect waves-primary subdrop">
+                                <a href="{% url 'policia:tareas' %}"
+                                    class="waves-effect waves-primary
+                                        {% if '/' == request.path %}
+                                        subdrop
+                                        {% endif %}">
                                     <i class="md md-access-time"></i>
                                     <span>
-                                        Tareas pendientes
+                                        Ver tareas pendientes
                                     </span>
                                 </a>
                             </li>
 
                             <li>
-                                <a href="#" class="waves-effect waves-primary">
-                                    <i class="md md-search"></i> <span>Búsqueda de usuarios</span>
+                                <a href="{% url 'policia:buscar' %}"
+                                    class="waves-effect waves-primary
+                                        {% if '/buscar/' == request.path %}
+                                        subdrop
+                                        {% endif %}">
+                                    <i class="md md-search"></i> <span>Buscar usuarios</span>
                                 </a>
                             </li>
 
@@ -124,12 +134,14 @@
                                 <div class="page-title-box">
                                     <ol class="breadcrumb pull-right">
                                         <li class="active">Panel de control</li>
-                                        <li class="active">Tareas pendientes</li>
+                                        <li class="active">{{ titulo }}</li>
                                     </ol>
-                                    <h4 class="page-title">Tareas pendientes</h4>
+                                    <h4 class="page-title">{{ titulo }} </h4>
                                 </div>
                             </div>
                         </div>
+
+                        {% block content %}{% endblock %}
 
                     </div>
                 </div>

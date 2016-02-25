@@ -1,0 +1,7 @@
+fieldset {
+    margin: 20px;
+}
+
+fieldset input, fieldset select, fieldset .radio-inline {
+    margin-right: 40px;
+}

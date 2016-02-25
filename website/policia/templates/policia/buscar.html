@@ -1,0 +1,77 @@
+{% extends 'policia/base.html' %}
+
+{% load staticfiles %}
+{% block stylesheets %}
+    <link href="{% static "policia/css/buscar.css" %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 text-left">
+        <div class="card-box">
+            <form method="post" class="form-inline">
+
+                {% csrf_token %}
+
+                <fieldset>
+
+                    <div class="form-group">
+                        <label for="search-username">Buscar usuarios similares a:  </label>
+                        <div class="form-group">
+                            <input type="text" class="form-control"
+                                placeholder="@usuario" id="search-username"
+                                name="search-username" maxlength="100" autofocus/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-language">Idioma:  </label>
+                        <select class="form-control" id="search-language" name="search-language">
+                            <option>ES</option>
+                            <option>EN</option>
+                            <option>AR</option>
+                            <option>FR</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-max">Máximo de resultados:  </label>
+                        <input type="number" class="form-control" id="search-max"
+                            name="search-max" maxlength="5" value="100"/>
+                    </div>
+
+                    <div class="form-group">
+
+                        <!-- Use label as fake button to add icon -->
+                        <label for="search-button" class="form-control btn btn-primary">
+                            <i class="md md-search"></i> Buscar
+                        </label>
+                        <input id="search-button" name="search-button" class="hidden" type="submit" value="Buscar"/>
+                        
+                    </div>
+                </fieldset>
+                <fieldset>
+
+                    <div class="form-group">
+                        <label for="search-by">Buscar por:  </label>
+                        <br/>
+                        <label class="radio-inline"><input type="radio" name="search-by" value="semantic" checked>Forma de hablar</label>
+                        <label class="radio-inline"><input type="radio" name="search-by" value="topic">Temas de los que habla</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-type">Buscar en:  </label>
+                        <br/>
+                        <label class="radio-inline"><input type="radio" name="search-type" value="local" checked>Comunidad del usuario</label>
+                        <label class="radio-inline"><input type="radio" name="search-type" value="global">Twitter global</label>
+                    </div>
+
+                </fieldset>
+
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

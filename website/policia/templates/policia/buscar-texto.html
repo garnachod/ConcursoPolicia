@@ -1,0 +1,129 @@
+{% extends 'policia/base.html' %}
+
+{% load staticfiles %}
+{% block stylesheets %}
+    <link href="{% static "policia/css/buscar.css" %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+<div id="search-box" class="row">
+    <div class="col-md-12 text-left">
+        <div class="card-box">
+            <form method="post" class="form-inline">
+                {% csrf_token %}
+
+                <div class="row">
+                    <fieldset>
+
+                        <div class="form-group">
+                            <label for="search-username">Buscar texto:  </label>
+                            <br/>
+                            <div class="form-group">
+                                <textarea type="text" class="form-control"
+                                    placeholder="@usuario" id="search-username"
+                                    name="search-text" maxlength="100" autofocus>
+                                </textarea>
+                            </div>
+                        </div>
+
+                    </fieldset>
+
+                    <fieldset>
+
+                        <div class="form-group">
+                            <label for="search-language">Idioma:  </label>
+                            <select class="form-control" id="search-language" name="search-language">
+                                <option>ES</option>
+                                <option>EN</option>
+                                <option>AR</option>
+                                <option>RU</option>
+                                <option>FR</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="search-max">Máximo de resultados:  </label>
+                            <input type="number" class="form-control" id="search-max"
+                                name="search-max" maxlength="5" value="100"/>
+                        </div>
+
+                        <div class="form-group">
+
+                            <!-- Use label as fake button to add icon -->
+                            <label for="search-button" class="form-control btn btn-primary">
+                                <i class="md md-search"></i> Buscar
+                            </label>
+                            <input id="search-button" name="search-button" class="hidden" type="submit" value="Buscar"/>
+
+                        </div>
+                    </fieldset>
+                    <fieldset>
+
+                        <div id="search-by-form-group" class="form-group">
+                            <label for="search-by">Buscar por:  </label>
+                            <br/>
+                            <label class="radio-inline"><input type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
+                            <label class="radio-inline"><input type="radio" name="search-by" value="semantic">Forma de hablar</label>
+                        </div>
+
+                        <div id="search-type-form-group" class="form-group">
+                            <label for="search-type">Buscar en:  </label>
+                            <br/>
+                            <label class="radio-inline"><input type="radio" name="search-type" value="global" checked>Twitter global</label>
+                            <label class="radio-inline"><input type="radio" name="search-type" value="local">Comunidad del usuario</label>
+                        </div>
+
+                    </fieldset>
+
+                </form>
+                </div>
+
+        </div>
+    </div>
+</div> <!-- /search-box -->
+
+<div id="results-box" class="row">
+
+    <!-- Template Detalles User Twitter -->
+    <div class="col-md-4 col-sm-6 text-left">
+        <div class="card-box">
+            <div class="row">
+                <div class="col-md-4">
+                    <a href="#">
+                        <img class="img-circle img-responsive" src="https://pbs.twimg.com/profile_images/674751297363550208/SKw6Rg8H_400x400.jpg"/>
+                    </a>
+
+                    <p class="twitter-name text-center">
+                        <small class="text-uppercase">P. Molins</small>
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <a class="twitter-handle" href="#">@p_molins</a>
+
+                    <br/>
+
+                    <small>
+                        Fecha de creación: 12/12/2016
+                        <br/>
+                        <i class="md md-location-on"></i> p_molins.getCurrentPosition();
+                    </small>
+
+                    <div class="twitter-stats row">
+                        <div class="col-md-6 text-center">
+                            <div class="twitter-number">112</div>
+                            <small>SEGUIDORES</small>
+                        </div>
+                        <div class="col-md-6 text-center">
+                            <div class="twitter-number">105</div>
+                            <small>SIGUIENDO</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Template Detalles User Twitter -->
+
+</div>
+
+{% endblock %}

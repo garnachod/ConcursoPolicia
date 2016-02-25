@@ -22,13 +22,23 @@ def tareas(request):
     })
 
 @login_required
-def buscar(request):
+def buscarSimilares(request):
     nombre = request.user.nombre + " " + request.user.apellidos
     email = request.user.email
-    return render(request, "policia/buscar.html", {
+    return render(request, "policia/buscar-similares.html", {
         'nombre': nombre,
         'email': email,
-        'titulo': 'Búsqueda de usuarios'
+        'titulo': 'Búsqueda de usuarios similares'
+    })
+
+@login_required
+def buscarTexto(request):
+    nombre = request.user.nombre + " " + request.user.apellidos
+    email = request.user.email
+    return render(request, "policia/buscar-texto.html", {
+        'nombre': nombre,
+        'email': email,
+        'titulo': 'Búsqueda de usuarios por texto'
     })
 
 def login(request, code=None):

@@ -99,14 +99,27 @@
                                 </a>
                             </li>
 
-                            <li>
-                                <a href="{% url 'policia:buscar' %}"
+                            <li class="has_sub">
+                                <a href="#"
                                     class="waves-effect waves-primary
-                                        {% if '/buscar/' == request.path %}
-                                        subdrop
+                                        {% if '/buscar/' in request.path %}
+                                        active
                                         {% endif %}">
                                     <i class="md md-search"></i> <span>Buscar usuarios</span>
                                 </a>
+                                <ul class="list-unstyled">
+                                    <li>
+                                        <a href="{% url 'policia:buscarSimilares' %}" class="waves-effect waves-primary">
+                                            <i class="md md-people-outline"></i><span>Similares</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'policia:buscarTexto' %}" class="waves-effect waves-primary">
+                                            <i class="md md-find-in-page"></i><span>Por texto</span>
+                                        </a>
+                                    </li>
+
+                                </ul>
                             </li>
 
                         </ul>

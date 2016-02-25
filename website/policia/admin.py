@@ -5,7 +5,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from .models import Usuario
+from .models import Usuario, Tarea
 
 class UsuarioCreationForm(UserCreationForm):
     """
@@ -105,6 +105,9 @@ class UsuarioAdmin(UserAdmin):
 
 # Registramos el modelo Usuario para mostrarlo en el panel de administracion
 admin.site.register(Usuario, UsuarioAdmin)
+
+# Registramos el modelo Tarea para mostrarlo en el panel de administracion
+admin.site.register(Tarea)
 
 # No hacemos uso del sistema de permisos de Django
 admin.site.unregister(Group)

@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^login/(?P<code>[0-9]{1})/$', views.login, name='login'),
     url(r'^autenticar/$', views.autenticar, name='autenticar'),
     url(r'^salir/$', views.salir, name='salir'),
-    url(r'^buscar/$', views.buscar, name='buscar'),
+    url(r'^buscar/similares/$', views.buscarSimilares, name='buscarSimilares'),
+    url(r'^buscar/texto/$', views.buscarTexto, name='buscarTexto'),
     url(r'^$', views.tareas, name='tareas'),
 ]

@@ -2,6 +2,35 @@ fieldset {
     margin: 20px;
 }
 
-fieldset input, fieldset select, fieldset .radio-inline {
-    margin-right: 40px;
+fieldset input, fieldset select {
+    margin-right: 50px;
+}
+
+fieldset .radio-inline {
+    margin-right: 10px;
+}
+
+#search-by-form-group {
+    margin-right: 80px;
+}
+
+.twitter-name {
+    margin-top: 13px;
+}
+
+.twitter-handle {
+    font-size: 1.5em;
+}
+
+.twitter-name, .twitter-handle, .twitter-location{
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.twitter-stats {
+    margin-top: 15px;
+}
+
+.twitter-number {
+    font-size: 1.3em;
 }

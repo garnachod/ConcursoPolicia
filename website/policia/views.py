@@ -8,6 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.shortcuts import redirect
 
+# IMPORTANTE: Abreviar cifras de seguidores/siguiendo
+# http://stackoverflow.com/questions/25611937/abbreviate-a-localized-number-in-javascript-for-thousands-1k-and-millions-1m
+
 @login_required
 def tareas(request):
     nombre = request.user.nombre + " " + request.user.apellidos

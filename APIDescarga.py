@@ -1,10 +1,13 @@
 import os
 import luigi
 from LuigiTasks.RecolectorTwitter import RecolectorUsuarioTwitter
+from DBbridge.ConsultasSQL_police import ConsultasSQL_police
 
 import time
 
 import multiprocessing
+import subprocess as sub
+from subprocess import PIPE, STDOUT
 
 class _downloadTwitterUser(multiprocessing.Process):
 	"""docstring for ClassName"""
@@ -12,15 +15,13 @@ class _downloadTwitterUser(multiprocessing.Process):
 		super(_downloadTwitterUser, self).__init__()
 		self.username = username
 		self.id_tarea = id_tarea
-		#self.daemon = True
-		self.stdin_path = '/dev/null'
-		self.stdout_path = '/dev/null'
 
 	def run(self):
-		f = os.popen("PYTHONPATH='../LuigiTasks' luigi --module RecolectorTwitter RecolectorUsuarioTwitter --usuario " +self.username)
-		"""luigi.run(["--usuario", self.username], main_task_cls = RecolectorUsuarioTwitter)"""
-		time.sleep(60)
-
+		comand = "PYTHONPATH='../LuigiTasks' luigi --module RecolectorTwitter RecolectorUsuarioTwitter --usuario " + self.username
+		#f = os.popen()
+		p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.id_tarea)
 	   
 class APIDescarga(object):
 	"""

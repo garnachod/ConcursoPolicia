@@ -11,13 +11,21 @@ class ConexionSQL():
 			#self.conn = psycopg2.connect(database="twitter", user="usrtwitter", password="postgres_tfg", host="localhost")
 			infoSQL = Conf().getSQLInfo()
 			self.conn = psycopg2.connect(database=infoSQL.database, user=infoSQL.user, password=infoSQL.password, host=infoSQL.host)
-
+			infoSQL = Conf().getSQLPoliceInfo()
+			self.policeConn = psycopg2.connect(database=infoSQL.database, user=infoSQL.user, password=infoSQL.password, host=infoSQL.host)
 		def getConexion(self):
 			""" Test method, return singleton conexion"""
 			return self.conn
 
 		def getCursor(self):
 			return self.conn.cursor()
+
+		def getConexion_police(self):
+			""" Test method, return singleton conexion"""
+			return self.policeConn
+
+		def getCursor_police(self):
+			return self.policeConn.cursor()
 
 
 	# storage for the instance reference

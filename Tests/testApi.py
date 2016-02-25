@@ -22,7 +22,7 @@ if __name__ == '__main__':
 	for user in users:
 		print user.screen_name + "\t"+ user.location
 	"""
-	users = APITextos.getUsersSimilar_user_all_topic("a_ortigosa", "es", 100, 1)
+	users = APITextos.getUsersSimilar_user_all_topic("culo_de_mono", "es", 100, 1)
 	if users != False:
 		for user in users:
 			print user.screen_name + "\t"+ user.location

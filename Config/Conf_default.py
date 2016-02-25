@@ -16,11 +16,13 @@ class Conf():
 			self.sql_host = 'localhost'
 			self.sql_port = '5432'
 			#app
-			self.abspath = '/home/dani/tfg/sources'
+			self.abspath = '/home/dani/github/ConcursoPolicia'
 			#SPARK
 			self.spark_home = '/home/dani/spark-1.4.0'
 			#Neo4j
 			self.neo4j_password = 'tfg_neo4j'
+			#vectors
+			self.dimVectors = 200
 
 		def getCassandraKeyspace(self):
 			return self.cassandra_keyspace
@@ -31,6 +33,9 @@ class Conf():
 		def getSparkHome(self):
 			return self.spark_home
 
+		def getAbsPath(self):
+			return self.abspath
+
 		def getSQLInfo(self):
 			infoSQL = namedtuple('InfoSQL', 'database, user, password, host')
 			return infoSQL(self.sql_database, self.sql_user, self.sql_password, self.sql_host)
@@ -39,8 +44,12 @@ class Conf():
 			infoSQL = namedtuple('InfoSQL', 'database, user, password, host, port')
 			return infoSQL(self.sql_database_policia, self.sql_user, self.sql_password, self.sql_host, self.sql_port)
 
-		def  getNeo4jPassword(self):
+		def getNeo4jPassword(self):
 			return self.neo4j_password
+
+		def getDimVectors(self):
+			return self.dimVectors
+
 
 
 	# storage for the instance reference

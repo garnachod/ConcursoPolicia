@@ -14,7 +14,18 @@ def tareas(request):
     email = request.user.email
     return render(request, "policia/tareas.html", {
         'nombre': nombre,
-        'email': email
+        'email': email,
+        'titulo': 'Tareas pendientes'
+    })
+
+@login_required
+def buscar(request):
+    nombre = request.user.nombre + " " + request.user.apellidos
+    email = request.user.email
+    return render(request, "policia/buscar.html", {
+        'nombre': nombre,
+        'email': email,
+        'titulo': 'Búsqueda de usuarios'
     })
 
 def login(request, code=None):

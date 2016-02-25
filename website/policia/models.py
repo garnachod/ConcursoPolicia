@@ -129,3 +129,4 @@ class Tarea(models.Model):
     num_usuarios = models.PositiveSmallIntegerField()
     inicio = models.DateTimeField()
     fin = models.DateTimeField(null=True)
+    enviar_email = models.BooleanField(default=False)

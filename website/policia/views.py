@@ -7,6 +7,12 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.shortcuts import redirect
+import os
+import sys
+
+lib_path = os.path.abspath('../../')
+sys.path.append(lib_path)
+from API.APITextos import APITextos
 
 # IMPORTANTE: Abreviar cifras de seguidores/siguiendo
 # http://stackoverflow.com/questions/25611937/abbreviate-a-localized-number-in-javascript-for-thousands-1k-and-millions-1m
@@ -15,6 +21,7 @@ from django.shortcuts import redirect
 def tareas(request):
     nombre = request.user.nombre + " " + request.user.apellidos
     email = request.user.email
+
     return render(request, "policia/tareas.html", {
         'nombre': nombre,
         'email': email,
@@ -25,6 +32,9 @@ def tareas(request):
 def buscarSimilares(request):
     nombre = request.user.nombre + " " + request.user.apellidos
     email = request.user.email
+
+    """ APITextos.getUsersSimilar_user_all_topic('p_molins', 'es', 100, 1) """
+
     return render(request, "policia/buscar-similares.html", {
         'nombre': nombre,
         'email': email,

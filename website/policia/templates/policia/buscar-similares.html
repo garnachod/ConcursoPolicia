@@ -1,8 +1,10 @@
 {% extends 'policia/base.html' %}
 
 {% load staticfiles %}
+
 {% block stylesheets %}
     <link href="{% static "policia/css/buscar.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "policia/plugins/custombox/dist/custombox.min.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -115,5 +117,7 @@
     <!-- /Template Detalles User Twitter -->
 
 </div>
+
+{% include 'policia/modal-tarea.html' %}
 
 {% endblock %}

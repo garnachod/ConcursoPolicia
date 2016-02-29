@@ -22,7 +22,7 @@ fieldset .radio-inline {
     font-size: 1.5em;
 }
 
-.twitter-name, .twitter-handle, .twitter-location{
+.twitter-name, .twitter-handle, .twitter-location {
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -33,4 +33,17 @@ fieldset .radio-inline {
 
 .twitter-number {
     font-size: 1.3em;
+}
+
+textarea {
+    min-width: 100%;
+}
+
+#search-text {
+    min-height: 150px;
+}
+
+#search-card {
+    padding-left: 30px;
+    padding-right: 30px;
 }

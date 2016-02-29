@@ -12,3 +12,4 @@ Conf.py
 *.dict
 */textos/*
 .DS_Store
+deploy

@@ -1,79 +1,88 @@
 {% extends 'policia/base.html' %}
 
 {% load staticfiles %}
+
 {% block stylesheets %}
     <link href="{% static "policia/css/buscar.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "policia/plugins/custombox/dist/custombox.min.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
+
 <div id="search-box" class="row">
     <div class="col-md-12 text-left">
-        <div class="card-box">
+        <div id="search-card" class="card-box">
             <form method="post" class="form-inline">
                 {% csrf_token %}
 
                 <div class="row">
-                    <fieldset>
 
-                        <div class="form-group">
-                            <label for="search-username">Buscar texto:  </label>
-                            <br/>
-                            <div class="form-group">
-                                <textarea type="text" class="form-control"
-                                    placeholder="@usuario" id="search-username"
-                                    name="search-text" maxlength="100" autofocus>
-                                </textarea>
+                    <div class="col-md-6">
+                        <fieldset class="row">
+
+                            <div  class="col-md-12">
+                                <label for="search-username">Buscar texto:  </label>
+                                <br/>
+                                    <textarea
+                                        class="form-control"
+                                        placeholder="" id="search-text"
+                                        name="search-text" maxlength="100"
+                                        id="search-text" autofocus>
+                                    </textarea>
                             </div>
-                        </div>
 
-                    </fieldset>
+                        </fieldset>
+                    </div>
 
-                    <fieldset>
+                    <div class="col-md-6">
+                        <fieldset>
 
-                        <div class="form-group">
-                            <label for="search-language">Idioma:  </label>
-                            <select class="form-control" id="search-language" name="search-language">
-                                <option>ES</option>
-                                <option>EN</option>
-                                <option>AR</option>
-                                <option>RU</option>
-                                <option>FR</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label for="search-language">Idioma:  </label>
+                                <select class="form-control" id="search-language" name="search-language">
+                                    <option>ES</option>
+                                    <option>EN</option>
+                                    <option>AR</option>
+                                    <option>RU</option>
+                                    <option>FR</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="search-max">Máximo de resultados:  </label>
-                            <input type="number" class="form-control" id="search-max"
-                                name="search-max" maxlength="5" value="100"/>
-                        </div>
+                            <div class="form-group">
+                                <label for="search-max">Máximo de resultados:  </label>
+                                <input type="number" class="form-control" id="search-max"
+                                    name="search-max" maxlength="5" value="100"/>
+                            </div>
 
-                        <div class="form-group">
+                            <div class="form-group">
 
-                            <!-- Use label as fake button to add icon -->
-                            <label for="search-button" class="form-control btn btn-primary">
-                                <i class="md md-search"></i> Buscar
-                            </label>
-                            <input id="search-button" name="search-button" class="hidden" type="submit" value="Buscar"/>
+                                <!-- Use label as fake button to add icon -->
+                                <label for="search-button" class="form-control btn btn-primary">
+                                    <i class="md md-search"></i> Buscar
+                                </label>
+                                <input id="search-button" name="search-button" class="hidden" type="submit" value="Buscar"/>
 
-                        </div>
-                    </fieldset>
-                    <fieldset>
+                            </div>
+                        </fieldset>
+                        <fieldset>
 
-                        <div id="search-by-form-group" class="form-group">
-                            <label for="search-by">Buscar por:  </label>
-                            <br/>
-                            <label class="radio-inline"><input type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
-                            <label class="radio-inline"><input type="radio" name="search-by" value="semantic">Forma de hablar</label>
-                        </div>
+                            <div id="search-by-form-group" class="form-group">
+                                <label for="search-by">Buscar por:  </label>
+                                <br/>
+                                <label class="radio-inline"><input type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
+                                <label class="radio-inline"><input type="radio" name="search-by" value="semantic">Forma de hablar</label>
+                            </div>
 
-                        <div id="search-type-form-group" class="form-group">
-                            <label for="search-type">Buscar en:  </label>
-                            <br/>
-                            <label class="radio-inline"><input type="radio" name="search-type" value="global" checked>Twitter global</label>
-                            <label class="radio-inline"><input type="radio" name="search-type" value="local">Comunidad del usuario</label>
-                        </div>
+                            <div id="search-type-form-group" class="form-group">
+                                <label for="search-type">Buscar en:  </label>
+                                <br/>
+                                <label class="radio-inline"><input type="radio" name="search-type" value="global" checked>Twitter global</label>
+                                <label class="radio-inline"><input type="radio" name="search-type" value="local">Comunidad del usuario</label>
+                            </div>
 
-                    </fieldset>
+                        </fieldset>
+
+                    </div>
 
                 </form>
                 </div>
@@ -125,5 +134,13 @@
     <!-- /Template Detalles User Twitter -->
 
 </div>
+
+{% include 'policia/modal-tarea.html' %}
+
+<a href="#custom-modal" class="btn btn-primary waves-effect waves-light"
+    data-animation="blur" data-plugin="custommodal"
+    data-overlaySpeed="100" data-overlayColor="#36404a">
+    Show Me
+</a>
 
 {% endblock %}

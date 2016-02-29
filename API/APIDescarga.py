@@ -1,6 +1,7 @@
 import os
 import luigi
 from LuigiTasks.RecolectorTwitter import RecolectorUsuarioTwitter, RecolectorCirculoUsuario
+from LuigiTasks.GenerateSim import GenerateSimRelations_semantic, GenerateSimRelations_topics
 from DBbridge.ConsultasSQL_police import ConsultasSQL_police
 from Config.Conf import Conf
 
@@ -49,6 +50,31 @@ class _downloadTwitterRelations(multiprocessing.Process):
 		os.popen(comand)
 		consultas = ConsultasSQL_police()
 		consultas.setFinishedTask(self.id_tarea)
+
+class _generateTwitterRelations(multiprocessing.Process):
+	def __init__(self, username, lang, semantic, id_tarea):
+		super(_generateTwitterRelations, self).__init__()
+		self.username = username
+		self.lang = lang
+		self.semantic = semantic
+		self.id_tarea = id_tarea
+
+	def run(self):
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
+		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim " 
+		if self.semantic == True:
+			comand += "GenerateSimRelations_semantic "
+		else:
+			comand += "GenerateSimRelations_topics "
+		comand += "--usuario " + self.username + " --lang " + self.lang
+		comand += " > /dev/null 2>&1"
+		comand = comand%path
+		
+		os.popen(comand)
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.id_tarea)
 	   
 class APIDescarga(object):
 	"""
@@ -81,7 +107,7 @@ class APIDescarga(object):
 
 
 	@staticmethod
-	def downloadTwitterUserRelations(username, id_tarea):
+	def downloadTwitterUserRelations(username, lang, semantic, id_tarea):
 		"""
 		Descarga toda la informacion del circulo Nivel 1 para los posteriores analisis,
 		 inserta una referencia en la base de datos de descarga, esa referencia se completa al terminar la tarea.
@@ -96,14 +122,19 @@ class APIDescarga(object):
 		True si la descarga esta realizada False en caso contrario
 
 		"""
-		recolector = RecolectorCirculoUsuario(usuario = username)
+		recolector = None
+		if semantic == True:
+			recolector = GenerateSimRelations_semantic(usuario = username, lang = lang)
+		else:
+			recolector = GenerateSimRelations_topics(usuario = username, lang = lang)
+
 		if os.path.isfile(recolector.output().path) == False:
-			p = _downloadTwitterRelations(username, id_tarea)
+			p = _generateTwitterRelations(username, lang, semantic, id_tarea)
 			p.start()
 			print "INICIANDO"
 			return False
 		else:
-			return True
+			return recolector.output().path
 
 	@staticmethod
 	def downloadUserMentions(username, id_tarea):

@@ -4,7 +4,7 @@ import sys
 lib_path = os.path.abspath('../')
 sys.path.append(lib_path)
 
-from APITextos import APITextos 
+from API.APITextos import APITextos 
 
 if __name__ == '__main__':
 	"""

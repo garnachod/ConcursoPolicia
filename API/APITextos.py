@@ -8,7 +8,7 @@ from APIDescarga import APIDescarga
 
 class APITextos(object):
 	"""docstring for APITextos"""
-
+	
 	@staticmethod
 	def getUsersSimilar_user_all_topic(username, lang, numberOfSim, id_tarea):
 		"""
@@ -18,7 +18,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		username : usuario de la red social con @ o sin @
+		username : usuario de la red social con @ o sin @ 
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 		id_tarea : identificador de la tarea creada
@@ -55,7 +55,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		username : usuario de la red social con @ o sin @
+		username : usuario de la red social con @ o sin @ 
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 
@@ -95,7 +95,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		username : usuario de la red social con @ o sin @
+		username : usuario de la red social con @ o sin @ 
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 		id_tarea : identificador de la tarea creada
@@ -126,7 +126,7 @@ class APITextos(object):
 	@staticmethod
 	def getUsersSimilar_user_relations_semantic(username, lang, numberOfSim, id_tarea):
 		pass
-
+		
 	@staticmethod
 	def getUsersSimilar_text_all_topic(text, lang, numberOfSim, id_tarea):
 		pass

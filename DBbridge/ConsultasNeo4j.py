@@ -32,6 +32,23 @@ class ConsultasNeo4j(object):
 
 		return identificadores
 
+	def getSiguiendoOrSeguidosByUserID(self, user_id):
+		seguidores = self.getListaIDsSeguidoresByUserID(user_id)
+		seguidores_dic = {}
+		for seguidor in seguidores_dic:
+			seguidores_dic[str(seguidor)] = True
+
+		siguiendo = self.getListaIDsSiguiendoByUserID(user_id):
+		for siguiendo_u in siguiendo:
+			if str(siguiendo_u) not in seguidores_dic:
+				seguidores_dic[str(siguiendo_u)] = True
+
+		retornoList = []
+		for key in seguidores_dic:
+			retornoList.append(key)
+
+		return retornoList
+
 	def getListaIDsFavsByUserID(self, user_id):
 		queryNeo4j = "MATCH (u:user {id_twitter : {ID}})-[r:FAV]->(a:tweet) return a"
 		nodos = self.graph.cypher.execute(queryNeo4j, {"ID":user_id})

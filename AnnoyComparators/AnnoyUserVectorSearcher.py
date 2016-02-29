@@ -14,26 +14,29 @@ class AnnoyUserVectorSearcher(object):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
 		
-		json_loc = '../LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.json'%(anyo, mes, dia, lang)
-		model_loc = '../LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.annoy'%(anyo, mes, dia, lang)
-		if os.path.isfile(model_loc) == False:
-			now = datetime.datetime.now() - datetime.timedelta(days=1)
+		json_loc = '%s/LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.json'%(path, anyo, mes, dia, lang)
+		model_loc = '%s/LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.annoy'%(path, anyo, mes, dia, lang)
+		days_minus = 1
+		while os.path.isfile(model_loc) == False and days_minus < 20:
+			now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
 			dia = now.day
 			mes = now.month
 			anyo = now.year
 
-			json_loc = '../LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.json'%(anyo, mes, dia, lang)
-			model_loc = '../LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.annoy'%(anyo, mes, dia, lang)
-			if os.path.isfile(model_loc) == False:
-				raise Exception("fichero no encontrado")
+			json_loc = '%s/LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.json'%(path, anyo, mes, dia, lang)
+			model_loc = '%s/LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.annoy'%(path, anyo, mes, dia, lang)
+			days_minus += 1
 
 		dicInverse = {}
 		with open(json_loc, "r") as json_fin:
 			dic = json.loads(json_fin.read())
 			for key in dic:
 				dicInverse[str(dic[key])] = long(key)
-		conf = Conf()
+		
 		u = AnnoyIndex(conf.getDimVectors())
 		u.load(model_loc)
 
@@ -50,34 +53,38 @@ class AnnoyUserVectorSearcher(object):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
 		
-		json_loc = '../LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.json'%(anyo, mes, dia, lang)
-		model_loc = '../LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.annoy'%(anyo, mes, dia, lang)
-		if os.path.isfile(model_loc) == False:
-			now = datetime.datetime.now() - datetime.timedelta(days=1)
+		json_loc = '%s/LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.json'%(path, anyo, mes, dia, lang)
+		model_loc = '%s/LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.annoy'%(path, anyo, mes, dia, lang)
+		days_minus = 1
+		while os.path.isfile(model_loc) == False and days_minus < 20:
+			now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
 			dia = now.day
 			mes = now.month
 			anyo = now.year
 
-			json_loc = '../LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.json'%(anyo, mes, dia, lang)
-			model_loc = '../LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.annoy'%(anyo, mes, dia, lang)
-			if os.path.isfile(model_loc) == False:
-				raise Exception("fichero no encontrado")
+			json_loc = '%s/LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.json'%(path, anyo, mes, dia, lang)
+			model_loc = '%s/LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.annoy'%(path, anyo, mes, dia, lang)
+			days_minus += 1
 
 		dicInverse = {}
 		with open(json_loc, "r") as json_fin:
 			dic = json.loads(json_fin.read())
 			for key in dic:
 				dicInverse[str(dic[key])] = long(key)
-
-		conf = Conf()
+		
 		u = AnnoyIndex(conf.getDimVectors())
 		u.load(model_loc)
 
-		similarElem, values = u.get_nns_by_vector(vector, 10000, include_distances=True)
+		similarElem, values = u.get_nns_by_vector(vector, 100000, include_distances=True)
 		best = []
+		
 		for i in xrange(numberSim):
 			best.append(dicInverse[str(similarElem[i])])
+
 		return best
 
 

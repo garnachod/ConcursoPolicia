@@ -1,5 +1,6 @@
 from ProcesadoresTexto.GenerateVectorsFromTweets import GenerateVectorsFromTweets
 from DBbridge.ConsultasCassandra import ConsultasCassandra
+from DBbridge.ConsultasNeo4j import ConsultasNeo4j
 from AnnoyComparators.AnnoyUserVectorSearcher import AnnoyUserVectorSearcher
 from SocialAPI.TwitterAPI.RecolectorTweetsUser import RecolectorTweetsUser
 from DBbridge.EscritorTweetsCassandra import EscritorTweetsCassandra
@@ -69,13 +70,17 @@ class APITextos(object):
 			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
 			generator = GenerateVectorsFromTweets()
 			vector = generator.getVector_topics(tweets, lang)
-			searcher = AnnoyUserVectorSearcher()
-			users = searcher.getSimilarUsers_topics(vector, lang, numberOfSim)
-			users_long = []
-			for user in users:
-				user_long = consultas.getUserByIDLargeCassandra_police(user)
-				if user_long != False:
-					users_long.append(user_long)
+			#se generan los vectores de todos los usuarios
+			consultasNeo4j = ConsultasNeo4j()
+			userID = consultas.getUserIDByScreenNameCassandra(username)
+			seguidoresysiguiendo = consultasNeo4j.getSiguiendoOrSeguidosByUserID(userID)
+			relaciones_coseno = []
+			for user in seguidoresysiguiendo:
+				tweets_ = consultas.getTweetsUsuarioCassandra_statusAndLang(user)
+				vector_ = generator.getVector_topics(tweets, lang)
+				coseno = 0
+
+			user_long = []
 
 			return users_long
 		else:

@@ -2,6 +2,8 @@ import datetime
 from Doc2Vec import Doc2Vec
 import os.path
 from LimpiadorTweets import LimpiadorTweets 
+from Config.Conf import Conf
+import numpy as np
 
 class GenerateVectorsFromTweets():
 	"""docstring for GenerateVectorsFromText"""
@@ -27,17 +29,20 @@ class GenerateVectorsFromTweets():
 			dia = now.day
 			mes = now.month
 			anyo = now.year
+			#configuracion del sistema
+			conf = Conf()
+			path = conf.getAbsPath()
 
-			model_loc = '../LuigiTasks/TrainText/Doc2VecLang_topics/%s/%s/%s_%s.model'%(anyo, mes, dia, lang)
-			if os.path.isfile(model_loc) == False:
-				now = datetime.datetime.now() - datetime.timedelta(days=1)
+			model_loc = '%s/LuigiTasks/TrainText/Doc2VecLang_topics/%s/%s/%s_%s.model'%(path, anyo, mes, dia, lang)
+			days_minus = 1
+			while os.path.isfile(model_loc) == False and days_minus < 20:
+				now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
 				dia = now.day
 				mes = now.month
 				anyo = now.year
 
-				model_loc = '../LuigiTasks/TrainText/Doc2VecLang_topics/%s/%s/%s_%s.model'%(anyo, mes, dia, lang)
-				if os.path.isfile(model_loc) == False:
-					raise Exception("fichero no encontrado")
+				model_loc = '%s/LuigiTasks/TrainText/Doc2VecLang_topics/%s/%s/%s_%s.model'%(path, anyo, mes, dia, lang)
+				days_minus += 1
 
 			d2v = None
 			if model_loc in self.models_opened:
@@ -47,8 +52,8 @@ class GenerateVectorsFromTweets():
 				self.models_opened[model_loc] = d2v
 			
 			vectorText = self.generateVectorText_topics(tweets, lang).split(" ")
-			vector = d2v.simulateVectorsFromVectorText( vectorText, model_loc)
-			return vector
+			vector = np.array(d2v.simulateVectorsFromVectorText(vectorText, model_loc))
+			return vector / np.linalg.norm(vector)
 
 
 

@@ -2,6 +2,7 @@ import os
 import luigi
 from LuigiTasks.RecolectorTwitter import RecolectorUsuarioTwitter, RecolectorCirculoUsuario
 from DBbridge.ConsultasSQL_police import ConsultasSQL_police
+from Config.Conf import Conf
 
 import time
 
@@ -9,17 +10,24 @@ import multiprocessing
 import subprocess as sub
 from subprocess import PIPE, STDOUT
 
+
 class _downloadTwitterUser(multiprocessing.Process):
 	"""docstring for ClassName"""
 	def __init__(self, username, id_tarea):
 		super(_downloadTwitterUser, self).__init__()
 		self.username = username
 		self.id_tarea = id_tarea
+		#self.daemon = True
 
 	def run(self):
-		comand = "PYTHONPATH='../LuigiTasks' luigi --module RecolectorTwitter RecolectorUsuarioTwitter --usuario " + self.username
-		#f = os.popen()
-		p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
+		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module RecolectorTwitter RecolectorUsuarioTwitter --usuario " + self.username
+		comand += " > /dev/null 2>&1"
+		comand = comand%path
+		os.popen(comand)
+		#p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
 		consultas = ConsultasSQL_police()
 		consultas.setFinishedTask(self.id_tarea)
 
@@ -31,9 +39,14 @@ class _downloadTwitterRelations(multiprocessing.Process):
 		self.id_tarea = id_tarea
 
 	def run(self):
-		comand = "PYTHONPATH='../LuigiTasks' luigi --module RecolectorTwitter RecolectorCirculoUsuario --usuario " + self.username
-		#f = os.popen()
-		p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
+		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module RecolectorTwitter RecolectorCirculoUsuario --usuario " + self.username
+		comand += " > /dev/null 2>&1"
+		comand = comand%path
+		
+		os.popen(comand)
 		consultas = ConsultasSQL_police()
 		consultas.setFinishedTask(self.id_tarea)
 	   

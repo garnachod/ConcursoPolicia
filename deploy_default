@@ -1,0 +1,41 @@
+
+remote_user='dani'
+remote_pass=''
+remote_server='150.244.58.70'
+local_root='.'
+remote_root='/home/dani/github/ConcursoPolicia/'
+
+echo Using local root: $local_root
+cd $local_root
+
+echo Uploading to remote root: $remote_server$remote_root
+
+echo Uploading API...
+sshpass -p $remote_pass scp -r ./API $remote_user@$remote_server:$remote_root
+
+echo Uploading AnnoyComparators...
+sshpass -p $remote_pass scp -r ./AnnoyComparators $remote_user@$remote_server:$remote_root
+
+echo Uploading LuigiTasks...
+sshpass -p $remote_pass scp -r ./LuigiTasks $remote_user@$remote_server:$remote_root
+
+echo Uploading ProcesadoresTexto...
+sshpass -p $remote_pass scp -r ./ProcesadoresTexto $remote_user@$remote_server:$remote_root
+
+echo Uploading DBBridge...
+sshpass -p $remote_pass scp -r ./DBbridge $remote_user@$remote_server:$remote_root
+
+echo Uploading SocialAPI...
+sshpass -p $remote_pass scp -r ./SocialAPI $remote_user@$remote_server:$remote_root
+
+echo Uploading website...
+sshpass -p $remote_pass scp -r ./website $remote_user@$remote_server:$remote_root
+
+website="website/"
+
+echo Running server...
+sshpass -p $remote_pass ssh $remote_user@$remote_server << EOF
+  cd $remote_root$website
+  fuser -k 8000/tcp
+  python manage.py runserver 0.0.0.0:8000
+EOF

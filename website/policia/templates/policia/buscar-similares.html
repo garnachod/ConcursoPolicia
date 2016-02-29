@@ -11,7 +11,7 @@
 <div id="search-box" class="row">
     <div class="col-md-12 text-left">
         <div class="card-box">
-            <form method="post" class="form-inline">
+            <form method="get" action="{% url 'policia:buscarSimilaresAPI' %}" class="form-inline">
                 {% csrf_token %}
                 <fieldset>
 
@@ -27,11 +27,11 @@
                     <div class="form-group">
                         <label for="search-language">Idioma:  </label>
                         <select class="form-control" id="search-language" name="search-language">
-                            <option>ES</option>
-                            <option>EN</option>
-                            <option>AR</option>
-                            <option>RU</option>
-                            <option>FR</option>
+                            <option value="es">ES</option>
+                            <option value="en">EN</option>
+                            <option value="ar">AR</option>
+                            <option value="ru">RU</option>
+                            <option value="fr">FR</option>
                         </select>
                     </div>
 
@@ -63,8 +63,8 @@
                     <div id="search-type-form-group" class="form-group">
                         <label for="search-type">Buscar en:  </label>
                         <br/>
-                        <label class="radio-inline"><input type="radio" name="search-type" value="global" checked>Twitter global</label>
-                        <label class="radio-inline"><input type="radio" name="search-type" value="local">Comunidad del usuario</label>
+                        <label class="radio-inline"><input type="radio" name="search-in" value="all" checked>Twitter global</label>
+                        <label class="radio-inline"><input type="radio" name="search-in" value="relations">Comunidad del usuario</label>
                     </div>
 
                 </fieldset>

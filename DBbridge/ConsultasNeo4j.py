@@ -38,14 +38,14 @@ class ConsultasNeo4j(object):
 		for seguidor in seguidores_dic:
 			seguidores_dic[str(seguidor)] = True
 
-		siguiendo = self.getListaIDsSiguiendoByUserID(user_id):
+		siguiendo = self.getListaIDsSiguiendoByUserID(user_id)
 		for siguiendo_u in siguiendo:
 			if str(siguiendo_u) not in seguidores_dic:
 				seguidores_dic[str(siguiendo_u)] = True
 
 		retornoList = []
 		for key in seguidores_dic:
-			retornoList.append(key)
+			retornoList.append(long(key))
 
 		return retornoList
 
@@ -71,7 +71,7 @@ class ConsultasNeo4j(object):
 		queryNeo4j = "MATCH (u:user) return count(*)"
 		nodos = self.graph.cypher.execute(queryNeo4j)
 		print nodos
-		
+
 if __name__ == '__main__':
 	consultas = ConsultasNeo4j()
 	#funcionando

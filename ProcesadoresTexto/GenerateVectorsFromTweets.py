@@ -24,6 +24,15 @@ class GenerateVectorsFromTweets():
 
 			return text_final
 
+		def generateVectorText_semantic(self, tweets, lang):
+			text_final = u""
+			for tweet in tweets:
+				if tweet.lang == lang:
+					tweetLimpio = LimpiadorTweets.clean(tweet.status)
+					text_final += tweetLimpio + u" "
+
+			return text_final
+
 		def getVector_topics(self, tweets, lang):
 			now = datetime.datetime.now()
 			dia = now.day
@@ -55,8 +64,36 @@ class GenerateVectorsFromTweets():
 			vector = np.array(d2v.simulateVectorsFromVectorText(vectorText, model_loc))
 			return vector / np.linalg.norm(vector)
 
+		def getVector_semantic(self, tweets, lang):
+			now = datetime.datetime.now()
+			dia = now.day
+			mes = now.month
+			anyo = now.year
+			#configuracion del sistema
+			conf = Conf()
+			path = conf.getAbsPath()
 
+			model_loc = '%s/LuigiTasks/TrainText/Doc2VecLang_semantic/%s/%s/%s_%s.model'%(path, anyo, mes, dia, lang)
+			days_minus = 1
+			while os.path.isfile(model_loc) == False and days_minus < 20:
+				now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
+				dia = now.day
+				mes = now.month
+				anyo = now.year
 
+				model_loc = '%s/LuigiTasks/TrainText/Doc2VecLang_semantic/%s/%s/%s_%s.model'%(path, anyo, mes, dia, lang)
+				days_minus += 1
+
+			d2v = None
+			if model_loc in self.models_opened:
+				d2v = self.models_opened[model_loc]
+			else:
+				d2v = Doc2Vec()
+				self.models_opened[model_loc] = d2v
+			
+			vectorText = self.generateVectorText_semantic(tweets, lang).split(" ")
+			vector = np.array(d2v.simulateVectorsFromVectorText(vectorText, model_loc))
+			return vector / np.linalg.norm(vector)
 
 
 	# storage for the instance reference

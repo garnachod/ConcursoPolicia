@@ -45,7 +45,7 @@ class ConsultasNeo4j(object):
 
 		retornoList = []
 		for key in seguidores_dic:
-			retornoList.append(key)
+			retornoList.append(long(key))
 
 		return retornoList
 

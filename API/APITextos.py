@@ -7,6 +7,10 @@ from APIDescarga import APIDescarga
 from collections import namedtuple
 import numpy as np
 
+import re
+
+re_tuser = re.compile(r'@?[a-zA-Z0-9_]+')
+
 class APITextos(object):
 	"""docstring for APITextos"""
 	
@@ -29,6 +33,19 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
+
 		if APIDescarga.downloadTwitterUser(username, id_tarea) == True:
 			consultas = ConsultasCassandra()
 			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
@@ -67,6 +84,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 
 		"""
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		path = APIDescarga.downloadTwitterUserRelations(username, lang, False, id_tarea)
 		if path == False:
 			return False
@@ -107,6 +136,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		if APIDescarga.downloadTwitterUser(username, id_tarea) == True:
 			consultas = ConsultasCassandra()
 			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
@@ -146,6 +187,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 
 		"""
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		path = APIDescarga.downloadTwitterUserRelations(username, lang, True, id_tarea)
 		if path == False:
 			return False
@@ -185,6 +238,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(texto) > 100000:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		Row = namedtuple('Row', 'status, lang')
 		tweets = [Row(text, lang)]
 		generator = GenerateVectorsFromTweets()
@@ -222,6 +287,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(texto) > 100000:
+			raise Exception("Parametros incorrectos")
+			
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		Row = namedtuple('Row', 'status, lang')
 		tweets = [Row(text, lang)]
 		generator = GenerateVectorsFromTweets()

@@ -8,9 +8,31 @@ from Config.Conf import Conf
 import time
 
 import multiprocessing
-import subprocess as sub
-from subprocess import PIPE, STDOUT
+import smtplib
 
+
+def sendEmail(id_tarea):
+	consultas = ConsultasSQL_police()
+	if consultas.getSendEmailFromTask(id_tarea) == True:
+		id_user = consultas.getIdUserFromTask(id_tarea)
+		tipoTarea = consultas.getTipoTarea(id_tarea)
+		if id_user != False:
+			email = consultas.getEmailFromUser(id_user)
+			server = smtplib.SMTP('smtp.gmail.com:587')
+			server.ehlo()
+			server.starttls()
+			fromaddr = "concurso.policia.tareas@gmail.com"
+			toaddrs = email
+			msg = "\r\n".join([
+			  "From: "+ fromaddr,
+			  "To: " + toaddrs,
+			  "Subject: Tarea terminada",
+			  "",
+			  "La tarea de tipo " + tipoTarea +" de twitter ha sido terminada"
+			])
+			server.login(fromaddr, "TareasPolicia.sender")
+			server.sendmail(fromaddr, toaddrs, msg)
+			server.quit()
 
 class _downloadTwitterUser(multiprocessing.Process):
 	"""docstring for ClassName"""
@@ -31,6 +53,7 @@ class _downloadTwitterUser(multiprocessing.Process):
 		#p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
 		consultas = ConsultasSQL_police()
 		consultas.setFinishedTask(self.id_tarea)
+		sendEmail(self.id_tarea)
 
 class _downloadTwitterRelations(multiprocessing.Process):
 	"""docstring for ClassName"""
@@ -75,7 +98,11 @@ class _generateTwitterRelations(multiprocessing.Process):
 		os.popen(comand)
 		consultas = ConsultasSQL_police()
 		consultas.setFinishedTask(self.id_tarea)
-	   
+		sendEmail(self.id_tarea)
+		
+
+
+ 	   
 class APIDescarga(object):
 	"""
 	API para descargar datos desde la interfaz web
@@ -100,7 +127,6 @@ class APIDescarga(object):
 		if os.path.isfile(recolector.output().path) == False:
 			p = _downloadTwitterUser(username, id_tarea)
 			p.start()
-			print "INICIANDO"
 			return False
 		else:
 			return True
@@ -131,7 +157,6 @@ class APIDescarga(object):
 		if os.path.isfile(recolector.output().path) == False:
 			p = _generateTwitterRelations(username, lang, semantic, id_tarea)
 			p.start()
-			print "INICIANDO"
 			return False
 		else:
 			return recolector.output().path

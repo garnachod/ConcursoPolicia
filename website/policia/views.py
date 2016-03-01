@@ -18,9 +18,6 @@ sys.path.append(lib_path)
 from API.APITextos import APITextos
 from .models import Tarea
 
-# IMPORTANTE: Abreviar cifras de seguidores/siguiendo
-# http://stackoverflow.com/questions/25611937/abbreviate-a-localized-number-in-javascript-for-thousands-1k-and-millions-1m
-
 #########################
 # API REST
 #########################
@@ -44,6 +41,18 @@ def _formatUsersJson(usuarios):
         })
         , usuarios)
     return JsonResponse({ 'users': usuarios })
+
+def _getUsersSimilarMethod(searchIn, searchBy):
+    if searchIn == 'all' and searchBy == 'topic':
+        return APITextos.getUsersSimilar_user_all_topic
+    elif searchIn == 'all' and searchBy == 'semantic':
+        return APITextos.getUsersSimilar_user_all_semantic
+    elif searchIn == 'relations' and searchBy == 'topic':
+        return APITextos.getUsersSimilar_user_relations_topic
+    elif searchIn == 'relations' and searchBy == 'semantic':
+        return APITextos.getUsersSimilar_user_relations_semantic
+    else
+        raise Exception('Parámetros searchIn o searchBy incorrectos')
 
 @login_required
 def buscarSimilaresAPI(request):
@@ -72,10 +81,9 @@ def buscarSimilaresAPI(request):
     maxResults = int(searchMax)
     idTarea = tarea.id
 
-    method = 'APITextos.getUsersSimilar_user_' + searchIn + '_' + searchBy + '(username, language, maxResults, idTarea)'
-
     try:
-        result = eval(method)
+        method = _getUsersSimilarMethod(searchIn, searchBy);
+        result = method(username, language, maxResults, idTarea)
     except Exception, e:
         result = []
 

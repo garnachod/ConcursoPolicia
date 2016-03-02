@@ -11,6 +11,10 @@ fieldset .radio-inline {
     margin-right: 80px;
 }
 
+#search-max {
+    max-width:80px;
+}
+
 .twitter-name {
     margin-top: 13px;
 }
@@ -40,7 +44,7 @@ textarea {
 }
 
 #search-text {
-    min-height: 150px;
+    min-height: 180px;
 }
 
 #search-card {

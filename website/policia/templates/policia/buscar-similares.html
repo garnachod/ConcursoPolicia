@@ -32,22 +32,25 @@
                         </fieldset>
                     </div>
                     <div class="col-md-6 col-lg-5">
-                        <fieldset>
-                            <div class="form-group">
-                                <label for="search-language">Idioma:  </label>
-                                <select class="form-control" id="search-language" name="search-language">
-                                    <option value="es">ES</option>
-                                    <option value="en">EN</option>
-                                    <option value="ar">AR</option>
-                                    <option value="ru">RU</option>
-                                    <option value="fr">FR</option>
-                                </select>
+                        <fieldset class="row">
+                                <div class="col-xs-4">
+                                    <label for="search-language">Idioma:  </label>
+                                    <select class="form-control" id="search-language" name="search-language">
+                                        <option value="es">ES</option>
+                                        <option value="en">EN</option>
+                                        <option value="ar">AR</option>
+                                        <option value="ru">RU</option>
+                                        <option value="fr">FR</option>
+                                    </select>
 
-                                <label for="search-max">Resultados:  </label>
-                                <input type="number" class="form-control" id="search-max"
-                                    name="search-max" maxlength="5" min="1"
-                                    max="5000" value="100"/>
-                            </div>
+                                </div>
+                                <div class="col-xs-8">
+                                    <label for="search-max">Máx. Resultados:  </label>
+                                    <input type="number" class="form-control" id="search-max"
+                                        name="search-max" maxlength="5" min="1"
+                                        max="5000" value="100"/>
+
+                                </div>
                         </fieldset>
                         <fieldset>
 

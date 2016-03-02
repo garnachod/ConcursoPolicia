@@ -129,6 +129,8 @@ class APIDescarga(object):
 			p.start()
 			return False
 		else:
+			consultas = ConsultasSQL_police()
+			consultas.setFinishedTask(id_tarea)
 			return True
 
 
@@ -145,7 +147,7 @@ class APIDescarga(object):
 
 		Returns
 		-------
-		True si la descarga esta realizada False en caso contrario
+		ruta de las relaciones si la descarga esta realizada False en caso contrario
 
 		"""
 		recolector = None
@@ -159,6 +161,8 @@ class APIDescarga(object):
 			p.start()
 			return False
 		else:
+			consultas = ConsultasSQL_police()
+			consultas.setFinishedTask(id_tarea)
 			return recolector.output().path
 
 	@staticmethod

@@ -1,9 +1,6 @@
 fieldset {
-    margin: 20px;
-}
-
-fieldset input, fieldset select {
-    margin-right: 50px;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 fieldset .radio-inline {
@@ -24,7 +21,10 @@ fieldset .radio-inline {
 
 .twitter-name, .twitter-handle, .twitter-location {
     overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
+    display: block;
 }
 
 .twitter-stats {

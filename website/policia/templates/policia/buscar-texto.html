@@ -11,15 +11,80 @@
 
 <div id="search-box" class="row">
     <div class="col-md-12 text-left">
-        <div id="search-card" class="card-box">
-            <form method="post" class="form-inline">
+        <div class="card-box">
+            <form method="get" action="{% url 'policia:buscarSimilaresAPI' %}" class="form-inline">
                 {% csrf_token %}
 
                 <div class="row">
+                    <div class="col-md-6 col-lg-5">
+                        <fieldset class="row">
+                            <div  class="col-md-12">
+                                <label for="search-username">Buscar texto:  </label>
+                                <br/>
+                                    <textarea
+                                        class="form-control"
+                                        placeholder="" id="search-text"
+                                        name="search-text" maxlength="100"
+                                        id="search-text" autofocus>
+                                    </textarea>
+                            </div>
 
+                        </fieldset>
+                    </div>
+                    <div class="col-md-6 col-lg-5">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="search-language">Idioma:  </label>
+                                <select class="form-control" id="search-language" name="search-language">
+                                    <option value="es">ES</option>
+                                    <option value="en">EN</option>
+                                    <option value="ar">AR</option>
+                                    <option value="ru">RU</option>
+                                    <option value="fr">FR</option>
+                                </select>
+
+                                <label for="search-max">Resultados:  </label>
+                                <input type="number" class="form-control" id="search-max"
+                                    name="search-max" maxlength="5" min="1"
+                                    max="5000" value="100"/>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                                <label for="search-by">Buscar por:  </label>
+                                <br/>
+                                <label class="radio-inline"><input type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
+                                <label class="radio-inline"><input type="radio" name="search-by" value="semantic">Forma de hablar</label>
+                        </fieldset>
+                        <fieldset>
+
+                                <label for="search-type">Buscar en:  </label>
+                                <br/>
+                                <label class="radio-inline"><input type="radio" name="search-in" value="all" checked>Twitter global</label>
+                                <label class="radio-inline"><input type="radio" name="search-in" value="relations">Comunidad del usuario</label>
+                        </fieldset>
+                    </div>
+                    <div class="col-md-12 col-lg-2">
+                        <fieldset>
+                            <div class="form-group">
+
+                                <label for="search-button" class="form-control btn btn-primary">
+                                    <i class="md md-search"></i> Buscar similares
+                                </label>
+                                <input id="search-button" name="search-button" class="hidden" type="submit" value="Buscar"/>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                </div><!-- /.row-->
+            </form>
+        </div> <!-- /.card-box -->
+        <!-- cardbox -->
+        <!--<div id="search-card" class="card-box">
+             <form method="post" class="form-inline">
+                {% csrf_token %}
+                <div class="row">
                     <div class="col-md-6">
                         <fieldset class="row">
-
                             <div  class="col-md-12">
                                 <label for="search-username">Buscar texto:  </label>
                                 <br/>
@@ -56,7 +121,6 @@
 
                             <div class="form-group">
 
-                                <!-- Use label as fake button to add icon -->
                                 <label for="search-button" class="form-control btn btn-primary">
                                     <i class="md md-search"></i> Buscar
                                 </label>
@@ -87,7 +151,7 @@
                 </form>
                 </div>
 
-        </div>
+        </div>!--><!-- /cardbox -->
     </div>
 </div> <!-- /search-box -->
 

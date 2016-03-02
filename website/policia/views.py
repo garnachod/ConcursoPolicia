@@ -51,7 +51,7 @@ def _getUsersSimilarMethod(searchIn, searchBy):
         return APITextos.getUsersSimilar_user_relations_topic
     elif searchIn == 'relations' and searchBy == 'semantic':
         return APITextos.getUsersSimilar_user_relations_semantic
-    else
+    else:
         raise Exception('Parámetros searchIn o searchBy incorrectos')
 
 @login_required

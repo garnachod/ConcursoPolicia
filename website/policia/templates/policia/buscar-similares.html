@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div id="search-box" class="row">
+<div id="search-box" class="row" ng-app="policia" ng-controller="searchSimilar">
     <div class="col-md-12 text-left">
         <div class="card-box">
             <form method="get" action="{% url 'policia:buscarSimilaresAPI' %}" class="form-inline">
@@ -21,21 +21,24 @@
                                 <div class="form-group">
                                     <input type="text" class="form-control"
                                         placeholder="@usuario" id="search-username"
-                                        name="search-username" maxlength="100" autofocus/>
+                                        name="search-username" maxlength="100" autofocus
+                                        ng-model="searchUsername"/>
                                 </div>
                         </fieldset>
                         <fieldset>
                                 <label for="search-by">Buscar por:  </label>
                                 <br/>
-                                <label class="radio-inline"><input type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
-                                <label class="radio-inline"><input type="radio" name="search-by" value="semantic">Forma de hablar</label>
+                                <label class="radio-inline"><input type="radio" name="search-by" value="topic" ng-model="searchBy"checked>Temas de los que habla</label>
+                                <label class="radio-inline"><input type="radio" name="search-by" value="semantic" ng-model="searchBy">Forma de hablar</label>
                         </fieldset>
                     </div>
                     <div class="col-md-6 col-lg-5">
                         <fieldset class="row">
                                 <div class="col-xs-4">
                                     <label for="search-language">Idioma:  </label>
-                                    <select class="form-control" id="search-language" name="search-language">
+                                    <select class="form-control" id="search-language"
+                                        name="search-language"
+                                        ng-model="searchLanguage">
                                         <option value="es">ES</option>
                                         <option value="en">EN</option>
                                         <option value="ar">AR</option>
@@ -46,9 +49,10 @@
                                 </div>
                                 <div class="col-xs-8">
                                     <label for="search-max">Máx. Resultados:  </label>
-                                    <input type="number" class="form-control" id="search-max"
-                                        name="search-max" maxlength="5" min="1"
-                                        max="5000" value="100"/>
+                                    <input type="number" class="form-control"
+                                        id="search-max" name="search-max"
+                                        maxlength="5" min="1" max="5000" value="100"
+                                        ng-model="searchMax"/>
 
                                 </div>
                         </fieldset>
@@ -56,8 +60,12 @@
 
                                 <label for="search-type">Buscar en:  </label>
                                 <br/>
-                                <label class="radio-inline"><input type="radio" name="search-in" value="all" checked>Twitter global</label>
-                                <label class="radio-inline"><input type="radio" name="search-in" value="relations">Comunidad del usuario</label>
+                                <label class="radio-inline"><input type="radio"
+                                        name="search-in" value="all"
+                                        ng-model="searchIn" checked>Twitter global</label>
+                                <label class="radio-inline"><input type="radio"
+                                        name="search-in" value="relations"
+                                        ng-model="searchIn">Comunidad del usuario</label>
                         </fieldset>
                     </div>
                     <div class="col-md-12 col-lg-2">
@@ -67,7 +75,7 @@
                                 <label for="search-button" class="form-control btn btn-primary">
                                     <i class="md md-search"></i> Buscar similares
                                 </label>
-                                <input id="search-button" name="search-button" class="hidden" type="submit" value="Buscar"/>
+                                <input ng-click="search()" id="search-button" name="search-button" class="hidden" type="button" value="Buscar"/>
 
                             </div>
                         </fieldset>
@@ -124,4 +132,8 @@
 
 {% include 'policia/modal-tarea.html' %}
 
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "policia/js/controllers/search-similar.js" %}"></script>
 {% endblock %}

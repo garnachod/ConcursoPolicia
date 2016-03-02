@@ -55,6 +55,17 @@ def _getUsersSimilarMethod(searchIn, searchBy):
         raise Exception('Parámetros searchIn o searchBy incorrectos')
 
 @login_required
+def notificarAPI(request, idTarea=0):
+    try:
+        tarea = Tarea.objects.get(pk=idTarea)
+        tarea.enviar_email = True
+        tarea.save()
+        return JsonResponse("ok", safe=False)
+    except:
+        return JsonResponse("invalid_id", safe=False)
+
+
+@login_required
 def buscarSimilaresAPI(request):
     try:
         searchUsername = request.GET['search-username']

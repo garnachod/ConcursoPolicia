@@ -51,8 +51,23 @@ def _getUsersSimilarMethod(searchIn, searchBy):
         return APITextos.getUsersSimilar_user_relations_topic
     elif searchIn == 'relations' and searchBy == 'semantic':
         return APITextos.getUsersSimilar_user_relations_semantic
-    else
+    else:
         raise Exception('Parámetros searchIn o searchBy incorrectos')
+
+@login_required
+def notificarAPI(request, idTarea=0):
+    try:
+        tarea = Tarea.objects.get(pk=idTarea)
+        if tarea.usuario == request.user:
+            tarea.enviar_email = True
+            tarea.save()
+            return JsonResponse("ok", safe=False)
+        else:
+            return JsonResponse("permission_denied", safe=False)
+
+    except:
+        return JsonResponse("invalid_id", safe=False)
+
 
 @login_required
 def buscarSimilaresAPI(request):

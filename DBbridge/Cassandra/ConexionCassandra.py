@@ -4,10 +4,13 @@ import sys
 lib_path = os.path.abspath('/home/dani/tfg/sources')
 sys.path.append(lib_path)
 
-from cassandra.cluster import Cluster
+try:
+	from cassandra.cluster import Cluster
+except:
+	pass
 from Config.Conf import Conf
 
-class ConexionCassandra(): 
+class ConexionCassandra():
 	"""docstring for ConexionCassandra"""
 
 	class __impl:
@@ -42,4 +45,3 @@ class ConexionCassandra():
 	def __setattr__(self, attr, value):
 		""" Delegate access to implementation """
 		return setattr(self.__instance, attr, value)
-		

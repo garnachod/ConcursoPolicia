@@ -58,9 +58,13 @@ def _getUsersSimilarMethod(searchIn, searchBy):
 def notificarAPI(request, idTarea=0):
     try:
         tarea = Tarea.objects.get(pk=idTarea)
-        tarea.enviar_email = True
-        tarea.save()
-        return JsonResponse("ok", safe=False)
+        if tarea.usuario == request.user:
+            tarea.enviar_email = True
+            tarea.save()
+            return JsonResponse("ok", safe=False)
+        else:
+            return JsonResponse("permission_denied", safe=False)
+
     except:
         return JsonResponse("invalid_id", safe=False)
 

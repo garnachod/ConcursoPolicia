@@ -8,132 +8,146 @@
 {% endblock %}
 
 {% block content %}
-<div id="search-box" class="row" ng-app="policia" ng-controller="searchSimilar">
-    <div class="col-md-12 text-left">
-        <div class="card-box">
-            <form method="get" action="{% url 'policia:buscarSimilaresAPI' %}" class="form-inline">
-                {% csrf_token %}
 
-                <div class="row">
-                    <div class="col-md-6 col-lg-5">
-                        <fieldset>
-                                <label for="search-username">Buscar usuarios similares a:  </label>
-                                <div class="form-group">
-                                    <input type="text" class="form-control"
-                                        placeholder="@usuario" id="search-username"
-                                        name="search-username" maxlength="100" autofocus
-                                        ng-model="searchUsername"/>
-                                </div>
-                        </fieldset>
-                        <fieldset>
-                                <label for="search-by">Buscar por:  </label>
-                                <br/>
-                                <label class="radio-inline"><input type="radio" name="search-by" value="topic" ng-model="searchBy"checked>Temas de los que habla</label>
-                                <label class="radio-inline"><input type="radio" name="search-by" value="semantic" ng-model="searchBy">Forma de hablar</label>
-                        </fieldset>
-                    </div>
-                    <div class="col-md-6 col-lg-5">
-                        <fieldset class="row">
-                                <div class="col-xs-4">
-                                    <label for="search-language">Idioma:  </label>
-                                    <select class="form-control" id="search-language"
-                                        name="search-language"
-                                        ng-model="searchLanguage">
-                                        <option value="es">ES</option>
-                                        <option value="en">EN</option>
-                                        <option value="ar">AR</option>
-                                        <option value="ru">RU</option>
-                                        <option value="fr">FR</option>
-                                    </select>
+<div ng-app="policia" ng-controller="searchSimilar">
 
-                                </div>
-                                <div class="col-xs-8">
-                                    <label for="search-max">Máx. Resultados:  </label>
-                                    <input type="number" class="form-control"
-                                        id="search-max" name="search-max"
-                                        maxlength="5" min="1" max="5000" value="100"
-                                        ng-model="searchMax"/>
+    <div id="search-box" class="row">
+        <div class="col-md-12 text-left">
+            <div class="card-box">
+                <form method="get" action="{% url 'policia:buscarSimilaresAPI' %}" class="form-inline">
+                    {% csrf_token %}
 
-                                </div>
-                        </fieldset>
-                        <fieldset>
-
-                                <label for="search-type">Buscar en:  </label>
-                                <br/>
-                                <label class="radio-inline"><input type="radio"
-                                        name="search-in" value="all"
-                                        ng-model="searchIn" checked>Twitter global</label>
-                                <label class="radio-inline"><input type="radio"
-                                        name="search-in" value="relations"
-                                        ng-model="searchIn">Comunidad del usuario</label>
-                        </fieldset>
-                    </div>
-                    <div class="col-md-12 col-lg-2">
-                        <fieldset>
-                            <div class="form-group">
-
-                                <label for="search-button" class="form-control btn btn-primary">
-                                    <i class="md md-search"></i> Buscar similares
-                                </label>
-                                <input ng-click="search()" id="search-button" name="search-button" class="hidden" type="button" value="Buscar"/>
-
-                            </div>
-                        </fieldset>
-                    </div>
-                </div><!-- /.row-->
-            </form>
-        </div> <!-- /.card-box -->
-    </div> <!-- /col-md-12 -->
-</div> <!-- /search-box -->
-
-<div id="results-box" class="row">
-
-    <!-- Template Detalles User Twitter -->
-    <div class="col-sm-6 col-md-6 col-lg-4 text-left">
-        <div class="card-box">
-            <div class="row">
-                <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-0 col-md-4 col-lg-4">
-                    <a href="#">
-                        <img class="img-circle img-responsive" src="https://pbs.twimg.com/profile_images/674751297363550208/SKw6Rg8H_400x400.jpg"/>
-                    </a>
-
-                    <p class="twitter-name text-center">
-                        <small class="text-uppercase">P. Molins</small>
-                    </p>
-                </div>
-                <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 row">
-                    <a class="twitter-handle" href="#">@p_molins</a>
-
-                    <br/>
-
-                    <small>
-                        Fecha de creación: 12/12/2016
-                        <br/>
-                        <i class="md md-location-on"></i> p_molins.getCurrentPosition();
-                    </small>
-
-                    <div class="twitter-stats row">
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
-                            <div class="twitter-number">112</div>
-                            <small>SEGUIDORES</small>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-5">
+                            <fieldset>
+                                    <label for="search-username">Buscar usuarios similares a:  </label>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control"
+                                            placeholder="@usuario" id="search-username"
+                                            name="search-username" maxlength="100" autofocus
+                                            ng-model="searchUsername"
+                                            ng-change="checkUsername()"/>
+                                    </div>
+                            </fieldset>
+                            <fieldset>
+                                    <label for="search-by">Buscar por:  </label>
+                                    <br/>
+                                    <label class="radio-inline"><input type="radio" name="search-by" value="topic" ng-model="searchBy"checked>Temas de los que habla</label>
+                                    <label class="radio-inline"><input type="radio" name="search-by" value="semantic" ng-model="searchBy">Forma de hablar</label>
+                            </fieldset>
                         </div>
-                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
-                            <div class="twitter-number">105</div>
-                            <small>SIGUIENDO</small>
+                        <div class="col-md-6 col-lg-5">
+                            <fieldset class="row">
+                                    <div class="col-xs-4">
+                                        <label for="search-language">Idioma:  </label>
+                                        <select class="form-control" id="search-language"
+                                            name="search-language"
+                                            ng-model="searchLanguage">
+                                            <option value="es">ES</option>
+                                            <option value="en">EN</option>
+                                            <option value="ar">AR</option>
+                                            <option value="ru">RU</option>
+                                            <option value="fr">FR</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <label for="search-max">Máx. Resultados:  </label>
+                                        <input type="number" class="form-control"
+                                            id="search-max" name="search-max"
+                                            maxlength="5" min="1" max="5000" value="100"
+                                            ng-model="searchMax"/>
+
+                                    </div>
+                            </fieldset>
+                            <fieldset>
+
+                                    <label for="search-type">Buscar en:  </label>
+                                    <br/>
+                                    <label class="radio-inline"><input type="radio"
+                                            name="search-in" value="all"
+                                            ng-model="searchIn" checked>Twitter global</label>
+                                    <label class="radio-inline"><input type="radio"
+                                            name="search-in" value="relations"
+                                            ng-model="searchIn">Comunidad del usuario</label>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-12 col-lg-2">
+                            <fieldset>
+                                <div class="form-group">
+
+                                    <label for="search-button" class="form-control btn btn-primary">
+                                        <i class="md md-search"></i> Buscar similares
+                                    </label>
+                                    <input ng-click="search()" id="search-button" name="search-button" class="hidden" type="button" value="Buscar"/>
+
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div><!-- /.row-->
+                </form>
+            </div> <!-- /.card-box -->
+        </div> <!-- /col-md-12 -->
+    </div> <!-- /search-box -->
+
+    <div id="results-box" class="row">
+
+        <div ng-repeat="user in similarUsers">
+            <!-- Template Detalles User Twitter -->
+            <div class="col-sm-6 col-md-6 col-lg-4 text-left">
+                <div class="card-box">
+                    <div class="row">
+                        <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-0 col-md-4 col-lg-4">
+                            <p class="text-center">
+                                <a href="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/">
+                                    <img class="twitter-thumbnail"
+                                        src="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/profile_image?size=original"/>
+                                </a>
+                            </p>
+                            <p class="twitter-name text-center">
+                                <small class="text-uppercase">{% verbatim %}{{ user.name }}{% endverbatim %}</small>
+                            </p>
+                        </div>
+                        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 row">
+                            <a class="twitter-handle" href="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/"/>
+                                @{% verbatim %}{{ user.screen_name }}{% endverbatim %}
+                            </a>
+
+                            <br/>
+
+                            <small>
+                                Fecha de creación: {% verbatim %}{{ user.created_at }}{% endverbatim %}
+                                <br/>
+                                <span ng-if="user.location">
+                                    <i class="md md-location-on"></i> {% verbatim %}{{ user.location }}{% endverbatim %}
+                                </span>
+                                <span ng-if="user.location == ''">
+                                    <i class="md md-location-on"></i> Ubicación desconocida
+                                </span>
+                            </small>
+
+                            <div class="twitter-stats row">
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+                                    <div class="twitter-number">{% verbatim %}{{ user.followers }}{% endverbatim %}</div>
+                                    <small>SEGUIDORES</small>
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+                                    <div class="twitter-number">{% verbatim %}{{ user.following }}{% endverbatim %}</div>
+                                    <small>SIGUIENDO</small>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <!-- /Template Detalles User Twitter -->
         </div>
     </div>
-    <!-- /Template Detalles User Twitter -->
+
+    {% include 'policia/modal-tarea.html' %}
 
 </div>
-
-{% include 'policia/modal-tarea.html' %}
-
 {% endblock %}
-
 {% block scripts %}
 <script src="{% static "policia/js/controllers/search-similar.js" %}"></script>
 {% endblock %}

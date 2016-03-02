@@ -1,27 +1,20 @@
+/*globals angular, console */
 var policia = angular.module('policia', []);
 
 policia.controller('searchSimilar', function ($scope, $http) {
     'use strict';
+
     $scope.searchUsername = '';
     $scope.searchLanguage = 'es';
     $scope.searchMax = 100;
     $scope.searchBy = 'topic';
     $scope.searchIn = 'all';
+    $scope.similarUsers = [];
 
-    function checkUsername() {
-        $http.get('https://twitter.com/' + $scope.searchUsername)
-            .success(
-                
-            )
-            .error(
+    $scope.checkUsername = function () {
+        return true;
 
-            );
-    }
-
-
-    function checkForm() {
-        checkUsername();
-    }
+    };
 
     $scope.search = function () {
 
@@ -35,15 +28,16 @@ policia.controller('searchSimilar', function ($scope, $http) {
         };
 
         $http.get(endpoint, { 'params': params }).success(function (data) {
+            console.log('respuesta api');
+            console.log(data);
+            if (data === "missing_params") {
 
-            if (data == "missing_params") {
+            } else if (data === "no_results") {
 
-            } else if (data == "no_results") {
-
-            } else if ("downloading"){
+            } else if (data === "downloading") {
 
             } else {
-
+                $scope.similarUsers = data.users;
             }
         });
     };

@@ -3,10 +3,13 @@ from DBbridge.ConsultasCassandra import ConsultasCassandra
 from DBbridge.ConsultasNeo4j import ConsultasNeo4j
 from AnnoyComparators.AnnoyUserVectorSearcher import AnnoyUserVectorSearcher
 from SocialAPI.TwitterAPI.RecolectorTweetsUser import RecolectorTweetsUser
-from DBbridge.EscritorTweetsCassandra import EscritorTweetsCassandra
 from APIDescarga import APIDescarga
 from collections import namedtuple
 import numpy as np
+
+import re
+
+re_tuser = re.compile(r'@?[a-zA-Z0-9_]+')
 
 class APITextos(object):
 	"""docstring for APITextos"""
@@ -30,6 +33,19 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
+
 		if APIDescarga.downloadTwitterUser(username, id_tarea) == True:
 			consultas = ConsultasCassandra()
 			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
@@ -68,34 +84,38 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 
 		"""
-		if APIDescarga.downloadTwitterUserRelations(username, id_tarea) == True:
-			consultas = ConsultasCassandra()
-			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
-			generator = GenerateVectorsFromTweets()
-			vector = generator.getVector_topics(tweets, lang)
-			#se generan los vectores de todos los usuarios
-			consultasNeo4j = ConsultasNeo4j()
-			userID = consultas.getUserIDByScreenNameCassandra(username)
-			seguidoresysiguiendo = consultasNeo4j.getSiguiendoOrSeguidosByUserID(userID)
-			relaciones_coseno = []
-			for user in seguidoresysiguiendo:
-				tweets_ = consultas.getTweetsUsuarioCassandra_statusAndLang(user)
-				vector_ = np.array([generator.getVector_topics(tweets, lang)]).T
-				coseno = np.dot(vector, vector_)[0]
-				relaciones_coseno.append((user, coseno))
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
 
-			relaciones_coseno = sorted(relaciones_coseno, key=lambda x: x[1], reverse=True)
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
+		path = APIDescarga.downloadTwitterUserRelations(username, lang, False, id_tarea)
+		if path == False:
+			return False
+		else:
+			consultas = ConsultasCassandra()
+			relaciones_coseno = []
+			with open(path) as fin:
+				for line in fin:
+					relaciones_coseno.append(long(line))
+			
 
 			users_long = []
 			length = min(len(relaciones_coseno), numberOfSim)
 			for i in xrange(length):
-				user_long = consultas.getUserByIDLargeCassandra_police(relaciones_coseno[i][0])
+				user_long = consultas.getUserByIDLargeCassandra_police(relaciones_coseno[i])
 				if user_long != False:
 					users_long.append(user_long)
 
 			return users_long
-		else:
-			return False
+			
 
 	@staticmethod
 	def getUsersSimilar_user_all_semantic(username, lang, numberOfSim, id_tarea):
@@ -116,6 +136,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		if APIDescarga.downloadTwitterUser(username, id_tarea) == True:
 			consultas = ConsultasCassandra()
 			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
@@ -155,34 +187,37 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 
 		"""
-		if APIDescarga.downloadTwitterUserRelations(username, id_tarea) == True:
-			consultas = ConsultasCassandra()
-			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
-			generator = GenerateVectorsFromTweets()
-			vector = generator.getVector_semantic(tweets, lang)
-			#se generan los vectores de todos los usuarios
-			consultasNeo4j = ConsultasNeo4j()
-			userID = consultas.getUserIDByScreenNameCassandra(username)
-			seguidoresysiguiendo = consultasNeo4j.getSiguiendoOrSeguidosByUserID(userID)
-			relaciones_coseno = []
-			for user in seguidoresysiguiendo:
-				tweets_ = consultas.getTweetsUsuarioCassandra_statusAndLang(user)
-				vector_ = np.array([generator.getVector_semantic(tweets, lang)]).T
-				coseno = np.dot(vector, vector_)[0]
-				relaciones_coseno.append((user, coseno))
+		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
+			raise Exception("Parametros incorrectos")
 
-			relaciones_coseno = sorted(relaciones_coseno, key=lambda x: x[1], reverse=True)
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
+		path = APIDescarga.downloadTwitterUserRelations(username, lang, True, id_tarea)
+		if path == False:
+			return False
+		else:
+			consultas = ConsultasCassandra()
+			relaciones_coseno = []
+			with open(path) as fin:
+				for line in fin:
+					relaciones_coseno.append(long(line))
+			
 
 			users_long = []
 			length = min(len(relaciones_coseno), numberOfSim)
 			for i in xrange(length):
-				user_long = consultas.getUserByIDLargeCassandra_police(relaciones_coseno[i][0])
+				user_long = consultas.getUserByIDLargeCassandra_police(relaciones_coseno[i])
 				if user_long != False:
 					users_long.append(user_long)
 
 			return users_long
-		else:
-			return False
 		
 	@staticmethod
 	def getUsersSimilar_text_all_topic(text, lang, numberOfSim, id_tarea):
@@ -203,6 +238,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(texto) > 100000:
+			raise Exception("Parametros incorrectos")
+
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		Row = namedtuple('Row', 'status, lang')
 		tweets = [Row(text, lang)]
 		generator = GenerateVectorsFromTweets()
@@ -240,6 +287,18 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if len(texto) > 100000:
+			raise Exception("Parametros incorrectos")
+			
+		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
+			raise Exception("Parametros incorrectos")
+
+		if numberOfSim < 1 or numberOfSim > 5000:
+			raise Exception("Parametros incorrectos")
+
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		Row = namedtuple('Row', 'status, lang')
 		tweets = [Row(text, lang)]
 		generator = GenerateVectorsFromTweets()

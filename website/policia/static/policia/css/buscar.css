@@ -1,9 +1,6 @@
 fieldset {
-    margin: 20px;
-}
-
-fieldset input, fieldset select {
-    margin-right: 50px;
+    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 fieldset .radio-inline {
@@ -12,6 +9,10 @@ fieldset .radio-inline {
 
 #search-by-form-group {
     margin-right: 80px;
+}
+
+#search-max {
+    max-width:80px;
 }
 
 .twitter-name {
@@ -24,7 +25,10 @@ fieldset .radio-inline {
 
 .twitter-name, .twitter-handle, .twitter-location {
     overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
+    display: block;
 }
 
 .twitter-stats {
@@ -40,7 +44,7 @@ textarea {
 }
 
 #search-text {
-    min-height: 150px;
+    min-height: 180px;
 }
 
 #search-card {

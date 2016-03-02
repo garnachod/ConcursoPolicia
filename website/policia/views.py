@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from django.utils import timezone
 import os
 import sys
 import math
@@ -15,9 +16,7 @@ import math
 lib_path = os.path.abspath('../../')
 sys.path.append(lib_path)
 from API.APITextos import APITextos
-
-# IMPORTANTE: Abreviar cifras de seguidores/siguiendo
-# http://stackoverflow.com/questions/25611937/abbreviate-a-localized-number-in-javascript-for-thousands-1k-and-millions-1m
+from .models import Tarea
 
 #########################
 # API REST
@@ -43,6 +42,33 @@ def _formatUsersJson(usuarios):
         , usuarios)
     return JsonResponse({ 'users': usuarios })
 
+def _getUsersSimilarMethod(searchIn, searchBy):
+    if searchIn == 'all' and searchBy == 'topic':
+        return APITextos.getUsersSimilar_user_all_topic
+    elif searchIn == 'all' and searchBy == 'semantic':
+        return APITextos.getUsersSimilar_user_all_semantic
+    elif searchIn == 'relations' and searchBy == 'topic':
+        return APITextos.getUsersSimilar_user_relations_topic
+    elif searchIn == 'relations' and searchBy == 'semantic':
+        return APITextos.getUsersSimilar_user_relations_semantic
+    else:
+        raise Exception('Parámetros searchIn o searchBy incorrectos')
+
+@login_required
+def notificarAPI(request, idTarea=0):
+    try:
+        tarea = Tarea.objects.get(pk=idTarea)
+        if tarea.usuario == request.user:
+            tarea.enviar_email = True
+            tarea.save()
+            return JsonResponse("ok", safe=False)
+        else:
+            return JsonResponse("permission_denied", safe=False)
+
+    except:
+        return JsonResponse("invalid_id", safe=False)
+
+
 @login_required
 def buscarSimilaresAPI(request):
     try:
@@ -51,35 +77,35 @@ def buscarSimilaresAPI(request):
         searchMax = request.GET['search-max']
         searchBy = request.GET['search-by']
         searchIn = request.GET['search-in']
-    except:
-        return "missing_params"
+    except Exception, e:
+        return JsonResponse("missing_params", safe=False)
 
-    # TO DO: Insertar en tareas
-
+    tarea = Tarea(
+        usuario = request.user,
+        tipo = "user_" + searchIn + "_" + searchBy,
+        username = searchUsername,
+        idioma = searchLanguage,
+        num_usuarios = searchMax,
+        inicio = timezone.now(),
+        fin = None,
+        enviar_email = False
+    )
+    tarea.save()
     username = searchUsername
     language = searchLanguage
     maxResults = int(searchMax)
-    idTarea = 1
+    idTarea = tarea.id
 
-    if searchIn == 'all' and searchBy == 'semantic':
-        result = APITextos.getUsersSimilar_user_all_semantic(username, language, maxResults, idTarea)
-
-    elif searchIn == 'relations' and searchBy == 'semantic':
-        result = APITextos.getUsersSimilar_user_relations_semantic(username, language, maxResults, idTarea)
-
-    elif searchIn == 'all' and searchBy == 'topic':
-        result = APITextos.getUsersSimilar_user_all_topic(username, language, maxResults, idTarea)
-
-    elif searchIn == 'relations' and searchBy == 'topic':
-        result = APITextos.getUsersSimilar_user_relations_topic(username, language, maxResults, idTarea)
-
-    else:
+    try:
+        method = _getUsersSimilarMethod(searchIn, searchBy);
+        result = method(username, language, maxResults, idTarea)
+    except Exception, e:
         result = []
 
     if result == []:
-        return "no_results"
+        return JsonResponse("no_results", safe=False)
     elif result == False:
-        return "downloading"
+        return JsonResponse("downloading", safe=False)
     else:
         return _formatUsersJson(result)
 

@@ -405,6 +405,10 @@ class ConsultasCassandra(object):
 			rows = self.session_cassandra.execute(query, [identificador])
 			if rows is not None and len(rows) > 0:
 				row = rows[0]
+				if row.following is None:
+					row.following = 0
+				if row.followers is None:
+					row.followers = 0
 				return row
 			else:
 				return False

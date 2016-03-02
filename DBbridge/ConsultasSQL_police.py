@@ -18,3 +18,39 @@ class ConsultasSQL_police(object):
 		except Exception, e:
 			print str(e)
 			return False
+
+	def getSendEmailFromTask(self, id_task):
+		query = "SELECT enviar_email FROM policia_tarea WHERE id=%s;"
+		try:
+			self.cur_sql.execute(query, [id_task, ])
+			row = self.cur_sql.fetchone()
+			return row[0]
+		except Exception, e:
+			return False
+
+	def getIdUserFromTask(self, id_task):
+		query = "SELECT usuario_id FROM policia_tarea WHERE id=%s;"
+		try:
+			self.cur_sql.execute(query, [id_task, ])
+			row = self.cur_sql.fetchone()
+			return row[0]
+		except Exception, e:
+			return False
+
+	def getTipoTarea(self, id_task):
+		query = "SELECT tipo FROM policia_tarea WHERE id=%s;"
+		try:
+			self.cur_sql.execute(query, [id_task, ])
+			row = self.cur_sql.fetchone()
+			return row[0]
+		except Exception, e:
+			return False
+
+	def getEmailFromUser(self, id_user):
+		query = "SELECT email FROM policia_usuario WHERE id=%s;"
+		try:
+			self.cur_sql.execute(query, [id_user, ])
+			row = self.cur_sql.fetchone()
+			return row[0]
+		except Exception, e:
+			return False

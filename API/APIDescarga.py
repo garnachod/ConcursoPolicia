@@ -1,15 +1,38 @@
 import os
 import luigi
 from LuigiTasks.RecolectorTwitter import RecolectorUsuarioTwitter, RecolectorCirculoUsuario
+from LuigiTasks.GenerateSim import GenerateSimRelations_semantic, GenerateSimRelations_topics
 from DBbridge.ConsultasSQL_police import ConsultasSQL_police
 from Config.Conf import Conf
 
 import time
 
 import multiprocessing
-import subprocess as sub
-from subprocess import PIPE, STDOUT
+import smtplib
 
+
+def sendEmail(id_tarea):
+	consultas = ConsultasSQL_police()
+	if consultas.getSendEmailFromTask(id_tarea) == True:
+		id_user = consultas.getIdUserFromTask(id_tarea)
+		tipoTarea = consultas.getTipoTarea(id_tarea)
+		if id_user != False:
+			email = consultas.getEmailFromUser(id_user)
+			server = smtplib.SMTP('smtp.gmail.com:587')
+			server.ehlo()
+			server.starttls()
+			fromaddr = "concurso.policia.tareas@gmail.com"
+			toaddrs = email
+			msg = "\r\n".join([
+			  "From: "+ fromaddr,
+			  "To: " + toaddrs,
+			  "Subject: Tarea terminada",
+			  "",
+			  "La tarea de tipo " + tipoTarea +" de twitter ha sido terminada"
+			])
+			server.login(fromaddr, "TareasPolicia.sender")
+			server.sendmail(fromaddr, toaddrs, msg)
+			server.quit()
 
 class _downloadTwitterUser(multiprocessing.Process):
 	"""docstring for ClassName"""
@@ -30,6 +53,7 @@ class _downloadTwitterUser(multiprocessing.Process):
 		#p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
 		consultas = ConsultasSQL_police()
 		consultas.setFinishedTask(self.id_tarea)
+		sendEmail(self.id_tarea)
 
 class _downloadTwitterRelations(multiprocessing.Process):
 	"""docstring for ClassName"""
@@ -49,7 +73,36 @@ class _downloadTwitterRelations(multiprocessing.Process):
 		os.popen(comand)
 		consultas = ConsultasSQL_police()
 		consultas.setFinishedTask(self.id_tarea)
-	   
+
+class _generateTwitterRelations(multiprocessing.Process):
+	def __init__(self, username, lang, semantic, id_tarea):
+		super(_generateTwitterRelations, self).__init__()
+		self.username = username
+		self.lang = lang
+		self.semantic = semantic
+		self.id_tarea = id_tarea
+
+	def run(self):
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
+		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim " 
+		if self.semantic == True:
+			comand += "GenerateSimRelations_semantic "
+		else:
+			comand += "GenerateSimRelations_topics "
+		comand += "--usuario " + self.username + " --lang " + self.lang
+		comand += " > /dev/null 2>&1"
+		comand = comand%path
+		
+		os.popen(comand)
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.id_tarea)
+		sendEmail(self.id_tarea)
+		
+
+
+ 	   
 class APIDescarga(object):
 	"""
 	API para descargar datos desde la interfaz web
@@ -74,14 +127,15 @@ class APIDescarga(object):
 		if os.path.isfile(recolector.output().path) == False:
 			p = _downloadTwitterUser(username, id_tarea)
 			p.start()
-			print "INICIANDO"
 			return False
 		else:
+			consultas = ConsultasSQL_police()
+			consultas.setFinishedTask(id_tarea)
 			return True
 
 
 	@staticmethod
-	def downloadTwitterUserRelations(username, id_tarea):
+	def downloadTwitterUserRelations(username, lang, semantic, id_tarea):
 		"""
 		Descarga toda la informacion del circulo Nivel 1 para los posteriores analisis,
 		 inserta una referencia en la base de datos de descarga, esa referencia se completa al terminar la tarea.
@@ -93,17 +147,23 @@ class APIDescarga(object):
 
 		Returns
 		-------
-		True si la descarga esta realizada False en caso contrario
+		ruta de las relaciones si la descarga esta realizada False en caso contrario
 
 		"""
-		recolector = RecolectorCirculoUsuario(usuario = username)
+		recolector = None
+		if semantic == True:
+			recolector = GenerateSimRelations_semantic(usuario = username, lang = lang)
+		else:
+			recolector = GenerateSimRelations_topics(usuario = username, lang = lang)
+
 		if os.path.isfile(recolector.output().path) == False:
-			p = _downloadTwitterRelations(username, id_tarea)
+			p = _generateTwitterRelations(username, lang, semantic, id_tarea)
 			p.start()
-			print "INICIANDO"
 			return False
 		else:
-			return True
+			consultas = ConsultasSQL_police()
+			consultas.setFinishedTask(id_tarea)
+			return recolector.output().path
 
 	@staticmethod
 	def downloadUserMentions(username, id_tarea):

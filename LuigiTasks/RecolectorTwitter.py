@@ -30,7 +30,11 @@ class RecolectorUsuarioTwitter(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.usuario = self.usuario.replace("@", "")
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/users/%s/%s/%s/%s'%(path, anyo, mes, dia, self.usuario))
 
 	def run(self):
@@ -132,7 +136,11 @@ class RecolectorSeguidoresTwitter(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.usuario = self.usuario.replace("@", "")
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/seguidores/%s/%s/%s'%(path, anyo, mes, self.usuario))
 		#return luigi.LocalTarget('tasks/RecolectorSeguidoresTwitter(%s)'%self.usuario)
 
@@ -184,7 +192,11 @@ class RecolectorSiguiendoTwitter(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.usuario = self.usuario.replace("@", "")
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/siguiendo/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def requires(self):
@@ -232,7 +244,11 @@ class RecolectorFavoritosTwitter(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.usuario = self.usuario.replace("@", "")
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/favoritos/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def run(self):
@@ -278,7 +294,11 @@ class RecolectorTweetsSiguendoTwitter(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.usuario = self.usuario.replace("@", "")
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/TweetsSiguendo/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def requires(self):
@@ -325,7 +345,11 @@ class RecolectorTweetsSeguidoresTwitter(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.usuario = self.usuario.replace("@", "")
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/TweetsSeguidores/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def requires(self):
@@ -367,7 +391,11 @@ class RecolectorCirculoUsuario(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.usuario = self.usuario.replace("@", "")
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/circulo/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def run(self):

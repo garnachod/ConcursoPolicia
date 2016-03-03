@@ -19,14 +19,16 @@
 
                     <div class="row">
                         <div class="col-md-6 col-lg-5">
-                            <fieldset>
+                            <fieldset ng-class="searchUsernameClass">
                                     <label for="search-username">Buscar usuarios similares a:  </label>
                                     <div class="form-group">
-                                        <input type="text" class="form-control"
+                                        <input type="text"
+                                            class="form-control"
                                             placeholder="@usuario" id="search-username"
-                                            name="search-username" maxlength="100" autofocus
+                                            name="search-username" maxlength="100"
+                                            autofocus
                                             ng-model="searchUsername"
-                                            ng-change="checkUsername()"/>
+                                            ng-mouseleave="checkUsername()"/>
                                     </div>
                             </fieldset>
                             <fieldset>
@@ -73,14 +75,16 @@
                             </fieldset>
                         </div>
                         <div class="col-md-12 col-lg-2">
-                            <fieldset>
+
+                            <img ng-show="searchSpinnerVisible" class="img-responsive" src="{% static 'policia/img/spinner.gif' %}"/>
+
+                            <fieldset ng-show="searchButtonVisible">
                                 <div class="form-group">
 
                                     <label for="search-button" class="form-control btn btn-primary">
                                         <i class="md md-search"></i> Buscar similares
                                     </label>
                                     <input ng-click="search()" id="search-button" name="search-button" class="hidden" type="button" value="Buscar"/>
-
                                 </div>
                             </fieldset>
                         </div>
@@ -90,7 +94,13 @@
         </div> <!-- /col-md-12 -->
     </div> <!-- /search-box -->
 
-    <div id="results-box" class="row">
+    <div ng-cloack id="results-box" class="row">
+        <div ng-show="errorVisible" class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="alert alert-danger">
+                <strong>¡Ups!</strong> {% verbatim %}{{ error }}{% endverbatim %}
+            </div>
+
+        </div>
 
         <div ng-repeat="user in similarUsers">
             <!-- Template Detalles User Twitter -->
@@ -109,31 +119,32 @@
                             </p>
                         </div>
                         <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 row">
-                            <a class="twitter-handle" href="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/"/>
-                                @{% verbatim %}{{ user.screen_name }}{% endverbatim %}
-                            </a>
+                            <p class="text-center">
+                                <a class="twitter-handle" href="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/"/>
+                                    @{% verbatim %}{{ user.screen_name }}{% endverbatim %}
+                                </a>
 
-                            <br/>
-
-                            <small>
-                                Fecha de creación: {% verbatim %}{{ user.created_at }}{% endverbatim %}
                                 <br/>
-                                <span ng-if="user.location">
-                                    <i class="md md-location-on"></i> {% verbatim %}{{ user.location }}{% endverbatim %}
-                                </span>
-                                <span ng-if="user.location == ''">
-                                    <i class="md md-location-on"></i> Ubicación desconocida
-                                </span>
-                            </small>
 
+                                <small class="twitter-details">
+                                    Fecha de creación: {% verbatim %}{{ user.created_at }}{% endverbatim %}
+                                    <br/>
+                                    <span ng-if="user.location">
+                                        <i class="md md-location-on"></i> {% verbatim %}{{ user.location }}{% endverbatim %}
+                                    </span>
+                                    <span ng-if="user.location == ''">
+                                        <i class="md md-location-on"></i> Ubicación desconocida
+                                    </span>
+                                </small>
+                            </p>
                             <div class="twitter-stats row">
-                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
-                                    <div class="twitter-number">{% verbatim %}{{ user.followers }}{% endverbatim %}</div>
-                                    <small>SEGUIDORES</small>
-                                </div>
                                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
                                     <div class="twitter-number">{% verbatim %}{{ user.following }}{% endverbatim %}</div>
                                     <small>SIGUIENDO</small>
+                                </div>
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+                                    <div class="twitter-number">{% verbatim %}{{ user.followers }}{% endverbatim %}</div>
+                                    <small>SEGUIDORES</small>
                                 </div>
                             </div>
                         </div>
@@ -148,6 +159,7 @@
 
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script src="{% static "policia/js/controllers/search-similar.js" %}"></script>
 {% endblock %}

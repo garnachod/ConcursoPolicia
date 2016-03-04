@@ -9,6 +9,8 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.utils import timezone
+import urllib2
+from urllib2 import HTTPError
 import os
 import sys
 import math
@@ -80,21 +82,25 @@ def buscarSimilaresAPI(request):
     except Exception, e:
         return JsonResponse("missing_params", safe=False)
 
-    tarea = Tarea(
-        usuario = request.user,
-        tipo = "user_" + searchIn + "_" + searchBy,
-        username = searchUsername,
-        idioma = searchLanguage,
-        num_usuarios = searchMax,
-        inicio = timezone.now(),
-        fin = None,
-        enviar_email = False
-    )
-    tarea.save()
-    username = searchUsername
-    language = searchLanguage
-    maxResults = int(searchMax)
-    idTarea = tarea.id
+    try:
+
+        tarea = Tarea(
+            usuario = request.user,
+            tipo = "user_" + searchIn + "_" + searchBy,
+            username = searchUsername,
+            idioma = searchLanguage,
+            num_usuarios = searchMax,
+            inicio = timezone.now(),
+            fin = None,
+            enviar_email = False
+        )
+        tarea.save()
+        username = searchUsername
+        language = searchLanguage
+        maxResults = int(searchMax)
+        idTarea = tarea.id
+    except:
+        return JsonResponse("db_error", safe=False)
 
     try:
         method = _getUsersSimilarMethod(searchIn, searchBy);
@@ -108,6 +114,14 @@ def buscarSimilaresAPI(request):
         return JsonResponse("downloading", safe=False)
     else:
         return _formatUsersJson(result)
+
+@login_required
+def validarUsuarioTwitterAPI(request, usuarioTwitter):
+    try:
+         urllib2.urlopen("http://twitter.com/" + usuarioTwitter)
+    except urllib2.HTTPError, err:
+        return JsonResponse("invalid", safe=False)
+    return JsonResponse("valid", safe=False)
 
 #########################
 # Secciones del panel

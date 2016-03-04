@@ -46,13 +46,16 @@ class APITextos(object):
 			raise Exception("Parametros incorrectos")
 
 
-		if APIDescarga.downloadTwitterUser(username, id_tarea) == True:
+		path = APIDescarga.downloadTwitterUser(username, lang, False, id_tarea)
+		if path == False:
+			return False
+		else:
+			users = []
 			consultas = ConsultasCassandra()
-			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
-			generator = GenerateVectorsFromTweets()
-			vector = generator.getVector_topics(tweets, lang)
-			searcher = AnnoyUserVectorSearcher()
-			users = searcher.getSimilarUsers_topics(vector, lang, numberOfSim + 1)
+			with open(path, "r") as fin:
+				for line in fin:
+					users.append(long(line))
+
 			users_long = []
 			for user in users:
 				user_long = consultas.getUserByIDLargeCassandra_police(user)
@@ -63,9 +66,7 @@ class APITextos(object):
 				if len(users_long) >= numberOfSim:
 					break
 			return users_long
-		else:
-			return False
-
+	
 	@staticmethod
 	def getUsersSimilar_user_relations_topic(username, lang, numberOfSim, id_tarea):
 		"""
@@ -102,7 +103,7 @@ class APITextos(object):
 		else:
 			consultas = ConsultasCassandra()
 			relaciones_coseno = []
-			with open(path) as fin:
+			with open(path, "r") as fin:
 				for line in fin:
 					relaciones_coseno.append(long(line))
 			
@@ -148,13 +149,16 @@ class APITextos(object):
 		if id_tarea < 0:
 			raise Exception("Parametros incorrectos")
 
-		if APIDescarga.downloadTwitterUser(username, id_tarea) == True:
+		path = APIDescarga.downloadTwitterUser(username, lang, True, id_tarea)
+		if path == False:
+			return False
+		else:
+			users = []
 			consultas = ConsultasCassandra()
-			tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(username)
-			generator = GenerateVectorsFromTweets()
-			vector = generator.getVector_semantic(tweets, lang)
-			searcher = AnnoyUserVectorSearcher()
-			users = searcher.getSimilarUsers_semantic(vector, lang, numberOfSim + 1)
+			with open(path, "r") as fin:
+				for line in fin:
+					users.append(long(line))
+
 			users_long = []
 			for user in users:
 				user_long = consultas.getUserByIDLargeCassandra_police(user)
@@ -165,8 +169,7 @@ class APITextos(object):
 				if len(users_long) >= numberOfSim:
 					break
 			return users_long
-		else:
-			return False
+
 
 	@staticmethod
 	def getUsersSimilar_user_relations_semantic(username, lang, numberOfSim, id_tarea):

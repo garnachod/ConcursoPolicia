@@ -10,8 +10,103 @@ from Config.Conf import Conf
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from DBbridge.ConsultasNeo4j import ConsultasNeo4j
 from ProcesadoresTexto.GenerateVectorsFromTweets import GenerateVectorsFromTweets
+from AnnoyComparators.AnnoyUserVectorSearcher import AnnoyUserVectorSearcher
 import datetime
 import numpy as np
+
+class GenerateSimAll_topics(luigi.Task):
+	usuario = luigi.Parameter()
+	lang = luigi.Parameter()
+
+	def requires(self):
+		return RecolectorUsuarioTwitter(self.usuario)
+
+	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget('%s/LuigiTasks/similitudes/topics_all/%s/%s/%s_%s_%s'%(path, anyo, mes, dia, self.usuario, self.lang))
+
+	def run(self):
+		numberOfSim = 5000
+
+		consultas = ConsultasCassandra()
+		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(self.usuario)
+		if len(tweets) < 4:
+			with self.output().open('w') as out_file:
+				out_file.write("\n")
+
+		#al menos necesitamos 4 tweets para caracterizar a una persona
+		#aunque cuantos mas mejor
+		else:
+			generator = GenerateVectorsFromTweets()
+			vector = generator.getVector_topics(tweets, self.lang)
+			searcher = AnnoyUserVectorSearcher()
+			users = searcher.getSimilarUsers_topics(vector, self.lang, numberOfSim + 1)
+			users_long = []
+			for user in users:
+				user_long = consultas.getUserByIDLargeCassandra_police(user)
+				if user_long != False:
+					if user_long.screen_name not in self.usuario:
+						users_long.append(user)
+
+				if len(users_long) >= numberOfSim:
+					break
+
+			with self.output().open('w') as out_file:
+				for _user in users_long:
+					out_file.write(str(_user))
+					out_file.write("\n")
+
+class GenerateSimAll_semantic(luigi.Task):
+	usuario = luigi.Parameter()
+	lang = luigi.Parameter()
+
+	def requires(self):
+		return RecolectorUsuarioTwitter(self.usuario)
+
+	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget('%s/LuigiTasks/similitudes/semantic_all/%s/%s/%s_%s_%s'%(path, anyo, mes, dia, self.usuario, self.lang))
+
+	def run(self):
+		numberOfSim = 5000
+
+		consultas = ConsultasCassandra()
+		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(self.usuario)
+		if len(tweets) < 4:
+			with self.output().open('w') as out_file:
+				out_file.write("\n")
+
+		#al menos necesitamos 4 tweets para caracterizar a una persona
+		#aunque cuantos mas mejor
+		else:
+			generator = GenerateVectorsFromTweets()
+			vector = generator.getVector_semantic(tweets, self.lang)
+			searcher = AnnoyUserVectorSearcher()
+			users = searcher.getSimilarUsers_semantic(vector, self.lang, numberOfSim + 1)
+			users_long = []
+			for user in users:
+				user_long = consultas.getUserByIDLargeCassandra_police(user)
+				if user_long != False:
+					if user_long.screen_name not in self.usuario:
+						users_long.append(user)
+
+				if len(users_long) >= numberOfSim:
+					break
+
+			with self.output().open('w') as out_file:
+				for _user in users_long:
+					out_file.write(str(_user))
+					out_file.write("\n")
 
 class GenerateSimRelations_semantic(luigi.Task):
 	usuario = luigi.Parameter()
@@ -27,7 +122,7 @@ class GenerateSimRelations_semantic(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget('%s/LuigiTasks/similitudes/semantic/%s/%s/%s_%s_%s'%(path, anyo, mes, self.usuario, self.lang))
+		return luigi.LocalTarget('%s/LuigiTasks/similitudes/semantic/%s/%s/%s_%s'%(path, anyo, mes, self.usuario, self.lang))
 
 	def run(self):
 		consultas = ConsultasCassandra()

@@ -42,7 +42,10 @@ def _formatUsersJson(usuarios):
             'created_at': user.created_at.strftime("%d/%m/%Y")
         })
         , usuarios)
-    return JsonResponse({ 'users': usuarios })
+    return JsonResponse({
+        'status': 'ready',
+        'users': usuarios 
+    })
 
 def _getUsersSimilarMethod(searchIn, searchBy):
     if searchIn == 'all' and searchBy == 'topic':
@@ -80,7 +83,7 @@ def buscarSimilaresAPI(request):
         searchBy = request.GET['search-by']
         searchIn = request.GET['search-in']
     except Exception, e:
-        return JsonResponse("missing_params", safe=False)
+        return JsonResponse({ 'status': "missing_params" })
 
     try:
 
@@ -100,7 +103,7 @@ def buscarSimilaresAPI(request):
         maxResults = int(searchMax)
         idTarea = tarea.id
     except:
-        return JsonResponse("db_error", safe=False)
+        return JsonResponse({ 'status': "db_error" })
 
     try:
         method = _getUsersSimilarMethod(searchIn, searchBy);
@@ -109,9 +112,9 @@ def buscarSimilaresAPI(request):
         result = []
 
     if result == []:
-        return JsonResponse("no_results", safe=False)
+        return JsonResponse({ 'status': "no_results" })
     elif result == False:
-        return JsonResponse("downloading", safe=False)
+        return JsonResponse({ 'status': "downloading" })
     else:
         return _formatUsersJson(result)
 

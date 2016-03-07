@@ -81,7 +81,7 @@ class GenerateSimAll_semantic(luigi.Task):
 		numberOfSim = 5000
 
 		consultas = ConsultasCassandra()
-		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(self.usuario)
+		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang_noRT(self.usuario)
 		if len(tweets) < 4:
 			with self.output().open('w') as out_file:
 				out_file.write("\n")
@@ -126,7 +126,7 @@ class GenerateSimRelations_semantic(luigi.Task):
 
 	def run(self):
 		consultas = ConsultasCassandra()
-		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(self.usuario)
+		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang_noRT(self.usuario)
 		generator = GenerateVectorsFromTweets()
 		vector = generator.getVector_semantic(tweets, self.lang)
 		#se generan los vectores de todos los usuarios
@@ -135,7 +135,7 @@ class GenerateSimRelations_semantic(luigi.Task):
 		seguidoresysiguiendo = consultasNeo4j.getSiguiendoOrSeguidosByUserID(userID)
 		relaciones_coseno = []
 		for user in seguidoresysiguiendo:
-			tweets_ = consultas.getTweetsUsuarioCassandra_statusAndLang(user)
+			tweets_ = consultas.getTweetsUsuarioCassandra_statusAndLang_noRT(user)
 			vector_ = np.array([generator.getVector_semantic(tweets, self.lang)]).T
 			coseno = np.dot(vector, vector_)[0]
 			relaciones_coseno.append((user, coseno))

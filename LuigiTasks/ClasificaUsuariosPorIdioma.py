@@ -9,7 +9,7 @@ import luigi
 import json
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from ProcesadoresTexto.LimpiadorTweets import LimpiadorTweets
-
+from Config.Conf import Conf
 import datetime
 
 
@@ -28,11 +28,13 @@ class ClasificaUsuariosPorIdioma(luigi.Task):
 			PYTHONPATH='' luigi --module ClasificaUsuariosPorIdioma ClasificaUsuariosPorIdioma
 	"""
 	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now()
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='users_idiomas/ClasificaUsuariosPorIdioma/%s/%s/%s.json'%(anyo, mes, dia))
+		return luigi.LocalTarget(path='%s/LuigiTasks/users_idiomas/ClasificaUsuariosPorIdioma/%s/%s/%s.json'%(path, anyo, mes, dia))
 
 	def run(self):
 		consultas = ConsultasCassandra()
@@ -70,12 +72,14 @@ class ClasificaUsuariosPorIdioma(luigi.Task):
 			out_file.write(json.dumps(dicUsers))
 
 	def readDicOld(self, diffDays = 1):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now() - datetime.timedelta(days=diffDays)
 		dia = now.day
 		mes = now.month
 		anyo = now.year
 
-		path = 'users_idiomas/ClasificaUsuariosPorIdioma/%s/%s/%s.json'%(anyo, mes, dia)
+		path = '%s/LuigiTasks/users_idiomas/ClasificaUsuariosPorIdioma/%s/%s/%s.json'%(path, anyo, mes, dia)
 
 		dicUsers_inverse = {}
 		dicUsers = {}
@@ -112,11 +116,13 @@ class GeneraTextoPorIdioma_topics(luigi.Task):
 	idioma = luigi.Parameter()
 
 	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now()
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_topics/%s/%s/%s_%s.text'%(anyo, mes, dia, self.idioma), 
+		return luigi.LocalTarget(path='%s/LuigiTasks/users_idiomas/GeneraTextoPorIdioma_topics/%s/%s/%s_%s.text'%(path, anyo, mes, dia, self.idioma), 
 								format=luigi.format.TextFormat(encoding='utf8'))
 
 	def requires(self):
@@ -160,11 +166,13 @@ class GeneraTextoPorIdioma_semantic(luigi.Task):
 	idioma = luigi.Parameter()
 
 	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now()
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='users_idiomas/GeneraTextoPorIdioma_semantic/%s/%s/%s_%s.text'%(anyo, mes, dia, self.idioma), 
+		return luigi.LocalTarget(path='%s/LuigiTasks/users_idiomas/GeneraTextoPorIdioma_semantic/%s/%s/%s_%s.text'%(path, anyo, mes, dia, self.idioma), 
 								format=luigi.format.TextFormat(encoding='utf8'))
 		
 	def requires(self):
@@ -185,7 +193,8 @@ class GeneraTextoPorIdioma_semantic(luigi.Task):
 				for tweet in tweets:
 					if tweet.lang == self.idioma:
 						tweetLimpio = LimpiadorTweets.clean(tweet.status)
-						out_file.write(tweetLimpio)
+						tweetSinStopWords = LimpiadorTweets.stopWordsByLanguagefilter(tweetLimpio, tweet.lang)
+						out_file.write(tweetSinStopWords)
 						out_file.write(u" ")
 				out_file.write(u"\n")
 		

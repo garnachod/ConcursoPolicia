@@ -1,0 +1,49 @@
+<!-- Template Detalles User Twitter -->
+<div class="col-sm-6 col-md-6 col-lg-4 text-left">
+    <div class="card-box">
+        <div class="row">
+            <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-0 col-md-4 col-lg-4">
+                <p class="text-center">
+                    <a href="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/">
+                        <img class="twitter-thumbnail"
+                            src="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/profile_image?size=original"/>
+                    </a>
+                </p>
+                <p class="twitter-name text-center">
+                    <small class="text-uppercase">{% verbatim %}{{ user.name }}{% endverbatim %}</small>
+                </p>
+            </div>
+            <div class="col-xs-12 col-sm-8 col-md-8 col-lg-8 row">
+                <p class="text-center">
+                    <a class="twitter-handle" href="https://twitter.com/{% verbatim %}{{ user.screen_name }}{% endverbatim %}/"/>
+                        @{% verbatim %}{{ user.screen_name }}{% endverbatim %}
+                    </a>
+
+                    <br/>
+
+                    <small class="twitter-details">
+                        Fecha de creación: {% verbatim %}{{ user.created_at }}{% endverbatim %}
+                        <br/>
+                        <span class="twitter-location" ng-if="user.location">
+                            <i class="md md-location-on"></i> {% verbatim %}{{ user.location }}{% endverbatim %}
+                        </span>
+                        <span class="twitter-location" ng-if="user.location == ''">
+                            <i class="md md-location-on"></i> Ubicación desconocida
+                        </span>
+                    </small>
+                </p>
+                <div class="twitter-stats row">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+                        <div class="twitter-number">{% verbatim %}{{ user.following }}{% endverbatim %}</div>
+                        <small>SIGUIENDO</small>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center">
+                        <div class="twitter-number">{% verbatim %}{{ user.followers }}{% endverbatim %}</div>
+                        <small>SEGUIDORES</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Template Detalles User Twitter -->

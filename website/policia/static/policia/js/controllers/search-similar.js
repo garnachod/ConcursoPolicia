@@ -21,6 +21,9 @@ policia.controller('searchSimilar', function ($scope, $http) {
     $scope.searchButtonVisible = true;
     $scope.errorVisible = false;
 
+    // Flags
+    var validSearchUsername = false;
+
     $scope.checkUsername = function () {
         var username = $scope.searchUsername;
 
@@ -29,14 +32,17 @@ policia.controller('searchSimilar', function ($scope, $http) {
         }
 
         if (username.length === 0) {
+            validSearchUsername = false;
             return $scope.searchUsernameClass = "has-error";
         }
 
         $http.get('/api/validar/usuario/' + username + '/')
             .success(function(data) {
                 if (data == "invalid") {
+                    validSearchUsername = false;
                     $scope.searchUsernameClass = "has-error"
                 } else {
+                    validSearchUsername = true;
                     $scope.searchUsernameClass = ""
                 }
             });
@@ -60,32 +66,33 @@ policia.controller('searchSimilar', function ($scope, $http) {
 
         $http.get(endpoint, { 'params': params })
             .success(function (data) {
-                if (data === "missing_params") {
+                if (data.status === "missing_params") {
                     $scope.similarUsers = [];
                     $scope.error = "Falta algún parámetro de búsqueda.";
                     $scope.errorVisible = true;
-
-                } else if (data === "no_results" || data === "db_error") {
+                } else if (data.status === "no_results" || data === "db_error") {
                     $scope.similarUsers = [];
                     $scope.error = "No se encontraron usuarios similares. " +
                                     "Compruebe que el nombre de usuario esté " +
                                     "escrito correctamente.";
 
                     $scope.errorVisible = true;
-                } else if (data === "downloading") {
+                } else if (data.status === "downloading") {
                     $scope.similarUsers = [];
-                    // modal
-                } else {
+                    Custombox.open({
+                        target: '#custom-modal',
+                        effect: 'blur',
+                        speed: 100
+                    });
+                } else if (data.status = "done"){
                     $scope.similarUsers = data.users;
                 }
-
                 $scope.searchSpinnerVisible = false;
                 $scope.searchButtonVisible = true;
-
             })
             .error(function (data) {
-                console.error("Error searching similar users");
-                console.error(data);
+                console.log('Error searching similar user.');
+                console.log(data);
                 $scope.searchSpinnerVisible = false;
                 $scope.searchButtonVisible = true;
             });

@@ -7,8 +7,8 @@
         Esta tarea tardará unos minutos en completarse.<br/>
         ¿Desea recibir una notificación por email cuando finalice?<br/><br/>
         <p>
-            <a href="#" class="btn btn-default">Sí</a>
-            <a href="{% url 'policia:tareas' %}" class="btn btn-primary">No, gracias</a>
+            <a href="#" ng-click="notifyByEmail()" class="btn btn-default">Sí</a>
+            <a href="#" ng-click="closeModal()" class="btn btn-primary">No, gracias</a>
         </p>
     </div>
 </div>

@@ -44,7 +44,7 @@ def _formatUsersJson(usuarios):
         , usuarios)
     return JsonResponse({
         'status': 'ready',
-        'users': usuarios 
+        'users': usuarios
     })
 
 def _getUsersSimilarMethod(searchIn, searchBy):

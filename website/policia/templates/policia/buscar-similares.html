@@ -9,11 +9,11 @@
 
 {% block content %}
 
-{% include 'policia/modal-tarea.html' %}
-
 <div
     ng-app="policia"
     ng-controller="searchSimilar">
+
+    {% include 'policia/modal-tarea.html' %}
 
     <div id="search-box" class="row">
         <div class="col-md-12 text-left">

@@ -114,7 +114,10 @@ def buscarSimilaresAPI(request):
     if result == []:
         return JsonResponse({ 'status': "no_results" })
     elif result == False:
-        return JsonResponse({ 'status': "downloading" })
+        return JsonResponse({
+            'status': "downloading",
+            'taskId': idTarea
+        })
     else:
         return _formatUsersJson(result)
 

@@ -11,7 +11,8 @@
 
 <div
     ng-app="policia"
-    ng-controller="searchSimilar">
+    ng-controller="searchSimilar"
+    ng-init="updateSearchParams()">
 
     {% include 'policia/modal-tarea.html' %}
 
@@ -103,9 +104,7 @@
             <div class="alert alert-danger">
                 <strong>¡Ups!</strong> {% verbatim %}{{ error }}{% endverbatim %}
             </div>
-
         </div>
-
         <div ng-repeat="user in similarUsers">
             {% include 'policia/usuario-twitter.html' %}
         </div>

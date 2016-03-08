@@ -1,7 +1,7 @@
 /*globals angular, console */
 var policia = angular.module('policia', []);
 
-policia.controller('searchSimilar', function ($scope, $http) {
+policia.controller('searchSimilar', function ($scope, $http, $location) {
     'use strict';
 
     // Modelos de datos
@@ -22,6 +22,33 @@ policia.controller('searchSimilar', function ($scope, $http) {
     $scope.errorVisible = false;
 
     var currentTaskId = 0;
+
+    function getQueryParam (sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    }
+
+    $scope.updateSearchParams = function () {
+        $scope.searchUsername = getQueryParam('username') || $scope.searchUsername;
+        $scope.searchLanguage =  getQueryParam('idioma') || $scope.searchLanguage;
+        $scope.searchMax = parseInt(getQueryParam('max')) || $scope.searchMax;
+        $scope.searchBy = getQueryParam('by') || $scope.searchBy;
+        $scope.searchIn = getQueryParam('in') || $scope.searchIn;
+        if ($scope.searchUsername.length > 0) {
+            $scope.search();
+        }
+
+    };
 
     $scope.notifyByEmail = function () {
         $http.get('/api/notificar/' + currentTaskId + '/')

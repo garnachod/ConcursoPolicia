@@ -33,6 +33,9 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
+		if id_tarea < 0:
+			raise Exception("Parametros incorrectos")
+
 		if len(username) > 16 or len(username) < 2 or re_tuser.match(username) == None:
 			raise Exception("Parametros incorrectos")
 
@@ -40,9 +43,6 @@ class APITextos(object):
 			raise Exception("Parametros incorrectos")
 
 		if numberOfSim < 1 or numberOfSim > 5000:
-			raise Exception("Parametros incorrectos")
-
-		if id_tarea < 0:
 			raise Exception("Parametros incorrectos")
 
 

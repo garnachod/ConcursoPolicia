@@ -20,5 +20,6 @@ urlpatterns = [
     url(r'^buscar/similares/$', views.buscarSimilares, name='buscarSimilares'),
     url(r'^buscar/texto/$', views.buscarTexto, name='buscarTexto'),
     url(r'^$', views.tareas, name='tareas'),
+    url(r'^tareas/(?P<page>[0-9]+)/$', views.tareas, name='tareas'),
 
 ]

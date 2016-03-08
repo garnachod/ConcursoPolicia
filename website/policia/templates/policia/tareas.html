@@ -2,76 +2,87 @@
 
 {% block content %}
 
+{% for tarea in tareas %}
+<!-- Tarea finalizada -->
 <div class="col-lg-12">
-    <div class="panel panel-border panel-primary">
+    <div class="panel panel-border
+        {% if tarea.fin %}
+            panel-primary
+        {% else %}
+            panel-default
+        {% endif %}
+        ">
         <div class="panel-heading">
         </div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-2">
                     <strong>Similares a: </strong><br/>
-                    @p_molins
+                    {% if '@' in tarea.username %}{% else %}@{% endif %}{{ tarea.username }}
                 </div>
                 <div class="col-md-2">
                     <strong>Por: </strong><br/>
+                    {% if 'semantic' in tarea.tipo %}
                     Forma de hablar
+                    {% else %}
+                    Temas de los que habla
+                    {% endif %}
                 </div>
                 <div class="col-md-2">
                     <strong>En: </strong><br/>
+                    {% if 'all' in tarea.tipo %}
                     Twitter global
+                    {% else %}
+                    Comunidad del usuario
+                    {% endif %}
                 </div>
                 <div class="col-md-2">
                     <strong>Idioma: </strong><br/>
-                    EN
+                    {{ tarea.idioma | upper }}
                 </div>
 
                 <div class="col-md-2">
                     <strong>Máx. Resultados: </strong><br/>
-                    100
+                    {{ tarea.num_usuarios }}
                 </div>
 
                 <div class="col-md-2 text-center">
-                    <a href="#" class="btn btn-primary">Ver resultados</a>
+                    {% if tarea.fin %}
+                        <a
+                        href="{% url 'policia:buscarSimilares' %}?username={{ tarea.username }}&idioma={{ tarea.idioma }}&max={{ tarea.num_usuarios }}&by={% if 'topic' in tarea.tipo %}topic{% else %}semantic{% endif %}&in={% if 'all' in tarea.tipo %}all{% else %}relations{% endif %}"
+                        class="btn btn-primary">Ver resultados</a>
+                    {% else %}
+                        <strong>Procesando...</strong>
+                    {% endif %}
                 </div>
             </div>
 
         </div>
     </div>
 </div>
+<!-- /Tarea finalizada -->
+{% endfor %}
 
-<div class="col-lg-12">
-    <div class="panel panel-border panel-default">
-        <div class="panel-heading">
-        </div>
-        <div class="panel-body">
-            <div class="row">
-            <div class="col-md-2">
-                <strong>Similares a: </strong><br/>
-                @p_molins
-            </div>
-            <div class="col-md-2">
-                <strong>Por: </strong><br/>
-                Forma de hablar
-            </div>
-            <div class="col-md-2">
-                <strong>En: </strong><br/>
-                Twitter global
-            </div>
-            <div class="col-md-2">
-                <strong>Idioma: </strong><br/>
-                EN
-            </div>
+{% if tareas %}
 
-            <div class="col-md-2">
-                <strong>Máx. Resultados: </strong><br/>
-                100
-            </div>
+    <div class="col-xs-12 text-center">
+        {% if anterior > 0 %}
+            <a href="{% url 'policia:tareas' page=anterior %}" class="pull-left"><< Anterior</a>
+        {% endif %}
+        <span>Página {{ pagina }}</span>
+        {% if siguiente != 0 %}
+            <a href="{% url 'policia:tareas' page=siguiente %}" class="pull-right">Siguiente >></a>
+        {% endif %}
+    </div>
 
-            <div class="col-md-2 text-center">
-                <strong>Procesando...</strong>
-            </div>
+{% else %}
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <div class="alert alert-success">
+            <strong>¡Vaya!</strong> Parece que no hay tareas pendientes.
+            Prueba buscando por <a href="{% url 'policia:buscarSimilares'%}">usuario</a>
+            o por <a href="{% url 'policia:buscarTexto'%}">texto</a>.
         </div>
     </div>
-</div>
+{% endif %}
 
 {% endblock content%}

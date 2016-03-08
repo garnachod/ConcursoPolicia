@@ -1,5 +1,6 @@
 # -​*- coding: utf-8 -*​-
 
+from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.core.urlresolvers import reverse
@@ -133,14 +134,30 @@ def validarUsuarioTwitterAPI(request, usuarioTwitter):
 # Secciones del panel
 #########################
 @login_required
-def tareas(request):
+def tareas(request, page=1):
     nombre = request.user.nombre + " " + request.user.apellidos
     email = request.user.email
+    tareas = Tarea.objects.filter(usuario=request.user).order_by('-inicio')
+    paginator = Paginator(tareas, 10)
+    anterior = int(page) - 1
+    if int(page) >= paginator.num_pages:
+        siguiente = 0
+    else:
+        siguiente = int(page) + 1
+
+    try:
+        tareas = paginator.page(page)
+    except:
+        tareas = []
 
     return render(request, "policia/tareas.html", {
         'nombre': nombre,
         'email': email,
-        'titulo': 'Tareas pendientes'
+        'titulo': 'Tareas pendientes',
+        'tareas': tareas,
+        'pagina': page,
+        'anterior': anterior,
+        'siguiente':siguiente
     })
 
 @login_required

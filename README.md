@@ -32,5 +32,6 @@ Primera semana:
 	* DBbridge/Neo4j/CreaRelaciones.py
 	* DBbridge/PostgreSQL/CreaTablas.py
 * Instalar las librerías python:
-	requirements.txt
+	* Instalar dependencias con pip install -r requirements.txt
+	* Creat tablas de Django con python manage.py migrate
 * Configurar cronjobs

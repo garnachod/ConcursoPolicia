@@ -89,7 +89,7 @@ class TrainDoc2VecLang_semantic(luigi.Task):
 			d2v = Doc2Vec()
 			savePath = self.path.replace("check","model")
 			conf = Conf()
-			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 20, method="DM")
+			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 30, method="DM")
 			out.write("OK")
 
 class GenerateVecsAnnoyLang_topics(luigi.Task):

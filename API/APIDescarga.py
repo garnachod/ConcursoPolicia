@@ -9,52 +9,7 @@ from Config.Conf import Conf
 import time
 
 import multiprocessing
-import smtplib
 
-
-def sendEmail(id_tarea):
-	consultas = ConsultasSQL_police()
-	if consultas.getSendEmailFromTask(id_tarea) == True:
-		id_user = consultas.getIdUserFromTask(id_tarea)
-		tipoTarea = consultas.getTipoTarea(id_tarea)
-		if id_user != False:
-			email = consultas.getEmailFromUser(id_user)
-			server = smtplib.SMTP('smtp.gmail.com:587')
-			server.ehlo()
-			server.starttls()
-			fromaddr = "concurso.policia.tareas@gmail.com"
-			toaddrs = email
-			msg = "\r\n".join([
-			  "From: "+ fromaddr,
-			  "To: " + toaddrs,
-			  "Subject: Tarea terminada",
-			  "",
-			  "La tarea de tipo " + tipoTarea +" de twitter ha sido terminada"
-			])
-			server.login(fromaddr, "TareasPolicia.sender")
-			server.sendmail(fromaddr, toaddrs, msg)
-			server.quit()
-
-class _downloadTwitterUser(multiprocessing.Process):
-	"""docstring for ClassName"""
-	def __init__(self, username, id_tarea):
-		super(_downloadTwitterUser, self).__init__()
-		self.username = username
-		self.id_tarea = id_tarea
-		#self.daemon = True
-
-	def run(self):
-		#configuracion del sistema
-		conf = Conf()
-		path = conf.getAbsPath()
-		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module RecolectorTwitter RecolectorUsuarioTwitter --usuario " + self.username
-		comand += " > /dev/null 2>&1"
-		comand = comand%path
-		os.popen(comand)
-		#p = sub.call(comand, stdout=PIPE,stderr=STDOUT, shell=True)
-		consultas = ConsultasSQL_police()
-		consultas.setFinishedTask(self.id_tarea)
-		sendEmail(self.id_tarea)
 
 class _generateTwitterUser(multiprocessing.Process):
 	"""docstring for _generateTwitterUser"""
@@ -74,34 +29,11 @@ class _generateTwitterUser(multiprocessing.Process):
 			comand += "GenerateSimAll_semantic "
 		else:
 			comand += "GenerateSimAll_topics "
-		comand += "--usuario " + self.username + " --lang " + self.lang
+		comand += "--usuario " + self.username + " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
 		comand += " > /dev/null 2>&1"
 		comand = comand%path
 		
 		os.popen(comand)
-		consultas = ConsultasSQL_police()
-		consultas.setFinishedTask(self.id_tarea)
-		sendEmail(self.id_tarea)
-		
-
-class _downloadTwitterRelations(multiprocessing.Process):
-	"""docstring for ClassName"""
-	def __init__(self, username, id_tarea):
-		super(_downloadTwitterRelations, self).__init__()
-		self.username = username
-		self.id_tarea = id_tarea
-
-	def run(self):
-		#configuracion del sistema
-		conf = Conf()
-		path = conf.getAbsPath()
-		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module RecolectorTwitter RecolectorCirculoUsuario --usuario " + self.username
-		comand += " > /dev/null 2>&1"
-		comand = comand%path
-		
-		os.popen(comand)
-		consultas = ConsultasSQL_police()
-		consultas.setFinishedTask(self.id_tarea)
 
 class _generateTwitterRelations(multiprocessing.Process):
 	def __init__(self, username, lang, semantic, id_tarea):
@@ -120,14 +52,11 @@ class _generateTwitterRelations(multiprocessing.Process):
 			comand += "GenerateSimRelations_semantic "
 		else:
 			comand += "GenerateSimRelations_topics "
-		comand += "--usuario " + self.username + " --lang " + self.lang
+		comand += "--usuario " + self.username + " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
 		comand += " > /dev/null 2>&1"
 		comand = comand%path
 		
 		os.popen(comand)
-		consultas = ConsultasSQL_police()
-		consultas.setFinishedTask(self.id_tarea)
-		sendEmail(self.id_tarea)
 		
  	   
 class APIDescarga(object):

@@ -3,20 +3,48 @@ import os
 import sys
 lib_path = os.path.abspath('../')
 sys.path.append(lib_path)
-
+ 
 import luigi
 from RecolectorTwitter import *
 from Config.Conf import Conf
+
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from DBbridge.ConsultasNeo4j import ConsultasNeo4j
+from DBbridge.ConsultasSQL_police import ConsultasSQL_police
+
 from ProcesadoresTexto.GenerateVectorsFromTweets import GenerateVectorsFromTweets
 from AnnoyComparators.AnnoyUserVectorSearcher import AnnoyUserVectorSearcher
 import datetime
 import numpy as np
+import smtplib
+
+def sendEmail(id_tarea):
+	consultas = ConsultasSQL_police()
+	if consultas.getSendEmailFromTask(id_tarea) == True:
+		id_user = consultas.getIdUserFromTask(id_tarea)
+		tipoTarea = consultas.getTipoTarea(id_tarea)
+		if id_user != False:
+			email = consultas.getEmailFromUser(id_user)
+			server = smtplib.SMTP('smtp.gmail.com:587')
+			server.ehlo()
+			server.starttls()
+			fromaddr = "concurso.policia.tareas@gmail.com"
+			toaddrs = email
+			msg = "\r\n".join([
+			  "From: "+ fromaddr,
+			  "To: " + toaddrs,
+			  "Subject: Tarea terminada",
+			  "",
+			  "La tarea de tipo " + tipoTarea +" de twitter ha sido terminada"
+			])
+			server.login(fromaddr, "TareasPolicia.sender")
+			server.sendmail(fromaddr, toaddrs, msg)
+			server.quit()
 
 class GenerateSimAll_topics(luigi.Task):
 	usuario = luigi.Parameter()
 	lang = luigi.Parameter()
+	idtarea = luigi.IntParameter(default=0)
 
 	def requires(self):
 		return RecolectorUsuarioTwitter(self.usuario)
@@ -61,9 +89,15 @@ class GenerateSimAll_topics(luigi.Task):
 					out_file.write(str(_user))
 					out_file.write("\n")
 
+
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.idtarea)
+		sendEmail(self.idtarea)
+
 class GenerateSimAll_semantic(luigi.Task):
 	usuario = luigi.Parameter()
 	lang = luigi.Parameter()
+	idtarea = luigi.IntParameter(default=0)
 
 	def requires(self):
 		return RecolectorUsuarioTwitter(self.usuario)
@@ -108,9 +142,14 @@ class GenerateSimAll_semantic(luigi.Task):
 					out_file.write(str(_user))
 					out_file.write("\n")
 
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.idtarea)
+		sendEmail(self.idtarea)
+
 class GenerateSimRelations_semantic(luigi.Task):
 	usuario = luigi.Parameter()
 	lang = luigi.Parameter()
+	idtarea = luigi.IntParameter(default=0)
 
 	def requires(self):
 		return RecolectorCirculoUsuario(self.usuario)
@@ -147,9 +186,14 @@ class GenerateSimRelations_semantic(luigi.Task):
 				out_file.write(str(relacion[0]))
 				out_file.write("\n")
 
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.idtarea)
+		sendEmail(self.idtarea)
+
 class GenerateSimRelations_topics(luigi.Task):
 	usuario = luigi.Parameter()
 	lang = luigi.Parameter()
+	idtarea = luigi.IntParameter(default=0)
 
 	def requires(self):
 		return RecolectorCirculoUsuario(self.usuario)
@@ -185,4 +229,7 @@ class GenerateSimRelations_topics(luigi.Task):
 			for relacion in relaciones_coseno:
 				out_file.write(str(relacion[0]))
 				out_file.write("\n")
-		
+
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.idtarea)
+		sendEmail(self.idtarea)

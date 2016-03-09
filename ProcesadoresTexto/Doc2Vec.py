@@ -26,7 +26,7 @@ class LabeledLineSentence:
 		self.doc2vec = None
 		#self.fileOpened = utils.smart_open(self.source)
 		self.fileOpened = fileinput.input([self.source])
-		self.dq = deque(maxlen = 1000)
+		self.dq = deque(maxlen = 10000)
 		self.finishedDoc = False
 	
 

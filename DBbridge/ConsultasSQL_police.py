@@ -44,6 +44,28 @@ class ConsultasSQL_police(object):
 		except Exception, e:
 			return False
 
+	def getUsernameFromTask(self, id_task):
+		query = "SELECT username FROM policia_tarea WHERE id=%s;"
+		try:
+			self.cur_sql = self.conSql.getCursor_police()
+
+			self.cur_sql.execute(query, [id_task, ])
+			row = self.cur_sql.fetchone()
+			return row[0]
+		except Exception, e:
+			return False
+
+	def getTextFromTask(self, id_task):
+		query = "SELECT texto FROM policia_tarea WHERE id=%s;"
+		try:
+			self.cur_sql = self.conSql.getCursor_police()
+
+			self.cur_sql.execute(query, [id_task, ])
+			row = self.cur_sql.fetchone()
+			return row[0]
+		except Exception, e:
+			return False
+
 	def getTipoTarea(self, id_task):
 		query = "SELECT tipo FROM policia_tarea WHERE id=%s;"
 		try:

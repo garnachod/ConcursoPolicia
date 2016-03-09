@@ -1,7 +1,7 @@
-/*globals angular, console */
+/*globals angular, console, window, Custombox */
 var policia = angular.module('policia', []);
 
-policia.controller('searchSimilar', function ($scope, $http, $location) {
+policia.controller('searchSimilar', function ($scope, $http) {
     'use strict';
 
     // Modelos de datos
@@ -23,13 +23,13 @@ policia.controller('searchSimilar', function ($scope, $http, $location) {
 
     var currentTaskId = 0;
 
-    function getQueryParam (sParam) {
+    function getQueryParam(sParam) {
         var sPageURL = decodeURIComponent(window.location.search.substring(1)),
             sURLVariables = sPageURL.split('&'),
             sParameterName,
             i;
 
-        for (i = 0; i < sURLVariables.length; i++) {
+        for (i = 0; i < sURLVariables.length; i += 1) {
             sParameterName = sURLVariables[i].split('=');
 
             if (sParameterName[0] === sParam) {
@@ -41,7 +41,7 @@ policia.controller('searchSimilar', function ($scope, $http, $location) {
     $scope.updateSearchParams = function () {
         $scope.searchUsername = getQueryParam('username') || $scope.searchUsername;
         $scope.searchLanguage =  getQueryParam('idioma') || $scope.searchLanguage;
-        $scope.searchMax = parseInt(getQueryParam('max')) || $scope.searchMax;
+        $scope.searchMax = parseInt(getQueryParam('max'), 10) || $scope.searchMax;
         $scope.searchBy = getQueryParam('by') || $scope.searchBy;
         $scope.searchIn = getQueryParam('in') || $scope.searchIn;
         if ($scope.searchUsername.length > 0) {
@@ -59,7 +59,7 @@ policia.controller('searchSimilar', function ($scope, $http, $location) {
             .error(function (err) {
                 console.log('Error notifying by email: ' + err);
             });
-            $scope.closeModal();
+        $scope.closeModal();
     };
 
     $scope.closeModal = function () {
@@ -90,15 +90,15 @@ policia.controller('searchSimilar', function ($scope, $http, $location) {
 
     $scope.search = function () {
 
-        var endpoint = '/api/buscar/similares/';
-        var params = {
-            'search-username': $scope.searchUsername,
-            'search-language': $scope.searchLanguage,
-            'search-max': $scope.searchMax,
-            'search-by': $scope.searchBy,
-            'search-in': $scope.searchIn,
-            'r':  Math.floor(Math.random() * (9999))
-        };
+        var endpoint = '/api/buscar/similares/',
+            params = {
+                'search-username': $scope.searchUsername,
+                'search-language': $scope.searchLanguage,
+                'search-max': $scope.searchMax,
+                'search-by': $scope.searchBy,
+                'search-in': $scope.searchIn,
+                'r':  Math.floor(Math.random() * (9999))
+            };
 
         $scope.searchSpinnerVisible = true;
         $scope.searchButtonVisible = false;

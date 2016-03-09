@@ -14,12 +14,10 @@
     ng-controller="searchSimilar"
     ng-init="updateSearchParams()">
 
-    {% include 'policia/modal-tarea.html' %}
-
     <div id="search-box" class="row">
         <div class="col-md-12 text-left">
             <div class="card-box">
-                <form method="get" action="{% url 'policia:buscarSimilaresAPI' %}" class="form-inline">
+                <form class="form-inline">
                     {% csrf_token %}
 
                     <div class="row">
@@ -109,6 +107,8 @@
             {% include 'policia/usuario-twitter.html' %}
         </div>
     </div>
+
+    {% include 'policia/modal-tarea.html' %}
 </div>
 
 {% endblock %}

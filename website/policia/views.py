@@ -225,6 +225,19 @@ def validarUsuarioTwitterAPI(request, usuarioTwitter):
         return JsonResponse("invalid", safe=False)
     return JsonResponse("valid", safe=False)
 
+@login_required
+def textoAPI(request, idTarea):
+    try:
+        tarea = Tarea.objects.get(pk=idTarea)
+        if tarea.usuario == request.user:
+            return JsonResponse(tarea.texto, safe=False)
+        else:
+            return JsonResponse("", safe=False)
+
+    except:
+        return JsonResponse("", safe=False)
+
+
 #########################
 # Secciones del panel
 #########################

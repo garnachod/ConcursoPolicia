@@ -89,6 +89,18 @@ def _getTipo(searchIn, searchBy, searchUsername, searchText):
     else:
         return 'text_all_' + searchBy
 
+def _getSearchBy(tipo):
+    if 'topic' in tipo:
+        return 'topic'
+    else:
+        return 'semantic'
+
+def _getSearchIn(tipo):
+    if 'all' in tipo:
+        return 'all'
+    else:
+        return 'relations'
+
 def _crearTarea(request, searchIn, searchBy, searchUsername, searchText, searchLanguage, searchMax):
 
     tarea = Tarea(
@@ -121,10 +133,6 @@ def _buscarDuplicado(request, searchIn, searchBy, searchUsername, searchText, se
         )[0]
         return tarea.id
     except Exception, e:
-        logger = logging.getLogger(__name__)
-        logging.basicConfig()
-        logger.error('excepcion buscando duplicado')
-        logger.error(e)
         return None
 
 @login_required
@@ -217,9 +225,43 @@ def validarUsuarioTwitterAPI(request, usuarioTwitter):
         return JsonResponse("invalid", safe=False)
     return JsonResponse("valid", safe=False)
 
+@login_required
+def textoAPI(request, idTarea):
+    try:
+        tarea = Tarea.objects.get(pk=idTarea)
+        if tarea.usuario == request.user:
+            return JsonResponse(tarea.texto, safe=False)
+        else:
+            return JsonResponse("", safe=False)
+
+    except:
+        return JsonResponse("", safe=False)
+
+
 #########################
 # Secciones del panel
 #########################
+@login_required
+def resultados(request, idTarea=0):
+    try:
+        tarea = Tarea.objects.get(pk=idTarea)
+        if tarea.username != None:
+            return HttpResponseRedirect(reverse('policia:buscarSimilares') +
+                '?username=' + tarea.username +
+                '&idioma=' + tarea.idioma +
+                '&max=' + str(tarea.num_usuarios) +
+                '&by=' + _getSearchBy(tarea.tipo) +
+                '&in=' + _getSearchIn(tarea.tipo))
+        else:
+            return HttpResponseRedirect(reverse('policia:buscarTexto') +
+                '?id=' + str(tarea.id) +
+                '&idioma=' + tarea.idioma +
+                '&max=' + str(tarea.num_usuarios) +
+                '&by=' + _getSearchBy(tarea.tipo))
+
+    except Exception, e:
+        return HttpResponseRedirect(reverse('policia:tareas'))
+
 @login_required
 def tareas(request, page=1):
     nombre = request.user.nombre + " " + request.user.apellidos

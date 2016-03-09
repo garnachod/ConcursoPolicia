@@ -1,5 +1,6 @@
 # -​*- coding: utf-8 -*​-
-
+import datetime
+import logging
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -48,17 +49,25 @@ def _formatUsersJson(usuarios):
         'users': usuarios
     })
 
-def _getUsersSimilarMethod(searchIn, searchBy):
-    if searchIn == 'all' and searchBy == 'topic':
-        return APITextos.getUsersSimilar_user_all_topic
-    elif searchIn == 'all' and searchBy == 'semantic':
-        return APITextos.getUsersSimilar_user_all_semantic
-    elif searchIn == 'relations' and searchBy == 'topic':
-        return APITextos.getUsersSimilar_user_relations_topic
-    elif searchIn == 'relations' and searchBy == 'semantic':
-        return APITextos.getUsersSimilar_user_relations_semantic
+def _getUsersSimilarMethod(isByUsername, searchIn, searchBy):
+    if isByUsername:
+        if searchIn == 'all' and searchBy == 'topic':
+            return APITextos.getUsersSimilar_user_all_topic
+        elif searchIn == 'all' and searchBy == 'semantic':
+            return APITextos.getUsersSimilar_user_all_semantic
+        elif searchIn == 'relations' and searchBy == 'topic':
+            return APITextos.getUsersSimilar_user_relations_topic
+        elif searchIn == 'relations' and searchBy == 'semantic':
+            return APITextos.getUsersSimilar_user_relations_semantic
+        else:
+            raise Exception('Parámetros searchIn o searchBy incorrectos')
     else:
-        raise Exception('Parámetros searchIn o searchBy incorrectos')
+        if searchBy == 'topic':
+            return APITextos.getUsersSimilar_text_all_topic
+        elif searchBy == 'semantic':
+            return APITextos.getUsersSimilar_text_all_semantic
+        else:
+            raise Exception('Parámetro searchBy incorrecto')
 
 @login_required
 def notificarAPI(request, idTarea=0):
@@ -74,6 +83,49 @@ def notificarAPI(request, idTarea=0):
     except:
         return JsonResponse("invalid_id", safe=False)
 
+def _getTipo(searchIn, searchBy, searchUsername, searchText):
+    if searchUsername is None:
+        return 'user_' + searchIn + "_" + searchBy
+    else:
+        return 'text_all_' + searchBy
+
+def _crearTarea(request, searchIn, searchBy, searchUsername, searchText, searchLanguage, searchMax):
+
+    tarea = Tarea(
+        usuario = request.user,
+        tipo = _getTipo(searchIn, searchBy, searchUsername, searchText),
+        username = searchUsername,
+        texto = searchText,
+        idioma = searchLanguage,
+        num_usuarios = searchMax,
+        inicio = timezone.now(),
+        fin = None,
+        enviar_email = False
+    )
+    tarea.save()
+    return tarea.id;
+
+def _buscarDuplicado(request, searchIn, searchBy, searchUsername, searchText, searchLanguage, searchMax):
+    try:
+        tarea = Tarea.objects.filter(
+            # Buscar tareas creadas hoy
+            inicio__gte = datetime.date.today(),
+            # Por el usuario actual
+            usuario = request.user,
+            # Con el mismo searchIn, searchBy, searchUsername, searchText, searchLanguage, searchMax
+            tipo = _getTipo(searchIn, searchBy, searchUsername, searchText),
+            username = searchUsername,
+            texto = searchText,
+            idioma = searchLanguage,
+            num_usuarios = searchMax,
+        )[0]
+        return tarea.id
+    except Exception, e:
+        logger = logging.getLogger(__name__)
+        logging.basicConfig()
+        logger.error('excepcion buscando duplicado')
+        logger.error(e)
+        return None
 
 @login_required
 def buscarSimilaresAPI(request):
@@ -84,36 +136,30 @@ def buscarSimilaresAPI(request):
         searchBy = request.GET['search-by']
         searchIn = request.GET['search-in']
     except Exception, e:
-        return JsonResponse({ 'status': "missing_params" })
+        return JsonResponse({
+            'status': "missing_params"
+        })
+
+    idTarea = _buscarDuplicado(request, searchIn, searchBy, searchUsername, None, searchLanguage, searchMax)
+
+    if idTarea is None:
+        try:
+            idTarea = _crearTarea(request, searchIn, searchBy, searchUsername, None, searchLanguage, searchMax)
+        except:
+            return JsonResponse({
+                'status': "db_error"
+            })
 
     try:
-
-        tarea = Tarea(
-            usuario = request.user,
-            tipo = "user_" + searchIn + "_" + searchBy,
-            username = searchUsername,
-            idioma = searchLanguage,
-            num_usuarios = searchMax,
-            inicio = timezone.now(),
-            fin = None,
-            enviar_email = False
-        )
-        tarea.save()
-        username = searchUsername
-        language = searchLanguage
-        maxResults = int(searchMax)
-        idTarea = tarea.id
-    except:
-        return JsonResponse({ 'status': "db_error" })
-
-    try:
-        method = _getUsersSimilarMethod(searchIn, searchBy);
-        result = method(username, language, maxResults, idTarea)
+        method = _getUsersSimilarMethod(True, searchIn, searchBy);
+        result = method(searchUsername, searchLanguage, int(searchMax), idTarea)
     except Exception, e:
         result = []
 
     if result == []:
-        return JsonResponse({ 'status': "no_results" })
+        return JsonResponse({
+            'status': "no_results"
+        })
     elif result == False:
         return JsonResponse({
             'status': "downloading",
@@ -121,6 +167,47 @@ def buscarSimilaresAPI(request):
         })
     else:
         return _formatUsersJson(result)
+
+@login_required
+def buscarTextoAPI(request):
+    try:
+        searchText = request.POST['search-text']
+        searchLanguage = request.POST['search-language']
+        searchMax = request.POST['search-max']
+        searchBy = request.POST['search-by']
+    except Exception, e:
+        return JsonResponse({
+            'status': "missing_params"
+        })
+
+    idTarea = _buscarDuplicado(request, 'all', searchBy, None, searchText, searchLanguage, searchMax)
+
+    if idTarea is None:
+        try:
+            idTarea = _crearTarea(request, 'all', searchBy, None, searchText, searchLanguage, searchMax)
+        except:
+            return JsonResponse({
+                'status': "db_error"
+            })
+
+    try:
+        method = _getUsersSimilarMethod(False, searchIn, searchBy);
+        result = method(searchText, searchLanguage, int(searchMax), idTarea)
+    except Exception, e:
+        result = []
+
+    if result == []:
+        return JsonResponse({
+            'status': "no_results"
+        })
+    elif result == False:
+        return JsonResponse({
+            'status': "downloading",
+            'taskId': idTarea
+        })
+    else:
+        return _formatUsersJson(result)
+
 
 @login_required
 def validarUsuarioTwitterAPI(request, usuarioTwitter):

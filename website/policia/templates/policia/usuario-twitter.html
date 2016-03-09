@@ -24,7 +24,7 @@
                     <small class="twitter-details">
                         Fecha de creación: {% verbatim %}{{ user.created_at }}{% endverbatim %}
                         <br/>
-                        <span class="twitter-location" ng-if="user.location">
+                        <span class="twitter-location" ng-if="user.location != ''">
                             <i class="md md-location-on"></i> {% verbatim %}{{ user.location }}{% endverbatim %}
                         </span>
                         <span class="twitter-location" ng-if="user.location == ''">

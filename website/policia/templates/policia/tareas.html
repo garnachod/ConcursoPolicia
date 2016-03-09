@@ -17,15 +17,21 @@
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-2">
-                    <strong>Similares a: </strong><br/>
-                    {% if '@' in tarea.username %}{% else %}@{% endif %}{{ tarea.username }}
+                    {% if tarea.username == None %}
+                        <strong>Similar al texto: </strong><br/>
+                        {{ tarea.texto | truncatechars:20 }}
+                    {% else %}
+                        <strong>Similares a: </strong><br/>
+                        {% if '@' in tarea.username %}{% else %}@{% endif %}{{ tarea.username }}
+                    {% endif %}
+
                 </div>
                 <div class="col-md-2">
                     <strong>Por: </strong><br/>
                     {% if 'semantic' in tarea.tipo %}
                     Forma de hablar
                     {% else %}
-                    Temas de los que habla
+                    Temas
                     {% endif %}
                 </div>
                 <div class="col-md-2">

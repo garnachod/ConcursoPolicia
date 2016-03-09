@@ -3,7 +3,7 @@ import os
 import sys
 lib_path = os.path.abspath('../')
 sys.path.append(lib_path)
- 
+
 import luigi
 from RecolectorTwitter import *
 from Config.Conf import Conf
@@ -19,10 +19,11 @@ import numpy as np
 import smtplib
 
 def sendEmail(id_tarea):
+    conf = Conf()
 	consultas = ConsultasSQL_police()
 	if consultas.getSendEmailFromTask(id_tarea) == True:
 		id_user = consultas.getIdUserFromTask(id_tarea)
-		tipoTarea = consultas.getTipoTarea(id_tarea)
+
 		if id_user != False:
 			email = consultas.getEmailFromUser(id_user)
 			server = smtplib.SMTP('smtp.gmail.com:587')
@@ -30,12 +31,25 @@ def sendEmail(id_tarea):
 			server.starttls()
 			fromaddr = "concurso.policia.tareas@gmail.com"
 			toaddrs = email
+
+            username = consultas.getUsernameFromTask(id_tarea)
+            texto = consultas.getTextFromTask(id_tarea)
+
+            if username:
+                asunto = "[Tarea Finalizada] Usuarios similares a " + usuario + "."
+                cuerpo = "La búsqueda de usuarios similares se ha completado." +
+                    "Puede consultar los resultados en: http://" + conf.getDomain + "/resultados/" + id_tarea + "/"
+            else:
+                asunto = "[Tarea Finalizada] Usuarios similares a un texto."
+                cuerpo = "La búsqueda de usuarios similares a un texto dado se ha completado." +
+                    "Puede consultar los resultados en: http://" + conf.getDomain + "/resultados/" + id_tarea + "/"
+
 			msg = "\r\n".join([
 			  "From: "+ fromaddr,
 			  "To: " + toaddrs,
-			  "Subject: Tarea terminada",
+			  "Subject: " + asunto,
 			  "",
-			  "La tarea de tipo " + tipoTarea +" de twitter ha sido terminada"
+			  cuerpo
 			])
 			server.login(fromaddr, "TareasPolicia.sender")
 			server.sendmail(fromaddr, toaddrs, msg)

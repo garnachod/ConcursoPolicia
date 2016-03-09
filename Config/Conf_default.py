@@ -5,6 +5,8 @@ class Conf():
 	class __impl:
 		"""docstring for __impl"""
 		def __init__(self):
+			#dominio web (sin "http://" ni "/" final)
+			self.domain = 'x.x.x.x:80'
 			#cassandra
 			self.cassandra_keyspace = 'twitter'
 			self.cassandra_keyspace_instagram = 'instagram'
@@ -23,6 +25,9 @@ class Conf():
 			self.neo4j_password = 'tfg_neo4j'
 			#vectors
 			self.dimVectors = 200
+
+		def getDomain(self):
+			return self.domain
 
 		def getCassandraKeyspace(self):
 			return self.cassandra_keyspace

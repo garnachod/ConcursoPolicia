@@ -55,7 +55,7 @@
                 <div class="col-md-2 text-center">
                     {% if tarea.fin %}
                         <a
-                        href="{% url 'policia:buscarSimilares' %}?username={{ tarea.username }}&idioma={{ tarea.idioma }}&max={{ tarea.num_usuarios }}&by={% if 'topic' in tarea.tipo %}topic{% else %}semantic{% endif %}&in={% if 'all' in tarea.tipo %}all{% else %}relations{% endif %}"
+                        href="{% url 'policia:resultados' tarea.id %}"
                         class="btn btn-primary">Ver resultados</a>
                     {% else %}
                         <strong>Procesando...</strong>

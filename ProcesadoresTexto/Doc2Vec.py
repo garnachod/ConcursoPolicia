@@ -33,14 +33,18 @@ class LabeledLineSentence:
 	def __iter__(self):
 		return self
 
+	def reloadDoc(self):
+		self.finishedDoc = False
+		self.fileOpened.close()
+		self.fileOpened = fileinput.input([self.source])
+
+
 	def next(self):
 		if len(self.dq) == 0:
 			#Load data
 			self.loadData()
 			if len(self.dq) == 0:
-				self.finishedDoc = False
-				self.fileOpened.close()
-				self.fileOpened = fileinput.input([self.source])
+				#
 				raise StopIteration()
 			else:
 				return self.dq.pop()
@@ -58,10 +62,12 @@ class LabeledLineSentence:
 				line = self.fileOpened.readline()
 			except:
 				self.finishedDoc = True
+				print "Documento terminado"
 				break
 
 			if len(line) < 1:
 				self.finishedDoc = True
+				print "Documento terminado"
 				break
 	
 			if self.ides == "Number":
@@ -97,6 +103,7 @@ class Doc2Vec(object):
 		
 		print "inicio vocab"
 		model.build_vocab(sentences)
+		sentences.reloadDoc()
 		print "fin vocab"
 		first_alpha = model.alpha
 		last_alpha = 0.0001
@@ -109,6 +116,7 @@ class Doc2Vec(object):
 			next_alpha = (((first_alpha - last_alpha) / float(epochs)) * float(epochs - (epoch+1)) + last_alpha)
 			model.min_alpha = next_alpha
 			model.train(sentences)
+			sentences.reloadDoc()
 			end = time.time()
 			model.alpha = next_alpha
 			print "tiempo de la epoca " + str(epoch) +": " + str(end - start)

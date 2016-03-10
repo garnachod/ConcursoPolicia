@@ -248,17 +248,54 @@ class GenerateSimText_topics(luigi.Task):
 		return luigi.LocalTarget('%s/LuigiTasks/similitudes/topic/%s/%s/%s_%s'%(path, anyo, mes, self.idtarea, self.lang))
 
 	def run(self):
+		consultas = ConsultasSQL_police()
+		text = consultas.getTextFromTask(self.idtarea)
+		if text == False:
+			with self.output().open('w') as out_file:
+				out_file.write("\n")
 
-		Row = namedtuple('Row', 'status, lang')
-		tweets = [Row(text, self.lang)]
-		generator = GenerateVectorsFromTweets()
-		vector = generator.getVector_semantic(tweets, self.lang)
-		searcher = AnnoyUserVectorSearcher()
-		users = searcher.getSimilarUsers_semantic(vector, self.lang, numberOfSim)
-		users_long = []
-		for user in users:
-			user_long = consultas.getUserByIDLargeCassandra_police(user)
-			if user_long != False:
-				users_long.append(user_long)
+		else:
+			Row = namedtuple('Row', 'status, lang')
+			tweets = [Row(text, self.lang)]
+			generator = GenerateVectorsFromTweets()
+			vector = generator.getVector_topics(tweets, self.lang)
+			searcher = AnnoyUserVectorSearcher()
+			users = searcher.getSimilarUsers_topics(vector, self.lang, 5000)
 
-		return users_long
+			with self.output().open('w') as out_file:
+				for user in users:
+					out_file.write(str(user))
+					out_file.write("\n")
+
+
+class GenerateSimText_semantic(luigi.Task):
+	idtarea = luigi.IntParameter()
+	lang = luigi.Parameter()
+
+	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		return luigi.LocalTarget('%s/LuigiTasks/similitudes/semantic/%s/%s/%s_%s'%(path, anyo, mes, self.idtarea, self.lang))
+
+	def run(self):
+		consultas = ConsultasSQL_police()
+		text = consultas.getTextFromTask(self.idtarea)
+		if text == False:
+			with self.output().open('w') as out_file:
+				out_file.write("\n")
+		else:
+			Row = namedtuple('Row', 'status, lang')
+			tweets = [Row(text, self.lang)]
+			generator = GenerateVectorsFromTweets()
+			vector = generator.getVector_topics(tweets, self.lang)
+			searcher = AnnoyUserVectorSearcher()
+			users = searcher.getSimilarUsers_topics(vector, self.lang, 5000)
+
+			with self.output().open('w') as out_file:
+				for user in users:
+					out_file.write(str(user))
+					out_file.write("\n")

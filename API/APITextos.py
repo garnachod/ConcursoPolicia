@@ -3,13 +3,39 @@ from DBbridge.ConsultasCassandra import ConsultasCassandra
 from DBbridge.ConsultasNeo4j import ConsultasNeo4j
 from AnnoyComparators.AnnoyUserVectorSearcher import AnnoyUserVectorSearcher
 from SocialAPI.TwitterAPI.RecolectorTweetsUser import RecolectorTweetsUser
+from LuigiTasks.GenerateSim import GenerateSimText_semantic, GenerateSimText_topics
+from DBbridge.ConsultasSQL_police import ConsultasSQL_police
 from APIDescarga import APIDescarga
 from collections import namedtuple
 import numpy as np
 
 import re
+import multiprocessing
 
 re_tuser = re.compile(r'@?[a-zA-Z0-9_]+')
+
+class _generateTextSim(multiprocessing.Process):
+	"""docstring for _generateTwitterUser"""
+	def __init__(self, lang, semantic, id_tarea):
+		super(_generateTwitterUser, self).__init__()
+		self.lang = lang
+		self.semantic = semantic
+		self.id_tarea = id_tarea
+
+	def run(self):
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
+		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim " 
+		if self.semantic == True:
+			comand += "GenerateSimText_semantic "
+		else:
+			comand += "GenerateSimText_topics "
+		comand += " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
+		comand += " > /dev/null 2>&1"
+		comand = comand%path
+		
+		os.popen(comand)
 
 class APITextos(object):
 	"""docstring for APITextos"""
@@ -253,22 +279,34 @@ class APITextos(object):
 		if id_tarea < 0:
 			raise Exception("Parametros incorrectos")
 
-		Row = namedtuple('Row', 'status, lang')
-		tweets = [Row(text, lang)]
-		generator = GenerateVectorsFromTweets()
-		vector = generator.getVector_topics(tweets, lang)
-		searcher = AnnoyUserVectorSearcher()
-		users = searcher.getSimilarUsers_topics(vector, lang, numberOfSim + 1)
-		users_long = []
-		for user in users:
-			user_long = consultas.getUserByIDLargeCassandra_police(user)
-			if user_long != False:
-				users_long.append(user_long)
+		recolector = GenerateSimText_topics(lang = lang, idtarea = id_tarea)
+		
+		if os.path.isfile(recolector.output().path) == False:
+			p = _generateTwitterUser(lang, False, id_tarea)
+			p.start()
+			return False
+		else:
+			consultas = ConsultasSQL_police()
+			consultas.setFinishedTask(id_tarea)
+			path = recolector.output().path
 
-			if len(users_long) >= numberOfSim:
-				break
+			users = []
+			consultas = ConsultasCassandra()
+			with open(path, "r") as fin:
+				for line in fin:
+					users.append(long(line))
 
-		return users_long
+			users_long = []
+			for user in users:
+				user_long = consultas.getUserByIDLargeCassandra_police(user)
+				if user_long != False:
+					if user_long.screen_name not in username:
+						users_long.append(user_long)
+
+				if len(users_long) >= numberOfSim:
+					break
+					
+			return users_long
 		
 
 	@staticmethod
@@ -302,16 +340,33 @@ class APITextos(object):
 		if id_tarea < 0:
 			raise Exception("Parametros incorrectos")
 
-		Row = namedtuple('Row', 'status, lang')
-		tweets = [Row(text, lang)]
-		generator = GenerateVectorsFromTweets()
-		vector = generator.getVector_semantic(tweets, lang)
-		searcher = AnnoyUserVectorSearcher()
-		users = searcher.getSimilarUsers_semantic(vector, lang, numberOfSim)
-		users_long = []
-		for user in users:
-			user_long = consultas.getUserByIDLargeCassandra_police(user)
-			if user_long != False:
-				users_long.append(user_long)
 
-		return users_long
+
+		recolector = GenerateSimText_semantic(lang = lang, idtarea = id_tarea)
+		
+		if os.path.isfile(recolector.output().path) == False:
+			p = _generateTwitterUser(lang, True, id_tarea)
+			p.start()
+			return False
+		else:
+			consultas = ConsultasSQL_police()
+			consultas.setFinishedTask(id_tarea)
+			path = recolector.output().path
+
+			users = []
+			consultas = ConsultasCassandra()
+			with open(path, "r") as fin:
+				for line in fin:
+					users.append(long(line))
+
+			users_long = []
+			for user in users:
+				user_long = consultas.getUserByIDLargeCassandra_police(user)
+				if user_long != False:
+					if user_long.screen_name not in username:
+						users_long.append(user_long)
+
+				if len(users_long) >= numberOfSim:
+					break
+
+			return users_long

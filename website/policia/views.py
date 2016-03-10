@@ -199,10 +199,13 @@ def buscarTextoAPI(request):
             })
 
     try:
-        method = _getUsersSimilarMethod(False, searchIn, searchBy);
+        method = _getUsersSimilarMethod(False, 'all', searchBy);
         result = method(searchText, searchLanguage, int(searchMax), idTarea)
     except Exception, e:
-        result = []
+        return JsonResponse({
+            'exception': str(e),
+            'status': "no_results"
+        })
 
     if result == []:
         return JsonResponse({

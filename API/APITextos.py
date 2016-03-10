@@ -9,6 +9,7 @@ from APIDescarga import APIDescarga
 from collections import namedtuple
 import numpy as np
 
+import os
 import re
 import multiprocessing
 
@@ -26,7 +27,7 @@ class _generateTextSim(multiprocessing.Process):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim " 
+		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim "
 		if self.semantic == True:
 			comand += "GenerateSimText_semantic "
 		else:
@@ -34,12 +35,12 @@ class _generateTextSim(multiprocessing.Process):
 		comand += " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
 		comand += " > /dev/null 2>&1"
 		comand = comand%path
-		
+
 		os.popen(comand)
 
 class APITextos(object):
 	"""docstring for APITextos"""
-	
+
 	@staticmethod
 	def getUsersSimilar_user_all_topic(username, lang, numberOfSim, id_tarea):
 		"""
@@ -49,7 +50,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		username : usuario de la red social con @ o sin @ 
+		username : usuario de la red social con @ o sin @
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 		id_tarea : identificador de la tarea creada
@@ -92,7 +93,7 @@ class APITextos(object):
 				if len(users_long) >= numberOfSim:
 					break
 			return users_long
-	
+
 	@staticmethod
 	def getUsersSimilar_user_relations_topic(username, lang, numberOfSim, id_tarea):
 		"""
@@ -102,7 +103,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		username : usuario de la red social con @ o sin @ 
+		username : usuario de la red social con @ o sin @
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 
@@ -132,7 +133,7 @@ class APITextos(object):
 			with open(path, "r") as fin:
 				for line in fin:
 					relaciones_coseno.append(long(line))
-			
+
 
 			users_long = []
 			length = min(len(relaciones_coseno), numberOfSim)
@@ -142,7 +143,7 @@ class APITextos(object):
 					users_long.append(user_long)
 
 			return users_long
-			
+
 
 	@staticmethod
 	def getUsersSimilar_user_all_semantic(username, lang, numberOfSim, id_tarea):
@@ -153,7 +154,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		username : usuario de la red social con @ o sin @ 
+		username : usuario de la red social con @ o sin @
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 		id_tarea : identificador de la tarea creada
@@ -206,7 +207,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		username : usuario de la red social con @ o sin @ 
+		username : usuario de la red social con @ o sin @
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 		id_tarea : identificador de la tarea creada
@@ -237,7 +238,7 @@ class APITextos(object):
 			with open(path) as fin:
 				for line in fin:
 					relaciones_coseno.append(long(line))
-			
+
 
 			users_long = []
 			length = min(len(relaciones_coseno), numberOfSim)
@@ -247,7 +248,7 @@ class APITextos(object):
 					users_long.append(user_long)
 
 			return users_long
-		
+
 	@staticmethod
 	def getUsersSimilar_text_all_topic(text, lang, numberOfSim, id_tarea):
 		"""
@@ -257,7 +258,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		texto : texto a comparar
+		text : texto a comparar
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 		id_tarea : identificador de la tarea creada
@@ -267,7 +268,7 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
-		if len(texto) > 100000:
+		if len(text) > 100000:
 			raise Exception("Parametros incorrectos")
 
 		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
@@ -280,7 +281,7 @@ class APITextos(object):
 			raise Exception("Parametros incorrectos")
 
 		recolector = GenerateSimText_topics(lang = lang, idtarea = id_tarea)
-		
+
 		if os.path.isfile(recolector.output().path) == False:
 			p = _generateTwitterUser(lang, False, id_tarea)
 			p.start()
@@ -305,9 +306,9 @@ class APITextos(object):
 
 				if len(users_long) >= numberOfSim:
 					break
-					
+
 			return users_long
-		
+
 
 	@staticmethod
 	def getUsersSimilar_text_all_semantic(text, lang, numberOfSim, id_tarea):
@@ -318,7 +319,7 @@ class APITextos(object):
 
 		Parameters
 		----------
-		texto : texto a comparar
+		text : texto a comparar
 		lang : lenguaje de los usuarios
 		numberOfSim : es el numero de usuarios devolver
 		id_tarea : identificador de la tarea creada
@@ -328,9 +329,9 @@ class APITextos(object):
 		lista con la informacion necesaria para la interfaz grafica
 		Si ha ocurrido un fallo o no se puede comparar retorna False
 		"""
-		if len(texto) > 100000:
+		if len(text) > 100000:
 			raise Exception("Parametros incorrectos")
-			
+
 		if lang != 'es' and lang != 'ar' and lang != 'en' and lang != 'fr':
 			raise Exception("Parametros incorrectos")
 
@@ -343,7 +344,7 @@ class APITextos(object):
 
 
 		recolector = GenerateSimText_semantic(lang = lang, idtarea = id_tarea)
-		
+
 		if os.path.isfile(recolector.output().path) == False:
 			p = _generateTwitterUser(lang, True, id_tarea)
 			p.start()

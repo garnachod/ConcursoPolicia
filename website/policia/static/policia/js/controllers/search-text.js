@@ -102,7 +102,8 @@ policia.controller('searchText', function ($scope, $http) {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
             transformRequest: transform
         }).success(function (data) {
-
+            console.log('response');
+            console.log(data);
             if (data.status === "missing_params") {
                 $scope.similarUsers = [];
                 $scope.error = "Falta algún parámetro de búsqueda.";

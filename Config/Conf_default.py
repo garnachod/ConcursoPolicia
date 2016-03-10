@@ -5,7 +5,11 @@ class Conf():
 	class __impl:
 		"""docstring for __impl"""
 		def __init__(self):
-			self.domain = '150.244.58.70:8000'
+			#dominio web (sin "http://" ni "/" final)
+			self.domain = '0.0.0.0:8000'
+
+			#dominio web (sin "http://" ni "/" final)
+
 			#cassandra
 			self.cassandra_keyspace = 'twitter'
 			self.cassandra_keyspace_instagram = 'instagram'

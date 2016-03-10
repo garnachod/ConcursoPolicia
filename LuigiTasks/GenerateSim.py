@@ -19,7 +19,7 @@ import numpy as np
 import smtplib
 
 def sendEmail(id_tarea):
-    conf = Conf()
+	conf = Conf()
 	consultas = ConsultasSQL_police()
 	if consultas.getSendEmailFromTask(id_tarea) == True:
 		id_user = consultas.getIdUserFromTask(id_tarea)
@@ -31,18 +31,15 @@ def sendEmail(id_tarea):
 			server.starttls()
 			fromaddr = "concurso.policia.tareas@gmail.com"
 			toaddrs = email
+			username = consultas.getUsernameFromTask(id_tarea)
+			texto = consultas.getTextFromTask(id_tarea)
 
-            username = consultas.getUsernameFromTask(id_tarea)
-            texto = consultas.getTextFromTask(id_tarea)
-
-            if username:
-                asunto = "[Tarea Finalizada] Usuarios similares a " + usuario + "."
-                cuerpo = "La búsqueda de usuarios similares se ha completado." +
-                    "Puede consultar los resultados en: http://" + conf.getDomain + "/resultados/" + id_tarea + "/"
-            else:
-                asunto = "[Tarea Finalizada] Usuarios similares a un texto."
-                cuerpo = "La búsqueda de usuarios similares a un texto dado se ha completado." +
-                    "Puede consultar los resultados en: http://" + conf.getDomain + "/resultados/" + id_tarea + "/"
+			if username:
+				asunto = "[Tarea Finalizada] Usuarios similares a " + username + "."
+				cuerpo = "La búsqueda de usuarios similares se ha completado." + "Puede consultar los resultados en: http://" + conf.getDomain() + "/resultados/" + str(id_tarea) + "/"
+			else:
+				asunto = "[Tarea Finalizada] Usuarios similares al texto: " + texto[:20] + "."
+				cuerpo = "La búsqueda de usuarios similares a un texto dado se ha completado. Puede consultar los resultados en: http://" + conf.getDomain() + "/resultados/" + str(id_tarea) + "/"
 
 			msg = "\r\n".join([
 			  "From: "+ fromaddr,

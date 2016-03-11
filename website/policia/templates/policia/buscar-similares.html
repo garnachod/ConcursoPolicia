@@ -100,8 +100,13 @@
 
     <div ng-cloack id="results-box" class="row">
         <div ng-show="errorVisible" class="col-xs-12 col-md-8 col-md-offset-2">
-            <div class="alert alert-danger">
+            <div class="text-center alert alert-danger">
                 <strong>¡Ups!</strong> {% verbatim %}{{ error }}{% endverbatim %}
+            </div>
+        </div>
+        <div ng-show="successVisible" class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="text-center alert alert-success">
+                <strong>¡Hecho!</strong> La búsqueda se ha añadido a <a href="/">tareas pendientes</a>.
             </div>
         </div>
         <div ng-repeat="user in similarUsers">

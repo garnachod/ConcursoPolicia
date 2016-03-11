@@ -45,7 +45,9 @@
                             <fieldset class="row">
                                     <div class="col-xs-4">
                                         <label for="search-language">Idioma:  </label>
-                                        <select class="form-control" id="search-language" name="search-language">
+                                        <select
+                                            ng-model="searchLanguage"
+                                            class="form-control" id="search-language" name="search-language">
                                             <option value="es">ES</option>
                                             <option value="en">EN</option>
                                             <option value="ar">AR</option>
@@ -56,23 +58,26 @@
                                     </div>
                                     <div class="col-xs-8">
                                         <label for="search-max">Máx. Resultados:  </label>
-                                        <input type="number" class="form-control" id="search-max"
+                                        <input
+                                            ng-model="searchMax"
+                                            type="number" class="form-control" id="search-max"
                                             name="search-max" maxlength="5" min="1"
                                             max="5000" value="100"/>
 
                                     </div>
                             </fieldset>
                             <fieldset>
-                                    <label for="search-by">Buscar por:  </label>
-                                    <br/>
-                                    <label class="radio-inline"><input type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
-                                    <label class="radio-inline"><input type="radio" name="search-by" value="semantic">Forma de hablar</label>
+                                <label for="search-by">Buscar por:  </label>
+                                <br/>
+                                <label class="radio-inline"><input ng-model="searchBy" type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
+                                <label class="radio-inline"><input ng-model="searchBy" type="radio" name="search-by" value="semantic">Forma de hablar</label>
                             </fieldset>
-
+                            <img ng-show="searchSpinnerVisible"
+                                class="img-responsive col-sm-3" src="{% static 'policia/img/spinner.gif' %}"/>
 
                             <fieldset>
                                 <br/>
-                                <div class="form-group">
+                                <div class="form-group" ng-show="searchButtonVisible">
 
                                     <label for="search-button" class="form-control btn btn-primary pull-right">
                                         <i class="md md-search"></i> Buscar similares
@@ -93,8 +98,13 @@
 
     <div ng-cloack id="results-box" class="row">
         <div ng-show="errorVisible" class="col-xs-12 col-md-8 col-md-offset-2">
-            <div class="alert alert-danger">
+            <div class="text-center alert alert-danger">
                 <strong>¡Ups!</strong> {% verbatim %}{{ error }}{% endverbatim %}
+            </div>
+        </div>
+        <div ng-show="successVisible" class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="text-center alert alert-success">
+                <strong>¡Hecho!</strong> La búsqueda se ha añadido a <a href="/">tareas pendientes</a>.
             </div>
         </div>
         <div ng-repeat="user in similarUsers">

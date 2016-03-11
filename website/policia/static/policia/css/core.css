@@ -665,6 +665,13 @@ pre {
   right: 25px;
   color: #eeeeee;
 }
+
+.panel .close {
+    color: #111111;
+    font-size: 1em;
+    margin-right: -10px;
+}
+
 .custom-modal-title {
   padding: 15px 25px 15px 25px;
   line-height: 22px;

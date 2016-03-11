@@ -20,6 +20,7 @@ policia.controller('searchSimilar', function ($scope, $http) {
     $scope.searchSpinnerVisible = false;
     $scope.searchButtonVisible = true;
     $scope.errorVisible = false;
+    $scope.successVisible = false;
 
     var currentTaskId = 0;
 
@@ -51,7 +52,7 @@ policia.controller('searchSimilar', function ($scope, $http) {
     };
 
     $scope.notifyByEmail = function () {
-        $http.get('/api/notificar/' + currentTaskId + '/')
+        $http.get('/api/tarea/notificar/' + currentTaskId + '/')
             .success(function (data) {
                 console.log('Notified!');
                 console.log(data);
@@ -103,6 +104,7 @@ policia.controller('searchSimilar', function ($scope, $http) {
         $scope.searchSpinnerVisible = true;
         $scope.searchButtonVisible = false;
         $scope.errorVisible = false;
+        $scope.successVisible = false;
 
         $http.get(endpoint, { 'params': params })
             .success(function (data) {
@@ -125,6 +127,7 @@ policia.controller('searchSimilar', function ($scope, $http) {
                         effect: 'blur',
                         speed: 100
                     });
+                    $scope.successVisible = true;
                 } else if (data.status === "ready") {
                     $scope.similarUsers = data.users;
                 }

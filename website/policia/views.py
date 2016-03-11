@@ -70,6 +70,20 @@ def _getUsersSimilarMethod(isByUsername, searchIn, searchBy):
             raise Exception('Parámetro searchBy incorrecto')
 
 @login_required
+def eliminarAPI(request, idTarea=0):
+    try:
+        tarea = Tarea.objects.get(pk=idTarea)
+        if tarea.usuario == request.user:
+            tarea.delete()
+            return JsonResponse("ok", safe=False)
+        else:
+            return JsonResponse("permission_denied", safe=False)
+
+    except:
+        return JsonResponse("invalid_id", safe=False)
+
+
+@login_required
 def notificarAPI(request, idTarea=0):
     try:
         tarea = Tarea.objects.get(pk=idTarea)

@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import sys
 lib_path = os.path.abspath('../')
-sys.path.append(lib_path)
+if lib_path not in sys.path:
+	sys.path.append(lib_path)
 from Config.Conf import Conf
 
 infoSQL = Conf().getSQLPoliceInfo()

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-lib_path = os.path.abspath('../')
-sys.path.append(lib_path)
+lib_path = os.path.abspath('/home/dani/github/ConcursoPolicia')
+if lib_path not in sys.path:
+	sys.path.append(lib_path)
 
 import luigi
 from ClasificaUsuariosPorIdioma import *

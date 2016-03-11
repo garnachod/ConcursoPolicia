@@ -28,14 +28,14 @@ class _generateTextSim(multiprocessing.Process):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim "
+		comand = "PYTHONPATH=\"${PYTHONPATH}:/home/dani/github/ConcursoPolicia/LuigiTasks\" && export PYTHONPATH && luigi --module GenerateSim "
 		if self.semantic == True:
 			comand += "GenerateSimText_semantic "
 		else:
 			comand += "GenerateSimText_topics "
 		comand += " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
 		comand += " > /dev/null 2>&1"
-		comand = comand%path
+		
 
 		os.popen(comand)
 

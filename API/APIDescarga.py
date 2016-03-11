@@ -24,15 +24,14 @@ class _generateTwitterUser(multiprocessing.Process):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim " 
+		comand = "PYTHONPATH=\"${PYTHONPATH}:/home/dani/github/ConcursoPolicia/LuigiTasks\" && export PYTHONPATH && luigi --module GenerateSim " 
 		if self.semantic == True:
 			comand += "GenerateSimAll_semantic "
 		else:
 			comand += "GenerateSimAll_topics "
 		comand += "--usuario " + self.username + " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
 		comand += " > /dev/null 2>&1"
-		comand = comand%path
-		
+
 		os.popen(comand)
 
 class _generateTwitterRelations(multiprocessing.Process):
@@ -47,14 +46,13 @@ class _generateTwitterRelations(multiprocessing.Process):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "PYTHONPATH='%s/LuigiTasks' luigi --module GenerateSim " 
+		comand = "PYTHONPATH=\"${PYTHONPATH}:/home/dani/github/ConcursoPolicia/LuigiTasks\" && export PYTHONPATH && luigi --module GenerateSim " 
 		if self.semantic == True:
 			comand += "GenerateSimRelations_semantic "
 		else:
 			comand += "GenerateSimRelations_topics "
 		comand += "--usuario " + self.username + " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
 		comand += " > /dev/null 2>&1"
-		comand = comand%path
 		
 		os.popen(comand)
 		

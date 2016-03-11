@@ -6,6 +6,7 @@ from SocialAPI.TwitterAPI.RecolectorTweetsUser import RecolectorTweetsUser
 from LuigiTasks.GenerateSim import GenerateSimText_semantic, GenerateSimText_topics
 from DBbridge.ConsultasSQL_police import ConsultasSQL_police
 from APIDescarga import APIDescarga
+from Config.Conf import Conf
 from collections import namedtuple
 import numpy as np
 
@@ -18,7 +19,7 @@ re_tuser = re.compile(r'@?[a-zA-Z0-9_]+')
 class _generateTextSim(multiprocessing.Process):
 	"""docstring for _generateTwitterUser"""
 	def __init__(self, lang, semantic, id_tarea):
-		super(_generateTwitterUser, self).__init__()
+		super(_generateTextSim, self).__init__()
 		self.lang = lang
 		self.semantic = semantic
 		self.id_tarea = id_tarea
@@ -281,9 +282,9 @@ class APITextos(object):
 			raise Exception("Parametros incorrectos")
 
 		recolector = GenerateSimText_topics(lang = lang, idtarea = id_tarea)
-
+		print id_tarea
 		if os.path.isfile(recolector.output().path) == False:
-			p = _generateTwitterUser(lang, False, id_tarea)
+			p = _generateTextSim(lang, False, id_tarea)
 			p.start()
 			return False
 		else:
@@ -301,8 +302,7 @@ class APITextos(object):
 			for user in users:
 				user_long = consultas.getUserByIDLargeCassandra_police(user)
 				if user_long != False:
-					if user_long.screen_name not in username:
-						users_long.append(user_long)
+					users_long.append(user_long)
 
 				if len(users_long) >= numberOfSim:
 					break
@@ -346,7 +346,7 @@ class APITextos(object):
 		recolector = GenerateSimText_semantic(lang = lang, idtarea = id_tarea)
 
 		if os.path.isfile(recolector.output().path) == False:
-			p = _generateTwitterUser(lang, True, id_tarea)
+			p = _generateTextSim(lang, True, id_tarea)
 			p.start()
 			return False
 		else:
@@ -364,8 +364,7 @@ class APITextos(object):
 			for user in users:
 				user_long = consultas.getUserByIDLargeCassandra_police(user)
 				if user_long != False:
-					if user_long.screen_name not in username:
-						users_long.append(user_long)
+					users_long.append(user_long)
 
 				if len(users_long) >= numberOfSim:
 					break

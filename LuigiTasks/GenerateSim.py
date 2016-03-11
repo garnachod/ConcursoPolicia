@@ -17,6 +17,7 @@ from AnnoyComparators.AnnoyUserVectorSearcher import AnnoyUserVectorSearcher
 import datetime
 import numpy as np
 import smtplib
+from collections import namedtuple
 
 def sendEmail(id_tarea):
 	conf = Conf()
@@ -67,6 +68,11 @@ class GenerateSimAll_topics(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/similitudes/topics_all/%s/%s/%s_%s_%s'%(path, anyo, mes, dia, self.usuario, self.lang))
 
 	def run(self):
@@ -120,6 +126,11 @@ class GenerateSimAll_semantic(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/similitudes/semantic_all/%s/%s/%s_%s_%s'%(path, anyo, mes, dia, self.usuario, self.lang))
 
 	def run(self):
@@ -172,6 +183,11 @@ class GenerateSimRelations_semantic(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/similitudes/semantic/%s/%s/%s_%s'%(path, anyo, mes, self.usuario, self.lang))
 
 	def run(self):
@@ -216,6 +232,11 @@ class GenerateSimRelations_topics(luigi.Task):
 		dia = now.day
 		mes = now.month
 		anyo = now.year
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
 		return luigi.LocalTarget('%s/LuigiTasks/similitudes/topic/%s/%s/%s_%s'%(path, anyo, mes, self.usuario, self.lang))
 
 	def run(self):
@@ -260,7 +281,10 @@ class GenerateSimText_topics(luigi.Task):
 
 	def run(self):
 		consultas = ConsultasSQL_police()
+		#714
 		text = consultas.getTextFromTask(self.idtarea)
+		text = text.decode('utf-8', 'ignore')
+		#print text
 		if text == False:
 			with self.output().open('w') as out_file:
 				out_file.write("\n")
@@ -270,6 +294,7 @@ class GenerateSimText_topics(luigi.Task):
 			tweets = [Row(text, self.lang)]
 			generator = GenerateVectorsFromTweets()
 			vector = generator.getVector_topics(tweets, self.lang)
+			#print vector
 			searcher = AnnoyUserVectorSearcher()
 			users = searcher.getSimilarUsers_topics(vector, self.lang, 5000)
 
@@ -278,6 +303,9 @@ class GenerateSimText_topics(luigi.Task):
 					out_file.write(str(user))
 					out_file.write("\n")
 
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.idtarea)
+		sendEmail(self.idtarea)
 
 class GenerateSimText_semantic(luigi.Task):
 	idtarea = luigi.IntParameter()
@@ -295,6 +323,7 @@ class GenerateSimText_semantic(luigi.Task):
 	def run(self):
 		consultas = ConsultasSQL_police()
 		text = consultas.getTextFromTask(self.idtarea)
+		text = text.decode('utf-8', 'ignore')
 		if text == False:
 			with self.output().open('w') as out_file:
 				out_file.write("\n")
@@ -310,3 +339,7 @@ class GenerateSimText_semantic(luigi.Task):
 				for user in users:
 					out_file.write(str(user))
 					out_file.write("\n")
+
+		consultas = ConsultasSQL_police()
+		consultas.setFinishedTask(self.idtarea)
+		sendEmail(self.idtarea)

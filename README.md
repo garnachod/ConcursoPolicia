@@ -27,6 +27,11 @@ Primera semana:
 * Instalar https://github.com/Stratio/cassandra-lucene-index instalar la misma version que Cassandra
 * Copiar Config/Conf_default.py con el nombre de Conf.py
 	* Configurar los parametros correctos.
+* Instalar las librerias de las que se compone el proyecto:
+	* sudo python setup.py install
+	* remove:
+	* python setup.py install --record files.txt
+	* cat files.txt | xargs rm -rf
 * Lanzar creación de tablas:
 	* DBbridge/Cassandra/Creatablas.py
 	* DBbridge/Neo4j/CreaRelaciones.py

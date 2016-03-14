@@ -7,7 +7,12 @@ policia.config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }]);
 
-policia.controller('searchText', function ($scope, $http) {
+policia.config(['$compileProvider', function ($compileProvider) {
+    'use strict';
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data):/);
+}]);
+
+policia.controller('searchText', ['$scope', '$http', 'CSVConverter', function ($scope, $http, CSVConverter) {
     'use strict';
 
     // Modelos de datos
@@ -16,7 +21,8 @@ policia.controller('searchText', function ($scope, $http) {
     $scope.searchMax = 100;
     $scope.searchBy = 'topic';
     $scope.similarUsers = [];
-    $scope.error = "";
+    $scope.error = '';
+    $scope.resultsDataURI = '';
 
     // Shows
     $scope.searchSpinnerVisible = false;
@@ -129,6 +135,7 @@ policia.controller('searchText', function ($scope, $http) {
 
             } else if (data.status === "ready") {
                 $scope.similarUsers = data.users;
+                $scope.resultsDataURI = CSVConverter.getDataURI($scope.similarUsers);
             }
 
             $scope.searchSpinnerVisible = false;
@@ -141,4 +148,4 @@ policia.controller('searchText', function ($scope, $http) {
             $scope.searchButtonVisible = true;
         });
     };
-});
+}]);

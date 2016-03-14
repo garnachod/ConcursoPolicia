@@ -1,8 +1,15 @@
 /*globals angular, console, window, Custombox */
 var policia = angular.module('policia', []);
 
-policia.controller('searchSimilar', function ($scope, $http) {
+policia.config(['$compileProvider', function ($compileProvider) {
     'use strict';
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|data):/);
+}]);
+
+policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function ($scope, $http, CSVConverter) {
+    'use strict';
+    var i = 0,
+        currentTaskId = 0;
 
     // Modelos de datos
     $scope.searchUsername = '';
@@ -10,9 +17,25 @@ policia.controller('searchSimilar', function ($scope, $http) {
     $scope.searchMax = 100;
     $scope.searchBy = 'topic';
     $scope.searchIn = 'all';
+    $scope.error = '';
     $scope.similarUsers = [];
-    $scope.error = "";
+    $scope.resultsDataURI = '';
 
+    // Mock users
+    /*
+    for (i = 0; i < 100; i += 1) {
+        $scope.similarUsers.push({
+            'screen_name': "p_molins",
+            'name': "p_molins",
+            'created_at': "12/03/2014",
+            'location': "Madrid / España",
+            'following': "12K",
+            'followers': "123"
+        });
+    }
+
+    $scope.resultsDataURI = CSVConverter.getDataURI($scope.similarUsers);
+*/
     // Clases
     $scope.searchUsernameClass = "";
 
@@ -22,16 +45,14 @@ policia.controller('searchSimilar', function ($scope, $http) {
     $scope.errorVisible = false;
     $scope.successVisible = false;
 
-    var currentTaskId = 0;
-
     function getQueryParam(sParam) {
         var sPageURL = decodeURIComponent(window.location.search.substring(1)),
             sURLVariables = sPageURL.split('&'),
             sParameterName,
-            i;
+            j;
 
-        for (i = 0; i < sURLVariables.length; i += 1) {
-            sParameterName = sURLVariables[i].split('=');
+        for (j = 0; j < sURLVariables.length; j += 1) {
+            sParameterName = sURLVariables[j].split('=');
 
             if (sParameterName[0] === sParam) {
                 return sParameterName[1] === undefined ? true : sParameterName[1];
@@ -130,6 +151,7 @@ policia.controller('searchSimilar', function ($scope, $http) {
                     $scope.successVisible = true;
                 } else if (data.status === "ready") {
                     $scope.similarUsers = data.users;
+                    $scope.resultsDataURI = CSVConverter.getDataURI(data.users);
                 }
                 $scope.searchSpinnerVisible = false;
                 $scope.searchButtonVisible = true;
@@ -141,4 +163,4 @@ policia.controller('searchSimilar', function ($scope, $http) {
                 $scope.searchButtonVisible = true;
             });
     };
-});
+}]);

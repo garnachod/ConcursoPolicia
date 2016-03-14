@@ -112,6 +112,11 @@
         <div ng-repeat="user in similarUsers">
             {% include 'policia/usuario-twitter.html' %}
         </div>
+        {% verbatim %}
+        <div ng-show="resultsDataURI">
+                <a id="btn-descargar" download="resultados.csv" ng-href="{{ resultsDataURI }}" class="btn btn-primary"><i class="md md-cloud-download"></i> Descargar como CSV</a>
+        </div>
+        {% endverbatim %}
     </div>
 
     {% include 'policia/modal-tarea.html' %}
@@ -121,4 +126,6 @@
 
 {% block scripts %}
 <script src="{% static "policia/js/controllers/search-similar.js" %}"></script>
+<script src="{% static "policia/js/controllers/csv-converter.js" %}"></script>
+
 {% endblock %}

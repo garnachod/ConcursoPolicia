@@ -99,9 +99,9 @@ def notificarAPI(request, idTarea=0):
 
 def _getTipo(searchIn, searchBy, searchUsername, searchText):
     if searchUsername is None:
-        return 'user_' + searchIn + "_" + searchBy
-    else:
         return 'text_all_' + searchBy
+    else:
+        return 'user_' + searchIn + "_" + searchBy
 
 def _getSearchBy(tipo):
     if 'topic' in tipo:

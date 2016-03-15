@@ -7,9 +7,10 @@ policia.config(['$compileProvider', function ($compileProvider) {
 }]);
 
 policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function ($scope, $http, CSVConverter) {
+
     'use strict';
-    var i = 0,
-        currentTaskId = 0;
+
+    var currentTaskId = 0;
 
     // Modelos de datos
     $scope.searchUsername = '';
@@ -21,21 +22,6 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
     $scope.similarUsers = [];
     $scope.resultsDataURI = '';
 
-    // Mock users
-    /*
-    for (i = 0; i < 100; i += 1) {
-        $scope.similarUsers.push({
-            'screen_name': "p_molins",
-            'name': "p_molins",
-            'created_at': "12/03/2014",
-            'location': "Madrid / España",
-            'following': "12K",
-            'followers': "123"
-        });
-    }
-
-    $scope.resultsDataURI = CSVConverter.getDataURI($scope.similarUsers);
-*/
     // Clases
     $scope.searchUsernameClass = "";
 
@@ -69,7 +55,6 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
         if ($scope.searchUsername.length > 0) {
             $scope.search();
         }
-
     };
 
     $scope.notifyByEmail = function () {
@@ -126,6 +111,10 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
         $scope.searchButtonVisible = false;
         $scope.errorVisible = false;
         $scope.successVisible = false;
+
+        console.log('Querying ' + endpoint);
+        console.log('With params:');
+        console.log(params);
 
         $http.get(endpoint, { 'params': params })
             .success(function (data) {

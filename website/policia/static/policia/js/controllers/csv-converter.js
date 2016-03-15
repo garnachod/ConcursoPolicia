@@ -1,30 +1,45 @@
+/*globals policia, angular, navigator, Blob */
 var policia = policia || angular.module('policia', []);
 
-policia.config(['$provide', function($provide) {
-  $provide.factory('CSVConverter', function() {
-      function getDataURI(usersArray) {
-          var csv = '',
-              urlEncodedCSV = '',
-              dataURI = 'data:application/csv;charset=utf-8,';
+policia.config(['$provide', function ($provide) {
+    'use strict';
 
-          csv += 'Username;Nombre;Fecha de creación;Ubicación;Siguiendo;Seguidores\r\n';
+    $provide.factory('CSVConverter', function () {
 
-          usersArray.forEach(function (user) {
-              csv += user.screen_name + ";";
-              csv += user.name + ";";
-              csv += user.created_at + ";";
-              csv += user.location + ";";
-              csv += user.following + ";";
-              csv += user.followers + "\r\n";
-          });
+        function getCSV(usersArray) {
+            var csv = 'Username;Nombre;Fecha de creación;Ubicación;Siguiendo;Seguidores\r\n';
+            usersArray.forEach(function (user) {
+                csv += user.screen_name + ";";
+                csv += user.name + ";";
+                csv += user.created_at + ";";
+                csv += user.location + ";";
+                csv += user.following + ";";
+                csv += user.followers + "\r\n";
+            });
+            return csv;
+        }
 
-          urlEncodedCSV = encodeURIComponent(csv);
-          dataURI += urlEncodedCSV;
-          return dataURI;
-      }
+        function getDataURI(usersArray) {
+            var urlEncodedCSV = '',
+                dataURI = 'data:application/csv;charset=utf-8,';
+            urlEncodedCSV = encodeURIComponent(getCSV(usersArray));
+            dataURI += urlEncodedCSV;
+            return dataURI;
+        }
 
-      return {
-          getDataURI: getDataURI,
-      };
-  });
+        function downloadDataInternetExplorer(usersArray) {
+            if (navigator.msSaveBlob == true) {
+                var csvContent = getCSV(usersArray),
+                    blob = new Blob([csvContent], {
+                        type: "text/csv;charset=utf-8;"
+                    });
+                navigator.msSaveBlob(blob, "resultados.csv");
+            }
+        }
+
+        return {
+            getDataURI: getDataURI,
+            downloadDataInternetExplorer: downloadDataInternetExplorer
+        };
+    });
 }]);

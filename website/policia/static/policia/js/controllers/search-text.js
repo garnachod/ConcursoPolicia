@@ -13,7 +13,10 @@ policia.config(['$compileProvider', function ($compileProvider) {
 }]);
 
 policia.controller('searchText', ['$scope', '$http', 'CSVConverter', function ($scope, $http, CSVConverter) {
+
     'use strict';
+
+    var currentTaskId = 0;
 
     // Modelos de datos
     $scope.searchText = '';
@@ -29,8 +32,11 @@ policia.controller('searchText', ['$scope', '$http', 'CSVConverter', function ($
     $scope.searchButtonVisible = true;
     $scope.errorVisible = false;
     $scope.successVisible = false;
+    $scope.downloadVisible = false;
 
-    var currentTaskId = 0;
+    $scope.downloadDataInternetExplorer = function () {
+        CSVConverter.downloadDataInternetExplorer($scope.similarUsers);
+    };
 
     function getQueryParam(sParam) {
         var sPageURL = decodeURIComponent(window.location.search.substring(1)),
@@ -101,6 +107,7 @@ policia.controller('searchText', ['$scope', '$http', 'CSVConverter', function ($
         $scope.searchButtonVisible = false;
         $scope.errorVisible = false;
         $scope.successVisible = false;
+        $scope.downloadVisible = false;
 
         transform = function (data) {
             return $.param(data);
@@ -113,17 +120,24 @@ policia.controller('searchText', ['$scope', '$http', 'CSVConverter', function ($
             console.log('response');
             console.log(data);
             if (data.status === "missing_params") {
+
                 $scope.similarUsers = [];
                 $scope.error = "Falta algún parámetro de búsqueda.";
                 $scope.errorVisible = true;
+                $scope.downloadVisible = false;
+
             } else if (data.status === "no_results" || data === "db_error") {
+
                 $scope.similarUsers = [];
                 $scope.error = "No se encontraron usuarios relacionados " +
                                 "con el texto introducido. " +
                                 "Pruebe con menos términos.";
 
                 $scope.errorVisible = true;
+                $scope.downloadVisible = false;
+
             } else if (data.status === "downloading") {
+
                 $scope.similarUsers = [];
                 currentTaskId = data.taskId;
                 Custombox.open({
@@ -132,10 +146,12 @@ policia.controller('searchText', ['$scope', '$http', 'CSVConverter', function ($
                     speed: 100
                 });
                 $scope.successVisible = true;
+                $scope.downloadVisible = false;
 
             } else if (data.status === "ready") {
                 $scope.similarUsers = data.users;
                 $scope.resultsDataURI = CSVConverter.getDataURI($scope.similarUsers);
+                $scope.downloadVisible = true;
             }
 
             $scope.searchSpinnerVisible = false;
@@ -146,6 +162,7 @@ policia.controller('searchText', ['$scope', '$http', 'CSVConverter', function ($
             console.log(data);
             $scope.searchSpinnerVisible = false;
             $scope.searchButtonVisible = true;
+            $scope.downloadVisible = false;
         });
     };
 }]);

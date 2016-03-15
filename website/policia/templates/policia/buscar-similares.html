@@ -15,6 +15,8 @@
     ng-controller="searchSimilar"
     ng-init="updateSearchParams()">
 
+    {% include 'policia/modal-tarea.html' %}
+
     <div id="search-box" class="row">
         <div class="col-md-12 text-left">
             <div class="card-box">
@@ -80,7 +82,7 @@
                         </div>
                         <div class="col-md-12 col-lg-2">
 
-                            <img ng-show="searchSpinnerVisible" class="img-responsive" src="{% static 'policia/img/spinner.gif' %}"/>
+                            <img ng-show="searchSpinnerVisible" class="img-responsive col-sm-3 col-md-12  " src="{% static 'policia/img/spinner.gif' %}"/>
 
                             <fieldset ng-show="searchButtonVisible">
                                 <div class="form-group">
@@ -112,15 +114,25 @@
         <div ng-repeat="user in similarUsers">
             {% include 'policia/usuario-twitter.html' %}
         </div>
-        {% verbatim %}
-        <div ng-show="resultsDataURI">
-                <a id="btn-descargar" download="resultados.csv" ng-href="{{ resultsDataURI }}" class="btn btn-primary"><i class="md md-cloud-download"></i> Descargar como CSV</a>
-        </div>
-        {% endverbatim %}
+
     </div>
 
-    {% include 'policia/modal-tarea.html' %}
+    <!-- Botón de descargar  -->
+    {% verbatim %}
+    <div class="navbar navbar-fixed-bottom hidden-xs" role="navigation">
+        <div class="container">
+            <div ng-show="downloadVisible">
+                <a id="btn-descargar" download="resultados.csv"
+                ng-href="{{ resultsDataURI }}" class="btn btn-primary pull-right"
+                ng-click="downloadDataInternetExplorer()"><i class="md md-cloud-download"></i> Descargar como CSV</a>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+    <!-- /Botón de descargar  -->
+
 </div>
+
 
 {% endblock %}
 

@@ -28,12 +28,20 @@ policia.config(['$provide', function ($provide) {
         }
 
         function downloadDataInternetExplorer(usersArray) {
-            if (navigator.msSaveBlob == true) {
+
+            //http://stackoverflow.com/questions/7405345/data-uri-scheme-and-internet-explorer-9-errors
+            if (window.navigator.msSaveOrOpenBlob) {
                 var csvContent = getCSV(usersArray),
-                    blob = new Blob([csvContent], {
-                        type: "text/csv;charset=utf-8;"
-                    });
-                navigator.msSaveBlob(blob, "resultados.csv");
+                    blobObject = new Blob([csvContent]);
+                window.navigator.msSaveOrOpenBlob(blobObject, 'resultados.csv');
+            }
+
+            if (document.execCommand) {
+                var IEwindow = window.open();
+                IEwindow.document.write('sep=,\r\n' + CSV);
+                IEwindow.document.close();
+                IEwindow.document.execCommand('SaveAs', true, fileName + ".csv");
+                IEwindow.close();
             }
         }
 

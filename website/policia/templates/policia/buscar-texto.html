@@ -72,8 +72,10 @@
                                 <label class="radio-inline"><input ng-model="searchBy" type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
                                 <label class="radio-inline"><input ng-model="searchBy" type="radio" name="search-by" value="semantic">Forma de hablar</label>
                             </fieldset>
+
                             <img ng-show="searchSpinnerVisible"
-                                class="img-responsive col-sm-3" src="{% static 'policia/img/spinner.gif' %}"/>
+                                class="img-responsive col-sm-3"
+                                src="{% static 'policia/img/spinner.gif' %}"/>
 
                             <fieldset>
                                 <br/>
@@ -110,12 +112,25 @@
         <div ng-repeat="user in similarUsers">
             {% include 'policia/usuario-twitter.html' %}
         </div>
-        {% verbatim %}
-        <div ng-show="resultsDataURI">
-            <a id="btn-descargar" download="resultados.csv" ng-href="{{ resultsDataURI }}" class="btn btn-primary"><i class="md md-cloud-download"></i> Descargar como CSV</a>
-        </div>
-        {% endverbatim %}
+
     </div>
+
+    <!-- Botón de descargar  -->
+    {% verbatim %}
+    <div class="navbar navbar-fixed-bottom hidden-xs" role="navigation">
+        <div class="container">
+            <div ng-show="downloadVisible">
+                <a id="btn-descargar" download="resultados.csv"
+                ng-href="{{ resultsDataURI }}"
+                ng-click="downloadDataInternetExplorer()"
+                class="btn btn-primary pull-right">
+                <i class="md md-cloud-download"></i> Descargar como CSV</a>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+    <!-- /Botón de descargar  -->
+
 </div>
 
 {% endblock %}

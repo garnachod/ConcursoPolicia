@@ -594,3 +594,10 @@ body.fixed-left .side-menu.left {
   font-size: 9px;
   line-height: 30px;
 }
+
+li .label {
+    margin-top: 3px;
+    max-width: 30px;
+    overflow: hidden !important;
+    display: inline-block;
+}

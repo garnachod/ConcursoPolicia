@@ -258,6 +258,10 @@ def textoAPI(request, idTarea):
 #########################
 # Secciones del panel
 #########################
+
+def _getNumTareasFinalizadas(request):
+    return Tarea.objects.filter(usuario=request.user).exclude(fin__isnull=True).count()
+
 @login_required
 def resultados(request, idTarea=0):
     try:
@@ -303,7 +307,8 @@ def tareas(request, page=1):
         'tareas': tareas,
         'pagina': page,
         'anterior': anterior,
-        'siguiente':siguiente
+        'siguiente':siguiente,
+        'numTareasFinalizadas': _getNumTareasFinalizadas(request)
     })
 
 @login_required
@@ -314,7 +319,8 @@ def buscarSimilares(request):
     return render(request, "policia/buscar-similares.html", {
         'nombre': nombre,
         'email': email,
-        'titulo': 'Búsqueda de usuarios similares'
+        'titulo': 'Búsqueda de usuarios similares',
+        'numTareasFinalizadas': _getNumTareasFinalizadas(request)
     })
 
 @login_required
@@ -324,7 +330,8 @@ def buscarTexto(request):
     return render(request, "policia/buscar-texto.html", {
         'nombre': nombre,
         'email': email,
-        'titulo': 'Búsqueda de usuarios por texto'
+        'titulo': 'Búsqueda de usuarios por texto',
+        'numTareasFinalizadas': _getNumTareasFinalizadas(request)
     })
 
 #########################

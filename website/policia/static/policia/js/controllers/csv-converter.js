@@ -1,4 +1,4 @@
-/*globals policia, angular, navigator, Blob */
+/*globals policia, angular, navigator, Blob, window */
 var policia = policia || angular.module('policia', []);
 
 policia.config(['$provide', function ($provide) {
@@ -36,13 +36,6 @@ policia.config(['$provide', function ($provide) {
                 window.navigator.msSaveOrOpenBlob(blobObject, 'resultados.csv');
             }
 
-            if (document.execCommand) {
-                var IEwindow = window.open();
-                IEwindow.document.write('sep=,\r\n' + CSV);
-                IEwindow.document.close();
-                IEwindow.document.execCommand('SaveAs', true, fileName + ".csv");
-                IEwindow.close();
-            }
         }
 
         return {

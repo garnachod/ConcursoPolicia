@@ -99,7 +99,7 @@ class Doc2Vec(object):
 		dm_ = 1 
 		if method != "DBOW":
 			dm_ = 0
-		model = gensim.models.Doc2Vec(min_count=1, window=7, size=dimension, dm = dm_, sample=1e-3, negative=5,workers=6, alpha=0.04)
+		model = gensim.models.Doc2Vec(min_count=1, window=7, size=dimension, dm = dm_, sample=1e-3, negative=5,workers=6, alpha=0.02)
 		
 		print "inicio vocab"
 		model.build_vocab(sentences)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-lib_path = os.path.abspath('../../')
-sys.path.append(lib_path)
+#lib_path = os.path.abspath('../../')
+#sys.path.append(lib_path)
 from DBbridge.EscritorUsuariosInstagramCassandra import EscritorUsuariosInstagramCassandra
 from DBbridge.EscritorSeguidoresInstagramNeo4j import EscritorSeguidoresInstagramNeo4j
 

@@ -40,3 +40,5 @@ Primera semana:
 	* Instalar dependencias con pip install -r requirements.txt
 	* Creat tablas de Django con python manage.py migrate
 * Configurar cronjobs
+* Si Luigi se va a lanzar desde apache:
+	* chown -R www-data:www-data LuigiTasks/

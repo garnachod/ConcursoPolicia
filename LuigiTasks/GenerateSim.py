@@ -203,7 +203,7 @@ class GenerateSimRelations_semantic(luigi.Task):
 		relaciones_coseno = []
 		for user in seguidoresysiguiendo:
 			tweets_ = consultas.getTweetsUsuarioCassandra_statusAndLang_noRT(user)
-			vector_ = np.array([generator.getVector_semantic(tweets, self.lang)]).T
+			vector_ = np.array([generator.getVector_semantic(tweets_, self.lang)]).T
 			coseno = np.dot(vector, vector_)[0]
 			relaciones_coseno.append((user, coseno))
 
@@ -252,7 +252,7 @@ class GenerateSimRelations_topics(luigi.Task):
 		relaciones_coseno = []
 		for user in seguidoresysiguiendo:
 			tweets_ = consultas.getTweetsUsuarioCassandra_statusAndLang(user)
-			vector_ = np.array([generator.getVector_topics(tweets, self.lang)]).T
+			vector_ = np.array([generator.getVector_topics(tweets_, self.lang)]).T
 			coseno = np.dot(vector, vector_)[0]
 			relaciones_coseno.append((user, coseno))
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-lib_path = os.path.abspath('/home/dani/tfg/sources')
-sys.path.append(lib_path)
+#lib_path = os.path.abspath('/home/dani/tfg/sources')
+#sys.path.append(lib_path)
 
 try:
 	from cassandra.cluster import Cluster

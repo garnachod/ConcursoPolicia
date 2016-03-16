@@ -22,8 +22,8 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
     $scope.similarUsers = [];
     $scope.resultsDataURI = '';
 
-    // Clases
-    $scope.searchUsernameClass = "";
+    // Classes
+    $scope.usernameValidationClass = "text-danger large md md-close";
 
     // Shows
     $scope.searchSpinnerVisible = false;
@@ -86,16 +86,16 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
         }
 
         if (username.length === 0) {
-            $scope.searchUsernameClass = "has-error";
+            $scope.usernameValidationClass = "text-danger large md md-close";
             return;
         }
 
         $http.get('/api/validar/usuario/' + username + '/')
             .success(function (data) {
                 if (data === "invalid") {
-                    $scope.searchUsernameClass = "has-error";
+                    $scope.usernameValidationClass = "text-danger large md md-close";
                 } else {
-                    $scope.searchUsernameClass = "";
+                    $scope.usernameValidationClass = "text-success large md md-check";
                 }
             });
     };

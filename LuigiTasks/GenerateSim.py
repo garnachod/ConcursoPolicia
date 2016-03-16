@@ -332,9 +332,9 @@ class GenerateSimText_semantic(luigi.Task):
 			Row = namedtuple('Row', 'status, lang')
 			tweets = [Row(text, self.lang)]
 			generator = GenerateVectorsFromTweets()
-			vector = generator.getVector_topics(tweets, self.lang)
+			vector = generator.getVector_semantic(tweets, self.lang)
 			searcher = AnnoyUserVectorSearcher()
-			users = searcher.getSimilarUsers_topics(vector, self.lang, 5000)
+			users = searcher.getSimilarUsers_semantic(vector, self.lang, 5000)
 
 			with self.output().open('w') as out_file:
 				for user in users:

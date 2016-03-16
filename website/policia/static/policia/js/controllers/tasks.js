@@ -17,12 +17,10 @@ policia.controller('tasks', function ($scope, $http) {
         $http.get('/api/tarea/eliminar/' + taskId + '/')
             .success(function () {
                 console.log('Tarea eliminada');
-                update();
             })
             .error(function (data) {
                 console.error('Error eliminando tarea');
                 console.error(data);
-                update();
             });
     };
 

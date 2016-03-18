@@ -57,6 +57,7 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
         $scope.searchMax = parseInt(getQueryParam('max'), 10) || $scope.searchMax;
         $scope.searchBy = getQueryParam('by') || $scope.searchBy;
         $scope.searchIn = getQueryParam('in') || $scope.searchIn;
+        $scope.checkUsername();
         if ($scope.searchUsername.length > 0) {
             $scope.search();
         }

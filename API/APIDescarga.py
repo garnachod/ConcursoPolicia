@@ -78,9 +78,9 @@ class APIDescarga(object):
 		"""
 		recolector = None
 		if semantic == True:
-			recolector = GenerateSimAll_semantic(usuario = username, lang = lang)
+			recolector = GenerateSimAll_semantic(usuario = username, lang = lang, idtarea=id_tarea)
 		else:
-			recolector = GenerateSimAll_topics(usuario = username, lang = lang)
+			recolector = GenerateSimAll_topics(usuario = username, lang = lang, idtarea=id_tarea)
 
 		if os.path.isfile(recolector.output().path) == False:
 			p = _generateTwitterUser(username, lang, semantic, id_tarea)
@@ -110,9 +110,9 @@ class APIDescarga(object):
 		"""
 		recolector = None
 		if semantic == True:
-			recolector = GenerateSimRelations_semantic(usuario = username, lang = lang)
+			recolector = GenerateSimRelations_semantic(usuario = username, lang = lang, idtarea=id_tarea)
 		else:
-			recolector = GenerateSimRelations_topics(usuario = username, lang = lang)
+			recolector = GenerateSimRelations_topics(usuario = username, lang = lang, idtarea=id_tarea)
 
 		if os.path.isfile(recolector.output().path) == False:
 			p = _generateTwitterRelations(username, lang, semantic, id_tarea)

@@ -75,6 +75,20 @@ class ConsultasSQL_police(object):
 			row = self.cur_sql.fetchone()
 			return row[0]
 		except Exception, e:
+			print str(e)
+			return False
+
+	def getTiempoInicioTarea(self, id_task):
+		#print id_task
+		query = "SELECT inicio FROM policia_tarea WHERE id=%s;"
+		try:
+			self.cur_sql = self.conSql.getCursor_police()
+
+			self.cur_sql.execute(query, [id_task, ])
+			row = self.cur_sql.fetchone()
+			return row[0]
+		except Exception, e:
+			print str(e)
 			return False
 
 	def getEmailFromUser(self, id_user):

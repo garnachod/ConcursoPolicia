@@ -65,7 +65,17 @@ class GenerateSimAll_topics(luigi.Task):
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
+		"""
+		se transforma la fecha NOW
 		now = datetime.datetime.now()
+		a la de la creacion de la tarea
+		"""
+		consultas = ConsultasSQL_police()
+		now = consultas.getTiempoInicioTarea(self.idtarea)
+		
+		if now == False:
+			raise Exception("la tarea no existe")
+
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -123,7 +133,17 @@ class GenerateSimAll_semantic(luigi.Task):
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
+		"""
+		se transforma la fecha NOW
 		now = datetime.datetime.now()
+		a la de la creacion de la tarea
+		"""
+		consultas = ConsultasSQL_police()
+		now = consultas.getTiempoInicioTarea(self.idtarea)
+		
+		if now == False:
+			raise Exception("la tarea no existe")
+
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -180,7 +200,17 @@ class GenerateSimRelations_semantic(luigi.Task):
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
+		"""
+		se transforma la fecha NOW
 		now = datetime.datetime.now()
+		a la de la creacion de la tarea
+		"""
+		consultas = ConsultasSQL_police()
+		now = consultas.getTiempoInicioTarea(self.idtarea)
+		
+		if now == False:
+			raise Exception("la tarea no existe")
+
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -229,7 +259,17 @@ class GenerateSimRelations_topics(luigi.Task):
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
+		"""
+		se transforma la fecha NOW
 		now = datetime.datetime.now()
+		a la de la creacion de la tarea
+		"""
+		consultas = ConsultasSQL_police()
+		now = consultas.getTiempoInicioTarea(self.idtarea)
+		
+		if now == False:
+			raise Exception("la tarea no existe")
+
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -274,7 +314,17 @@ class GenerateSimText_topics(luigi.Task):
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
+		"""
+		se transforma la fecha NOW
 		now = datetime.datetime.now()
+		a la de la creacion de la tarea
+		"""
+		consultas = ConsultasSQL_police()
+		now = consultas.getTiempoInicioTarea(self.idtarea)
+		
+		if now == False:
+			raise Exception("la tarea no existe")
+
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -315,7 +365,17 @@ class GenerateSimText_semantic(luigi.Task):
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
+		"""
+		se transforma la fecha NOW
 		now = datetime.datetime.now()
+		a la de la creacion de la tarea
+		"""
+		consultas = ConsultasSQL_police()
+		now = consultas.getTiempoInicioTarea(self.idtarea)
+		
+		if now == False:
+			raise Exception("la tarea no existe")
+
 		dia = now.day
 		mes = now.month
 		anyo = now.year

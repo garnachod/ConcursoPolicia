@@ -73,7 +73,7 @@ class APITextos(object):
 		if numberOfSim < 1 or numberOfSim > 5000:
 			raise Exception("Parametros incorrectos")
 
-
+		#print id_tarea
 		path = APIDescarga.downloadTwitterUser(username, lang, False, id_tarea)
 		if path == False:
 			return False

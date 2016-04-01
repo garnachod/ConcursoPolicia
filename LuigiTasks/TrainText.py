@@ -51,7 +51,7 @@ class TrainDoc2VecLang_topics(luigi.Task):
 			savePath = self.path.replace("check","model")
 			#print self.input().path
 			conf = Conf()
-			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 20, method="DBOW")
+			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 20, method="DM")
 			out.write("OK")
 
 class TrainDoc2VecLang_semantic(luigi.Task):

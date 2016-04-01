@@ -97,7 +97,7 @@ class Doc2Vec(object):
 
 		total_start = time.time()
 		dm_ = 1 
-		if method != "DBOW":
+		if method == "DBOW":
 			dm_ = 0
 		model = gensim.models.Doc2Vec(min_count=1, window=7, size=dimension, dm = dm_, sample=1e-3, negative=5,workers=6, alpha=0.02)
 		

@@ -175,7 +175,7 @@ def buscarSimilaresAPI(request):
             return JsonResponse({
                 'status': "db_error"
             })
-
+ 
     try:
         method = _getUsersSimilarMethod(True, searchIn, searchBy);
         result = method(searchUsername, searchLanguage, int(searchMax), idTarea)

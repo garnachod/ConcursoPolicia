@@ -102,7 +102,7 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
                     $scope.usernameValidationClass = "text-success large md md-check";
                 }
             });
-    };
+    }; 
 
     $scope.search = function () {
 

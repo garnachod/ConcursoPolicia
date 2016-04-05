@@ -52,11 +52,14 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
     }
 
     $scope.updateSearchParams = function () {
+        var taskId = -1;
         $scope.searchUsername = getQueryParam('username') || $scope.searchUsername;
         $scope.searchLanguage =  getQueryParam('idioma') || $scope.searchLanguage;
         $scope.searchMax = parseInt(getQueryParam('max'), 10) || $scope.searchMax;
         $scope.searchBy = getQueryParam('by') || $scope.searchBy;
         $scope.searchIn = getQueryParam('in') || $scope.searchIn;
+        $scope.taskId = getQueryParam('id') || taskId;
+        
         $scope.checkUsername();
         if ($scope.searchUsername.length > 0) {
             $scope.search();
@@ -112,6 +115,18 @@ policia.controller('searchSimilar', ['$scope', '$http', 'CSVConverter', function
                 'search-in': $scope.searchIn,
                 'r':  Math.floor(Math.random() * (9999))
             };
+        if ($scope.taskId != -1){
+            endpoint = '/api/buscar/similares/',
+                params = {
+                    'search-username': $scope.searchUsername,
+                    'search-language': $scope.searchLanguage,
+                    'search-max': $scope.searchMax,
+                    'search-by': $scope.searchBy,
+                    'search-in': $scope.searchIn,
+                    'id': $scope.taskId,
+                    'r':  Math.floor(Math.random() * (9999))
+                };
+        }
 
         $scope.searchSpinnerVisible = true;
         $scope.searchButtonVisible = false;

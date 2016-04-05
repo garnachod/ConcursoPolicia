@@ -162,7 +162,11 @@ def buscarSimilaresAPI(request):
             'status': "missing_params"
         })
 
-    idTarea = _buscarDuplicado(request, searchIn, searchBy, searchUsername, None, searchLanguage, searchMax)
+    idTarea = None
+    if "id" in request.GET:
+        idTarea = request.GET["id"]
+    else:
+        idTarea = _buscarDuplicado(request, searchIn, searchBy, searchUsername, None, searchLanguage, searchMax)
 
     if idTarea is None:
         try:
@@ -202,7 +206,12 @@ def buscarTextoAPI(request):
             'status': "missing_params"
         })
 
-    idTarea = _buscarDuplicado(request, 'all', searchBy, None, searchText, searchLanguage, searchMax)
+    idTarea = None
+    if "id" in request.POST:
+        idTarea = request.POST["id"]
+        print idTarea
+    else:
+        idTarea = _buscarDuplicado(request, 'all', searchBy, None, searchText, searchLanguage, searchMax)
 
     if idTarea is None:
         try:
@@ -272,7 +281,8 @@ def resultados(request, idTarea=0):
                 '&idioma=' + tarea.idioma +
                 '&max=' + str(tarea.num_usuarios) +
                 '&by=' + _getSearchBy(tarea.tipo) +
-                '&in=' + _getSearchIn(tarea.tipo))
+                '&in=' + _getSearchIn(tarea.tipo) +
+                '&id=' + str(idTarea))
         else:
             return HttpResponseRedirect(reverse('policia:buscarTexto') +
                 '?id=' + str(tarea.id) +

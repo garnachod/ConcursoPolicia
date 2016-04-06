@@ -28,7 +28,7 @@ class _generateTextSim(multiprocessing.Process):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "PYTHONPATH=\"${PYTHONPATH}:/home/dani/github/ConcursoPolicia/LuigiTasks\" && export PYTHONPATH && luigi --module GenerateSim "
+		comand = "luigi --module LuigiTasks.GenerateSim "
 		if self.semantic == True:
 			comand += "GenerateSimText_semantic "
 		else:

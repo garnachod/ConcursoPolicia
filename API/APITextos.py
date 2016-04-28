@@ -14,7 +14,7 @@ import os
 import re
 import multiprocessing
 
-re_tuser = re.compile(r'@?[a-zA-Z0-9_]+')
+re_tuser = re.compile(r'^@?[a-zA-Z0-9_]+$')
 
 class _generateTextSim(multiprocessing.Process):
 	"""docstring for _generateTwitterUser"""

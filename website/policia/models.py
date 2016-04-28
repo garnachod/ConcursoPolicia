@@ -124,7 +124,8 @@ class Tarea(models.Model):
     """
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tipo = models.CharField(max_length=100)
-    username = models.CharField(max_length=20)
+    texto = models.TextField(null=True)
+    username = models.CharField(max_length=20, null=True)
     idioma = models.CharField(max_length=2)
     num_usuarios = models.PositiveSmallIntegerField()
     inicio = models.DateTimeField()

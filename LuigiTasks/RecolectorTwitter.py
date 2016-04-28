@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-lib_path = os.path.abspath('../')
-sys.path.append(lib_path)
+#lib_path = os.path.abspath('/home/dani/github/ConcursoPolicia')
+#if lib_path not in sys.path:
+#	sys.path.append(lib_path)
 
 from DBbridge.EscritorTweetsCassandra import EscritorTweetsCassandra
 from DBbridge.EscritorSeguidoresNeo4j import EscritorSeguidoresNeo4j
@@ -22,11 +23,12 @@ from Config.Conf import Conf
 import datetime
 class RecolectorUsuarioTwitter(luigi.Task):
 	usuario = luigi.Parameter()
+	date = luigi.DateParameter(default=datetime.datetime.now())
 
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
-		now = datetime.datetime.now()
+		now = self.date
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -286,11 +288,12 @@ class RecolectorTweetsSiguendoTwitter(luigi.Task):
 		a continuacion descarga todos los tweets de esos siguiendo
 	"""
 	usuario = luigi.Parameter()
+	date = luigi.DateParameter(default=datetime.datetime.now())
 
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
-		now = datetime.datetime.now()
+		now = self.date
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -321,7 +324,7 @@ class RecolectorTweetsSiguendoTwitter(luigi.Task):
 		if identificador > 0:
 			siguiendos = consultasNeo4j.getListaIDsSiguiendoByUserID(identificador)
 			for siguiendo in siguiendos:
-				yield RecolectorUsuarioTwitter(siguiendo)
+				yield RecolectorUsuarioTwitter(siguiendo, date=self.date)
 
 		with self.output().open('w') as out_file:
 			out_file.write("OK")
@@ -337,11 +340,12 @@ class RecolectorTweetsSeguidoresTwitter(luigi.Task):
 			PYTHONPATH='' luigi --module RecolectorTwitter RecolectorTweetsSeguidoresTwitter --usuario ...
 	"""
 	usuario = luigi.Parameter()
+	date = luigi.DateParameter(default=datetime.datetime.now())
 
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()
-		now = datetime.datetime.now()
+		now = self.date
 		dia = now.day
 		mes = now.month
 		anyo = now.year
@@ -372,7 +376,7 @@ class RecolectorTweetsSeguidoresTwitter(luigi.Task):
 		if identificador > 0:
 			seguidores = consultasNeo4j.getListaIDsSeguidoresByUserID(identificador)
 			for seguidor in seguidores:
-				yield RecolectorUsuarioTwitter(seguidor)
+				yield RecolectorUsuarioTwitter(seguidor,date=self.date)
 
 		with self.output().open('w') as out_file:
 			out_file.write("OK")
@@ -380,9 +384,10 @@ class RecolectorTweetsSeguidoresTwitter(luigi.Task):
 
 class RecolectorCirculoUsuario(luigi.Task):
 	usuario = luigi.Parameter()
+	date = luigi.DateParameter(default=datetime.datetime.now())
 
 	def requires(self):
-		return [RecolectorTweetsSeguidoresTwitter(self.usuario), RecolectorTweetsSiguendoTwitter(self.usuario)]
+		return [RecolectorTweetsSeguidoresTwitter(self.usuario, date=self.date), RecolectorTweetsSiguendoTwitter(self.usuario, date=self.date)]
 
 	def output(self):
 		conf = Conf()

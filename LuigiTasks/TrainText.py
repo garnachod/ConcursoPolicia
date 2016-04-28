@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-lib_path = os.path.abspath('../')
-sys.path.append(lib_path)
+#lib_path = os.path.abspath('/home/dani/github/ConcursoPolicia')
+#if lib_path not in sys.path:
+#	sys.path.append(lib_path)
 
 import luigi
 from ClasificaUsuariosPorIdioma import *
@@ -32,11 +33,13 @@ class TrainDoc2VecLang_topics(luigi.Task):
 	idioma = luigi.Parameter()
 
 	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now()
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.path = 'TrainText/Doc2VecLang_topics/%s/%s/%s_%s.check'%(anyo, mes, dia, self.idioma)
+		self.path = '%s/LuigiTasks/TrainText/Doc2VecLang_topics/%s/%s/%s_%s.check'%(path,anyo, mes, dia, self.idioma)
 		return luigi.LocalTarget(path=self.path)
 
 	def requires(self):
@@ -70,11 +73,13 @@ class TrainDoc2VecLang_semantic(luigi.Task):
 	idioma = luigi.Parameter()
 
 	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now()
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		self.path = 'TrainText/Doc2VecLang_semantic/%s/%s/%s_%s.check'%(anyo, mes, dia, self.idioma)
+		self.path = '%s/LuigiTasks/TrainText/Doc2VecLang_semantic/%s/%s/%s_%s.check'%(path, anyo, mes, dia, self.idioma)
 		return luigi.LocalTarget(path=self.path)
 
 	def requires(self):
@@ -85,7 +90,7 @@ class TrainDoc2VecLang_semantic(luigi.Task):
 			d2v = Doc2Vec()
 			savePath = self.path.replace("check","model")
 			conf = Conf()
-			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 20, method="DM")
+			d2v.train(self.input().path, savePath, dimension = conf.getDimVectors(), epochs = 30, method="DM")
 			out.write("OK")
 
 class GenerateVecsAnnoyLang_topics(luigi.Task):
@@ -107,11 +112,14 @@ class GenerateVecsAnnoyLang_topics(luigi.Task):
 	"""
 	idioma = luigi.Parameter()
 	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now()
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='AnnoyVecs/topics/%s/%s/%s_%s.json'%(anyo, mes, dia, self.idioma))
+		self.path = '%s/LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.json'%(path, anyo, mes, dia, self.idioma)
+		return luigi.LocalTarget(path=self.path)
 
 	def requires(self):
 		return [GeneraTextoPorIdioma_topics(self.idioma), TrainDoc2VecLang_topics(self.idioma)]
@@ -145,7 +153,7 @@ class GenerateVecsAnnoyLang_topics(luigi.Task):
 			dia = now.day
 			mes = now.month
 			anyo = now.year
-			path = 'AnnoyVecs/topics/%s/%s/%s_%s.json'%(anyo, mes, dia, self.idioma)
+			path = self.path
 			t.save(path.replace("json","annoy"))
 
 class GenerateVecsAnnoyLang_semantic(luigi.Task):
@@ -167,11 +175,14 @@ class GenerateVecsAnnoyLang_semantic(luigi.Task):
 	"""
 	idioma = luigi.Parameter()
 	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
 		now = datetime.datetime.now()
 		dia = now.day
 		mes = now.month
 		anyo = now.year
-		return luigi.LocalTarget(path='AnnoyVecs/semantic/%s/%s/%s_%s.json'%(anyo, mes, dia, self.idioma))
+		self.path = '%s/LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.json'%(path, anyo, mes, dia, self.idioma)
+		return luigi.LocalTarget(path=self.path)
 
 	def requires(self):
 		return [GeneraTextoPorIdioma_semantic(self.idioma), TrainDoc2VecLang_semantic(self.idioma)]
@@ -205,7 +216,7 @@ class GenerateVecsAnnoyLang_semantic(luigi.Task):
 			dia = now.day
 			mes = now.month
 			anyo = now.year
-			path = 'AnnoyVecs/semantic/%s/%s/%s_%s.json'%(anyo, mes, dia, self.idioma)
+			path = self.path
 			t.save(path.replace("json","annoy"))
 		
 		

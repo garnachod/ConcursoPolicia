@@ -110,6 +110,7 @@ class EscritorTweetsUsersCassandra(Escritor):
 		name = data["name"]
 		#screen name
 		screen_name = data["screen_name"]
+		screen_name = screen_name.lower()
 		#location
 		location = data["location"]
 		#followers_count

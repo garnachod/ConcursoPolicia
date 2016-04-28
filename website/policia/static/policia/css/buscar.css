@@ -15,6 +15,12 @@ fieldset .radio-inline {
     max-width:80px;
 }
 
+.twitter-thumbnail {
+    height: 90px;
+    width: 90px;
+    border-radius: 50%;
+}
+
 .twitter-name {
     margin-top: 13px;
 }
@@ -29,6 +35,10 @@ fieldset .radio-inline {
     -o-text-overflow: ellipsis;
     text-overflow: ellipsis;
     display: block;
+}
+
+.twitter-name, .twitter-location {
+    height: 20px;
 }
 
 .twitter-stats {

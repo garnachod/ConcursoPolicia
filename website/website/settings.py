@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 import os
 import sys
 lib_path = os.path.abspath('../')
-sys.path.append(lib_path)
+if lib_path not in sys.path:
+	sys.path.append(lib_path)
 from Config.Conf import Conf
 
 infoSQL = Conf().getSQLPoliceInfo()
@@ -21,6 +22,9 @@ infoSQL = Conf().getSQLPoliceInfo()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+CROS_ORIGIN_WHITELIST = {
+    'twitter.com'
+}
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -33,10 +37,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'policia.apps.PoliciaConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,6 +51,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE_CLASSES = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

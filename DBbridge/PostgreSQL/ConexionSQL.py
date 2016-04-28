@@ -25,8 +25,12 @@ class ConexionSQL():
 			return self.policeConn
 
 		def getCursor_police(self):
-			return self.policeConn.cursor()
-
+			try:
+				return self.policeConn.cursor()
+			except:
+				infoSQL = Conf().getSQLPoliceInfo()
+				self.policeConn = psycopg2.connect(database=infoSQL.database, user=infoSQL.user, password=infoSQL.password, host=infoSQL.host)
+				return self.policeConn.cursor()
 
 	# storage for the instance reference
 	__instance = None

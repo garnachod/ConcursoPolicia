@@ -9,131 +9,133 @@
 
 {% block content %}
 
-<div id="search-box" class="row">
-    <div class="col-md-12 text-left">
-        <div class="card-box">
-            <form method="get" action="{% url 'policia:buscarSimilaresAPI' %}" class="form-inline">
-                {% csrf_token %}
+<div
+    ng-cloak
+    ng-app="policia"
+    ng-controller="searchText"
+    ng-init="updateSearchParams()">
 
-                <div class="row">
-                    <div class="col-md-6 col-lg-5">
-                        <fieldset class="row">
-                            <div  class="col-md-12">
-                                <label for="search-username">Buscar texto:  </label>
+    {% include 'policia/modal-tarea.html' %}
+
+    <div id="search-box" class="row">
+        <div class="col-md-12 text-left">
+            <div class="card-box">
+                <form class="form-inline">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6 col-lg-6">
+                            <fieldset class="row">
+                                <div  class="col-md-12">
+                                    <label for="search-text">Buscar texto:  </label>
+                                    <br/>
+                                        <textarea
+                                            ng-model="searchText"
+                                            class="form-control"id="search-text"
+                                            name="search-text" maxlength="100000"
+                                            id="search-text" autofocus></textarea>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                        <div class="col-md-6 col-lg-6">
+                            <fieldset class="row">
                                 <br/>
-                                    <textarea
-                                        class="form-control"
-                                        placeholder="" id="search-text"
-                                        name="search-text" maxlength="100"
-                                        id="search-text" autofocus>
-                                    </textarea>
-                            </div>
+                            </fieldset>
+                            <fieldset class="row">
+                                    <div class="col-xs-4">
+                                        <label for="search-language">Idioma:  </label>
+                                        <select
+                                            ng-model="searchLanguage"
+                                            class="form-control" id="search-language" name="search-language">
+                                            <option value="es">ES</option>
+                                            <option value="en">EN</option>
+                                            <option value="ar">AR</option>
+                                            <option value="ru">RU</option>
+                                            <option value="fr">FR</option>
+                                        </select>
 
-                        </fieldset>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <fieldset class="row">
-                                <div class="col-xs-4">
-                                    <label for="search-language">Idioma:  </label>
-                                    <select class="form-control" id="search-language" name="search-language">
-                                        <option value="es">ES</option>
-                                        <option value="en">EN</option>
-                                        <option value="ar">AR</option>
-                                        <option value="ru">RU</option>
-                                        <option value="fr">FR</option>
-                                    </select>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <label for="search-max">Máx. Resultados:  </label>
+                                        <input
+                                            ng-model="searchMax"
+                                            type="number" class="form-control" id="search-max"
+                                            name="search-max" maxlength="5" min="1"
+                                            max="5000" value="100"/>
 
-                                </div>
-                                <div class="col-xs-8">
-                                    <label for="search-max">Máx. Resultados:  </label>
-                                    <input type="number" class="form-control" id="search-max"
-                                        name="search-max" maxlength="5" min="1"
-                                        max="5000" value="100"/>
-
-                                </div>
-                        </fieldset>
-                        <fieldset>
+                                    </div>
+                            </fieldset>
+                            <fieldset>
                                 <label for="search-by">Buscar por:  </label>
                                 <br/>
-                                <label class="radio-inline"><input type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
-                                <label class="radio-inline"><input type="radio" name="search-by" value="semantic">Forma de hablar</label>
-                        </fieldset>
-                        <fieldset>
+                                <label class="radio-inline"><input ng-model="searchBy" type="radio" name="search-by" value="topic" checked>Temas de los que habla</label>
+                                <label class="radio-inline"><input ng-model="searchBy" type="radio" name="search-by" value="semantic">Forma de hablar</label>
+                            </fieldset>
 
-                                <label for="search-type">Buscar en:  </label>
+                            <img ng-show="searchSpinnerVisible"
+                                class="img-responsive col-sm-3"
+                                src="{% static 'policia/img/spinner.gif' %}"/>
+
+                            <fieldset>
                                 <br/>
-                                <label class="radio-inline"><input type="radio" name="search-in" value="all" checked>Twitter global</label>
-                                <label class="radio-inline"><input type="radio" name="search-in" value="relations">Comunidad del usuario</label>
-                        </fieldset>
-                    </div>
-                    <div class="col-md-12 col-lg-2">
-                        <fieldset>
-                            <div class="form-group">
+                                <div class="form-group" ng-show="searchButtonVisible">
 
-                                <label for="search-button" class="form-control btn btn-primary">
-                                    <i class="md md-search"></i> Buscar similares
-                                </label>
-                                <input id="search-button" name="search-button" class="hidden" type="submit" value="Buscar"/>
+                                    <label for="search-button" class="form-control btn btn-primary pull-right">
+                                        <i class="md md-search"></i> Buscar similares
+                                    </label>
+                                    <input id="search-button"
+                                        ng-click="search()"
+                                        name="search-button" class="hidden"
+                                        type="submit" value="Buscar"/>
 
-                            </div>
-                        </fieldset>
-                    </div>
-                </div><!-- /.row-->
-            </form>
-        </div> <!-- /.card-box -->
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div><!-- /.row-->
+                </form>
+            </div> <!-- /.card-box -->
+        </div> <!-- /col-md-12 -->
+    </div> <!-- /search-box -->
+
+    <div ng-cloack id="results-box" class="row">
+        <div ng-show="errorVisible" class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="text-center alert alert-danger">
+                <strong>¡Ups!</strong> {% verbatim %}{{ error }}{% endverbatim %}
+            </div>
+        </div>
+        <div ng-show="successVisible" class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="text-center alert alert-success">
+                <strong>¡Hecho!</strong> La búsqueda se ha añadido a <a href="/">tareas pendientes</a>.
+            </div>
+        </div>
+        <div ng-repeat="user in similarUsers">
+            {% include 'policia/usuario-twitter.html' %}
+        </div>
+
     </div>
-</div> <!-- /search-box -->
 
-<div id="results-box" class="row">
-
-    <!-- Template Detalles User Twitter -->
-    <div class="col-md-4 col-sm-6 text-left">
-        <div class="card-box">
-            <div class="row">
-                <div class="col-md-4">
-                    <a href="#">
-                        <img class="img-circle img-responsive" src="https://pbs.twimg.com/profile_images/674751297363550208/SKw6Rg8H_400x400.jpg"/>
-                    </a>
-
-                    <p class="twitter-name text-center">
-                        <small class="text-uppercase">P. Molins</small>
-                    </p>
-                </div>
-                <div class="col-md-8">
-                    <a class="twitter-handle" href="#">@p_molins</a>
-
-                    <br/>
-
-                    <small>
-                        Fecha de creación: 12/12/2016
-                        <br/>
-                        <i class="md md-location-on"></i> p_molins.getCurrentPosition();
-                    </small>
-
-                    <div class="twitter-stats row">
-                        <div class="col-md-6 text-center">
-                            <div class="twitter-number">112</div>
-                            <small>SEGUIDORES</small>
-                        </div>
-                        <div class="col-md-6 text-center">
-                            <div class="twitter-number">105</div>
-                            <small>SIGUIENDO</small>
-                        </div>
-                    </div>
-                </div>
+    <!-- Botón de descargar  -->
+    {% verbatim %}
+    <div class="navbar navbar-fixed-bottom hidden-xs" role="navigation">
+        <div class="container">
+            <div ng-show="downloadVisible">
+                <a id="btn-descargar" download="resultados.csv"
+                ng-href="{{ resultsDataURI }}"
+                ng-click="downloadDataInternetExplorer()"
+                class="btn btn-primary pull-right">
+                <i class="md md-cloud-download"></i> Descargar como CSV</a>
             </div>
         </div>
     </div>
-    <!-- /Template Detalles User Twitter -->
+    {% endverbatim %}
+    <!-- /Botón de descargar  -->
 
 </div>
 
-{% include 'policia/modal-tarea.html' %}
+{% endblock %}
 
-<a href="#custom-modal" class="btn btn-primary waves-effect waves-light"
-    data-animation="blur" data-plugin="custommodal"
-    data-overlaySpeed="100" data-overlayColor="#36404a">
-    Show Me
-</a>
-
+{% block scripts %}
+<script src="{% static "policia/js/controllers/search-text.js" %}"></script>
+<script src="{% static "policia/js/controllers/csv-converter.js" %}"></script>
 {% endblock %}

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 #Para prueba unitarias
-import os
-import sys
-lib_path = os.path.abspath('/home/dani/tfg/sources')
-sys.path.append(lib_path)
+#import os
+#import sys
+#lib_path = os.path.abspath('/home/dani/tfg/sources')
+#sys.path.append(lib_path)
 
 from Cassandra.ConexionCassandra import ConexionCassandra
 from collections import namedtuple
@@ -191,7 +191,7 @@ class ConsultasCassandra(object):
 		"""
 		query = """SELECT id_twitter FROM users WHERE screen_name = %s LIMIT 1;"""
 		try:
-			rows = self.session_cassandra.execute(query, [twitterUser])
+			rows = self.session_cassandra.execute(query, [twitterUser.lower()])
 			if len(rows) == 0:
 				return None
 

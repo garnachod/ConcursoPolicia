@@ -29,7 +29,8 @@ class GenerateVectorsFromTweets():
 			for tweet in tweets:
 				if tweet.lang == lang:
 					tweetLimpio = LimpiadorTweets.clean(tweet.status)
-					text_final += tweetLimpio + u" "
+					tweetSinStopWords = LimpiadorTweets.stopWordsByLanguagefilter(tweetLimpio, tweet.lang)
+					text_final += tweetSinStopWords + u" "
 
 			return text_final
 

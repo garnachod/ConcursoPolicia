@@ -95,12 +95,12 @@ class AnalyticsCommunity(luigi.Task):
 			DG = nx.read_gexf(fin)
 
 		DG = remove_edges(DG)
-		page_rank = self.getComputedDictionary(DG)
-		page_rank = [(key, page_rank[key]) for key in page_rank]
-		page_rank = sorted(page_rank, key=lambda x: x[1], reverse = True)[:20]
+		rank = self.getComputedDictionary(DG)
+		rank = [(key, rank[key]) for key in rank]
+		rank = sorted(rank, key=lambda x: x[1], reverse = True)[:20]
 
 		
-		for user_id, value in page_rank:
+		for user_id, value in rank:
 			print consultas.getScreenNameByUserIDCassandra(long(user_id))
 
 
@@ -119,7 +119,7 @@ class PagerankCommunity(AnalyticsCommunity):
 
 class ClosenessCommunity(AnalyticsCommunity):
 	"""
-		extiende de AnalyticsCommunity, computa el pagerank:
+		extiende de AnalyticsCommunity, computa el Closeness:
 			implementado getFolderAnalysis()
 			implementado getComputedDictionary()
 	"""

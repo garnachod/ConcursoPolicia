@@ -343,7 +343,15 @@ def buscarTexto(request):
         'titulo': 'Búsqueda de usuarios por texto',
         'numTareasFinalizadas': _getNumTareasFinalizadas(request)
     })
-
+def buscarTiempo(request):
+    nombre = request.user.nombre + " " + request.user.apellidos
+    email = request.user.email
+    return render(request, "policia/buscar-tiempo.html", {
+        'nombre': nombre,
+        'email': email,
+        'titulo': 'Búsqueda de usuarios tiempo en la publicación',
+        'numTareasFinalizadas': _getNumTareasFinalizadas(request)
+    })
 #########################
 # Sitema de autenticación
 #########################

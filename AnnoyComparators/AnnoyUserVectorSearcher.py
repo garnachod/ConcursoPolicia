@@ -21,7 +21,7 @@ class AnnoyUserVectorSearcher(object):
 		json_loc = '%s/LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.json'%(path, anyo, mes, dia, lang)
 		model_loc = '%s/LuigiTasks/AnnoyVecs/topics/%s/%s/%s_%s.annoy'%(path, anyo, mes, dia, lang)
 		days_minus = 1
-		while os.path.isfile(model_loc) == False and days_minus < 20:
+		while os.path.isfile(model_loc) == False and days_minus < 200:
 			now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
 			dia = now.day
 			mes = now.month
@@ -60,7 +60,7 @@ class AnnoyUserVectorSearcher(object):
 		json_loc = '%s/LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.json'%(path, anyo, mes, dia, lang)
 		model_loc = '%s/LuigiTasks/AnnoyVecs/semantic/%s/%s/%s_%s.annoy'%(path, anyo, mes, dia, lang)
 		days_minus = 1
-		while os.path.isfile(model_loc) == False and days_minus < 20:
+		while os.path.isfile(model_loc) == False and days_minus < 200:
 			now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
 			dia = now.day
 			mes = now.month

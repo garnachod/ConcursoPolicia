@@ -209,9 +209,6 @@ class ConsultasCassandra(object):
 		query = """SELECT screen_name FROM users WHERE id_twitter = %s LIMIT 1;"""
 		try:
 			rows = self.session_cassandra.execute(query, [user_id])
-			if len(rows) == 0:
-				return None
-
 			return rows[0].screen_name
 		except Exception, e:
 			print "getUserIDByScreenNameCassandra"

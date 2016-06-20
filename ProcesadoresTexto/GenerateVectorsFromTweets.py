@@ -45,7 +45,7 @@ class GenerateVectorsFromTweets():
 
 			model_loc = '%s/LuigiTasks/TrainText/Doc2VecLang_topics/%s/%s/%s_%s.model'%(path, anyo, mes, dia, lang)
 			days_minus = 1
-			while os.path.isfile(model_loc) == False and days_minus < 20:
+			while os.path.isfile(model_loc) == False and days_minus < 200:
 				now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
 				dia = now.day
 				mes = now.month
@@ -76,7 +76,7 @@ class GenerateVectorsFromTweets():
 
 			model_loc = '%s/LuigiTasks/TrainText/Doc2VecLang_semantic/%s/%s/%s_%s.model'%(path, anyo, mes, dia, lang)
 			days_minus = 1
-			while os.path.isfile(model_loc) == False and days_minus < 20:
+			while os.path.isfile(model_loc) == False and days_minus < 200:
 				now = datetime.datetime.now() - datetime.timedelta(days=days_minus)
 				dia = now.day
 				mes = now.month

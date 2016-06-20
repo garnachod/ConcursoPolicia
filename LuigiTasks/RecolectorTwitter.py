@@ -235,6 +235,49 @@ class RecolectorSiguiendoTwitter(luigi.Task):
 		with self.output().open('w') as out_file:
 			out_file.write("OK")
 		
+class RecolectorSiguiendoDeSeguidores(luigi.Task):
+	usuario = luigi.Parameter()
+
+	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
+		now = datetime.datetime.now()
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
+		return luigi.LocalTarget('%s/LuigiTasks/siguiendo_seguidores/%s/%s/%s'%(path, anyo, mes, self.usuario))
+
+	def requires(self):
+		return [RecolectorUsuarioTwitter(self.usuario), RecolectorSeguidoresTwitter(self.usuario)]
+
+
+	def run(self):
+		consultasNeo4j = ConsultasNeo4j()
+		consultasCassandra = ConsultasCassandra()
+
+		# si no es un identificador, se intenta conseguir desde cassandra
+		identificador = 0
+		try:
+			identificador = long(self.usuario)
+		except Exception, e:
+			if self.usuario[0] == "@":
+				self.usuario = self.usuario[1:]
+			identificador = consultasCassandra.getUserIDByScreenNameCassandra(self.usuario)
+
+		#solo puede no existir ese identificador si es privado, pero debemos controlarlo
+		if identificador > 0:
+			seguidores = consultasNeo4j.getListaIDsSeguidoresByUserID(identificador)
+			for seguidor in seguidores:
+				yield RecolectorSiguiendoTwitter(seguidor)
+
+		with self.output().open('w') as out_file:
+			out_file.write("OK")
+
 
 class RecolectorFavoritosTwitter(luigi.Task):
 	usuario = luigi.Parameter()
@@ -305,7 +348,7 @@ class RecolectorTweetsSiguendoTwitter(luigi.Task):
 		return luigi.LocalTarget('%s/LuigiTasks/TweetsSiguendo/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def requires(self):
-		return [RecolectorUsuarioTwitter(self.usuario), RecolectorSiguiendoTwitter(self.usuario)]
+		return [RecolectorUsuarioTwitter(self.usuario, date=self.date), RecolectorSiguiendoTwitter(self.usuario)]
 
 	def run(self):
 		consultasNeo4j = ConsultasNeo4j()
@@ -357,7 +400,7 @@ class RecolectorTweetsSeguidoresTwitter(luigi.Task):
 		return luigi.LocalTarget('%s/LuigiTasks/TweetsSeguidores/%s/%s/%s'%(path, anyo, mes, self.usuario))
 
 	def requires(self):
-		return [RecolectorUsuarioTwitter(self.usuario), RecolectorSeguidoresTwitter(self.usuario)]
+		return [RecolectorUsuarioTwitter(self.usuario, date=self.date), RecolectorSeguidoresTwitter(self.usuario)]
 
 	def run(self):
 		consultasNeo4j = ConsultasNeo4j()

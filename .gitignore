@@ -11,5 +11,6 @@ Conf.py
 *.state
 *.dict
 */textos/*
+*/LuigiTasks/*/*
 .DS_Store
 deploy

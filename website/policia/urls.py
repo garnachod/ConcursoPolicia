@@ -22,6 +22,7 @@ urlpatterns = [
     # Secciones del panel del control
     url(r'^resultados/(?P<idTarea>[0-9]+)/$', views.resultados, name='resultados'),
     url(r'^buscar/similares/$', views.buscarSimilares, name='buscarSimilares'),
+    url(r'^buscar/tiempo/$', views.buscarTiempo, name='buscarTiempo'),
     url(r'^buscar/texto/$', views.buscarTexto, name='buscarTexto'),
     url(r'^$', views.tareas, name='tareas'),
     url(r'^tareas/(?P<page>[0-9]+)/$', views.tareas, name='tareas'),

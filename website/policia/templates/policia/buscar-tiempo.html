@@ -1,0 +1,141 @@
+{% extends 'policia/base.html' %}
+
+{% load staticfiles %}
+
+{% block stylesheets %}
+    <link href="{% static "policia/css/buscar.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "policia/plugins/custombox/dist/custombox.min.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div
+    ng-cloak
+    ng-app="policia"
+    ng-controller="searchSimilar"
+    ng-init="updateSearchParams()">
+
+    {% include 'policia/modal-tarea.html' %}
+
+    <div id="search-box" class="row">
+        <div class="col-md-12 text-left">
+            <div class="card-box">
+                <form class="form-inline">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6 col-lg-5">
+                            <fieldset>
+                                    <label for="search-username">Buscar usuarios similares a:  </label>
+                                    <div class="form-group">
+                                        <input type="text"
+                                            class="form-control"
+                                            placeholder="@usuario" id="search-username"
+                                            name="search-username" maxlength="100"
+                                            autofocus
+                                            ng-model="searchUsername"
+                                            ng-change="checkUsername()"/>
+                                            <label>
+                                                <i ng-class="usernameValidationClass"></i>
+                                            </label>
+                                    </div>
+                            </fieldset>
+                            <fieldset>
+
+                                    <label for="search-type">Buscar en:  </label>
+                                    <br/>
+                                    <label class="radio-inline"><input type="radio"
+                                            name="search-in" value="all"
+                                            ng-model="searchIn" checked>Twitter global</label>
+                                    <label class="radio-inline"><input type="radio"
+                                            name="search-in" value="relations"
+                                            ng-model="searchIn">Comunidad del usuario</label>
+                            </fieldset>
+                        </div>
+                        <div class="col-md-6 col-lg-5">
+                            <fieldset class="row">
+                                    <div class="col-xs-4">
+                                        <label for="search-language">Idioma:  </label>
+                                        <select class="form-control" id="search-language"
+                                            name="search-language"
+                                            ng-model="searchLanguage">
+                                            <option value="es">ES</option>
+                                            <option value="en">EN</option>
+                                            <option value="ar">AR</option>
+                                            <option value="ru">RU</option>
+                                            <option value="fr">FR</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <label for="search-max">Máx. Resultados:  </label>
+                                        <input type="number" class="form-control"
+                                            id="search-max" name="search-max"
+                                            maxlength="5" min="1" max="5000" value="100"
+                                            ng-model="searchMax"/>
+
+                                    </div>
+                            </fieldset>
+                            
+                        </div>
+                        <div class="col-md-12 col-lg-2">
+
+                            <img ng-show="searchSpinnerVisible" class="img-responsive col-sm-3 col-md-12  " src="{% static 'policia/img/spinner.gif' %}"/>
+
+                            <fieldset ng-show="searchButtonVisible">
+                                <div class="form-group">
+
+                                    <label for="search-button" class="form-control btn btn-primary">
+                                        <i class="md md-search"></i> Buscar similares
+                                    </label>
+                                    <input ng-click="search()" id="search-button" name="search-button" class="hidden" type="button" value="Buscar"/>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div><!-- /.row-->
+                </form>
+            </div> <!-- /.card-box -->
+        </div> <!-- /col-md-12 -->
+    </div> <!-- /search-box -->
+
+    <div ng-cloack id="results-box" class="row">
+        <div ng-show="errorVisible" class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="text-center alert alert-danger">
+                <strong>¡Ups!</strong> {% verbatim %}{{ error }}{% endverbatim %}
+            </div>
+        </div>
+        <div ng-show="successVisible" class="col-xs-12 col-md-8 col-md-offset-2">
+            <div class="text-center alert alert-success">
+                <strong>¡Hecho!</strong> La búsqueda se ha añadido a <a href="/">tareas pendientes</a>.
+            </div>
+        </div>
+        <div ng-repeat="user in similarUsers">
+            {% include 'policia/usuario-twitter.html' %}
+        </div>
+
+    </div>
+
+    <!-- Botón de descargar  -->
+    {% verbatim %}
+    <div class="navbar navbar-fixed-bottom hidden-xs" role="navigation">
+        <div class="container">
+            <div ng-show="downloadVisible">
+                <a id="btn-descargar" download="resultados.csv"
+                ng-href="{{ resultsDataURI }}" class="btn btn-primary pull-right"
+                ng-click="downloadDataInternetExplorer()"><i class="md md-cloud-download"></i> Descargar como CSV</a>
+            </div>
+        </div>
+    </div>
+    {% endverbatim %}
+    <!-- /Botón de descargar  -->
+
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static "policia/js/controllers/search-time.js" %}"></script>
+<script src="{% static "policia/js/controllers/csv-converter.js" %}"></script>
+
+{% endblock %}

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
-import sys
-lib_path = os.path.abspath('../')
-sys.path.append(lib_path)
+#import os
+#import sys
+#lib_path = os.path.abspath('../')
+#sys.path.append(lib_path)
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from GenerateVectorsFromTweets import GenerateVectorsFromTweets
 import time

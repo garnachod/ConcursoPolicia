@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # -​*- coding: utf-8 -*​-
 import datetime
 import logging
@@ -343,6 +344,7 @@ def buscarTexto(request):
         'titulo': 'Búsqueda de usuarios por texto',
         'numTareasFinalizadas': _getNumTareasFinalizadas(request)
     })
+@login_required
 def buscarTiempo(request):
     nombre = request.user.nombre + " " + request.user.apellidos
     email = request.user.email

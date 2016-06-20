@@ -1,4 +1,4 @@
-<<<<<<< HEAD:sources/DBbridge/Cassandra/README_rendimiento.md
+
 ### Tiempos De Escritura
 #### Recoleción de tweets de un usuario
 ##### 3400 tweets

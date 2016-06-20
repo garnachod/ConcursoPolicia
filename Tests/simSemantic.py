@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from DBbridge.ConsultasNeo4j import ConsultasNeo4j
 from ProcesadoresTexto.GenerateVectorsFromTweets import GenerateVectorsFromTweets
@@ -32,4 +33,3 @@ if __name__ == '__main__':
 	with open('similitudes.txt','w') as out_file:
 		for relacion in relaciones_coseno:
 			out_file.write(str(relacion[0]))
-			out_file.write("\n")

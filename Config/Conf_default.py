@@ -56,6 +56,10 @@ class Conf():
 		def getDimVectors(self):
 			return self.dimVectors
 
+		def getAnnoyTimePath(self):
+			return self.annoyTimePath
+
+
 
 
 	# storage for the instance reference

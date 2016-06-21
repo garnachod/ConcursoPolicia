@@ -55,6 +55,29 @@ class _generateTwitterRelations(multiprocessing.Process):
 		comand += " > /dev/null 2>&1"
 		
 		os.popen(comand)
+
+class _generateTwitterTime(object):
+	"""docstring for GenerateTwitterTime"""
+	def __init__(self, username, lang, id_tarea):
+		super(GenerateTwitterTime, self).__init__()
+		self.username = username
+		self.lang = lang
+		self.id_tarea = id_tarea
+
+	def run(self):
+		#configuracion del sistema
+		conf = Conf()
+		path = conf.getAbsPath()
+		comand = "luigi --module LuigiTasks.GenerateSim " 
+		if self.semantic == True:
+			comand += "GenerateSimRelations_semantic "
+		else:
+			comand += "GenerateSimRelations_topics "
+		comand += "--usuario " + self.username + " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
+		comand += " > /dev/null 2>&1"
+		
+		os.popen(comand)
+		
 		
  	   
 class APIDescarga(object):
@@ -116,6 +139,33 @@ class APIDescarga(object):
 
 		if os.path.isfile(recolector.output().path) == False:
 			p = _generateTwitterRelations(username, lang, semantic, id_tarea)
+			p.start()
+			return False
+		else:
+			consultas = ConsultasSQL_police()
+			consultas.setFinishedTask(id_tarea)
+			return recolector.output().path
+
+	@staticmethod
+	def downloadAndGenerateTime(username, lang, id_tarea):
+		"""
+		Descarga un usuario de twitter,
+		 inserta una referencia en la base de datos de descarga, esa referencia se completa al terminar la tarea.
+
+		Parameters
+		----------
+		username : usuario de la red social con @ o sin @ 
+		id_tarea : identificador de la tarea para insertar el fin de busqueda
+
+		Returns
+		-------
+		True si la descarga esta realizada False en caso contrario
+		"""
+		recolector = None
+		#recolector = CLASS
+
+		if os.path.isfile(recolector.output().path) == False:
+			p = _generateTwitterTime(username, lang, id_tarea)
 			p.start()
 			return False
 		else:

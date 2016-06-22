@@ -43,7 +43,7 @@ class AnnoyUserVectorSearcher(object):
 		similarElem, values = u.get_nns_by_vector(vector, 100000, include_distances=True)
 		best = []
 		
-		for i in xrange(min(numberSim, len(similarElem)):
+		for i in xrange(min(numberSim, len(similarElem))):
 			best.append(dicInverse[str(similarElem[i])])
 
 		return best
@@ -82,7 +82,7 @@ class AnnoyUserVectorSearcher(object):
 		similarElem, values = u.get_nns_by_vector(vector, 100000, include_distances=True)
 		best = []
 		
-		for i in xrange(min(numberSim, len(similarElem)):
+		for i in xrange(min(numberSim, len(similarElem))):
 			best.append(dicInverse[str(similarElem[i])])
 
 		return best

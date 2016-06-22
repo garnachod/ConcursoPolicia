@@ -43,6 +43,14 @@ def crea_tablas():
     )
     cur.execute(query)
 
+    
+
+def crea_tokens_count():
+    """Se ha visto que no se necesita indice (empeora el tiempo), al menos por ahora"""
+    conSql = ConexionSQL()
+    conn = conSql.getConexion()
+    cur = conSql.getCursor()
+
     query = ('DROP TABLE IF EXISTS twitter_tokens CASCADE;'
              'CREATE TABLE twitter_tokens('
              'id serial PRIMARY KEY, '
@@ -54,13 +62,7 @@ def crea_tablas():
             ');'
              )
     cur.execute(query)
-    conn.commit()
-
-def crea_tokens_count():
-    """Se ha visto que no se necesita indice (empeora el tiempo), al menos por ahora"""
-    conSql = ConexionSQL()
-    conn = conSql.getConexion()
-    cur = conSql.getCursor()
+    #conn.commit()
 
     query = ('DROP TABLE IF EXISTS tokens_count CASCADE;'
              'CREATE TABLE tokens_count('
@@ -249,6 +251,11 @@ def crea_tablas_close():
 	conn.close()
 
 if __name__ == "__main__":
+    crea_tokens_count()
+    conSql = ConexionSQL()
+    conn = conSql.getConexion()
+    conn.close()
+    """
     debug = True
     if debug:
         #crea_tabla_MLT()
@@ -266,6 +273,8 @@ if __name__ == "__main__":
         crea_tabla_clasificacion()
         crea_tabla_seguidores()
         crea_tablas_close()
+    """
+
     
     #crea_tabla_MLT()
     #crea_tabla_lista_entrenamiento()

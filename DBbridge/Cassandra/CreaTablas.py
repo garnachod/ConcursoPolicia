@@ -1,4 +1,5 @@
 from cassandra.cluster import Cluster
+from ConexionCassandra import ConexionCassandra
 
 def creaUsersTwitter(session):
     query = (

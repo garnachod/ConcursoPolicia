@@ -224,8 +224,6 @@ class ConsultasCassandra(object):
 		query = """SELECT last_tweet_collected FROM users WHERE screen_name = %s LIMIT 1;"""
 		try:
 			rows = self.session_cassandra.execute(query, [twitterUser])
-			if len(rows) == 0:
-				return 0
 
 			ltc = rows[0].last_tweet_collected
 			if ltc is None:
@@ -248,8 +246,6 @@ class ConsultasCassandra(object):
 		query = """SELECT last_tweet_collected FROM users WHERE id_twitter = %s LIMIT 1;"""
 		try:
 			rows = self.session_cassandra.execute(query, [twitterUser])
-			if len(rows) == 0:
-				return 0
 
 			ltc = rows[0].last_tweet_collected
 			if ltc is None:
@@ -398,7 +394,7 @@ class ConsultasCassandra(object):
 		query = """SELECT name, screen_name, followers, following, location, created_at FROM users WHERE id_twitter = %s LIMIT 1;"""
 		try:
 			rows = self.session_cassandra.execute(query, [identificador])
-			if rows is not None and len(rows) > 0:
+			if rows is not None:
 				row = rows[0]
 				if row.following is None:
 					row.following = 0
@@ -424,7 +420,7 @@ class ConsultasCassandra(object):
 		query = """SELECT screen_name, profile_img FROM users WHERE id_twitter = %s LIMIT 1;"""
 		try:
 			rows = self.session_cassandra.execute(query, [identificador])
-			if rows is not None and len(rows) > 0:
+			if rows is not None:
 				row = rows[0]
 				return row
 			else:

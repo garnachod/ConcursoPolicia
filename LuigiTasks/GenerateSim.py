@@ -91,10 +91,10 @@ class GenerateSimAll_topics(luigi.Task):
 
 		consultas = ConsultasCassandra()
 		tweets = consultas.getTweetsUsuarioCassandra_statusAndLang(self.usuario)
-		if len(tweets) < 4:
+		"""if tweets < 4:
 			with self.output().open('w') as out_file:
 				out_file.write("\n")
-
+		"""
 		#al menos necesitamos 4 tweets para caracterizar a una persona
 		#aunque cuantos mas mejor
 		else:

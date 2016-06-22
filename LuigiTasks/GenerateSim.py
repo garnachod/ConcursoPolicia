@@ -97,25 +97,25 @@ class GenerateSimAll_topics(luigi.Task):
 		"""
 		#al menos necesitamos 4 tweets para caracterizar a una persona
 		#aunque cuantos mas mejor
-		else:
-			generator = GenerateVectorsFromTweets()
-			vector = generator.getVector_topics(tweets, self.lang)
-			searcher = AnnoyUserVectorSearcher()
-			users = searcher.getSimilarUsers_topics(vector, self.lang, numberOfSim + 1)
-			users_long = []
-			for user in users:
-				user_long = consultas.getUserByIDLargeCassandra_police(user)
-				if user_long != False:
-					if user_long.screen_name not in self.usuario:
-						users_long.append(user)
+		#else:
+		generator = GenerateVectorsFromTweets()
+		vector = generator.getVector_topics(tweets, self.lang)
+		searcher = AnnoyUserVectorSearcher()
+		users = searcher.getSimilarUsers_topics(vector, self.lang, numberOfSim + 1)
+		users_long = []
+		for user in users:
+			user_long = consultas.getUserByIDLargeCassandra_police(user)
+			if user_long != False:
+				if user_long.screen_name not in self.usuario:
+					users_long.append(user)
 
-				if len(users_long) >= numberOfSim:
-					break
+			if len(users_long) >= numberOfSim:
+				break
 
-			with self.output().open('w') as out_file:
-				for _user in users_long:
-					out_file.write(str(_user))
-					out_file.write("\n")
+		with self.output().open('w') as out_file:
+			for _user in users_long:
+				out_file.write(str(_user))
+				out_file.write("\n")
 
 
 		consultas = ConsultasSQL_police()

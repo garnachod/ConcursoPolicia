@@ -374,7 +374,7 @@ class ConsultasCassandra(object):
 		query = """SELECT name, screen_name, followers, location, created_at FROM users WHERE id_twitter = %s LIMIT 1;"""
 		try:
 			rows = self.session_cassandra.execute(query, [identificador])
-			if rows is not None and len(rows) > 0:
+			if rows is not None:
 				row = rows[0]
 				return row
 			else:

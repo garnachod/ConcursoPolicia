@@ -11,6 +11,7 @@ class Conf():
 			#cassandra
 			self.cassandra_keyspace = 'twitter'
 			self.cassandra_keyspace_instagram = 'instagram'
+			self.cassandra_servers = ["127.0.0.1"]
 			#SQL
 			self.sql_database = 'twitter'
 			self.sql_database_policia = 'policia'
@@ -35,6 +36,9 @@ class Conf():
 
 		def getCassandraKeyspaceInstagram(self):
 			return self.cassandra_keyspace_instagram
+
+		def getCassandraServers(self):
+			return self.cassandra_servers
 
 		def getSparkHome(self):
 			return self.spark_home

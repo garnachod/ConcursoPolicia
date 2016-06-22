@@ -18,7 +18,8 @@ class ConexionCassandra():
 
 		def __init__(self):
 			#self.conn = psycopg2.connect(database="twitter", user="usrtwitter", password="postgres_tfg", host="localhost")
-			cluster_cass = Cluster()
+			servers = Conf().getCassandraServers()
+			cluster_cass = Cluster(servers)
 			self.session = cluster_cass.connect(Conf().getCassandraKeyspace())
 			self.session_instagram = cluster_cass.connect(Conf().getCassandraKeyspaceInstagram())
 

@@ -48,8 +48,8 @@ def creaTweets(session):
 
 def creaIndexTweet(session):
     ###usa el plugin "https://github.com/Stratio/cassandra-lucene-index" que usa LUCENE
-    query = "DROP INDEX tweets_index;"
-    session.execute(query)
+    #query = "DROP INDEX tweets_index;"
+    #session.execute(query)
     query = (
         "CREATE CUSTOM INDEX tweets_index ON tweets (lucene)"
         "USING 'com.stratio.cassandra.lucene.Index'"
@@ -68,13 +68,13 @@ def creaIndexTweet(session):
     "};"
     )
     session.execute(query)
-    """
+    
     query = "CREATE INDEX indx_id_twitter ON tweets (id_twitter);"
     session.execute(query)
     query = "CREATE INDEX indx_orig_tweet ON tweets (orig_tweet);"
     session.execute(query)
     query = "CREATE INDEX indx_lang ON tweets (lang);"
-    session.execute(query)"""
+    session.execute(query)
 
 
 def debug_func(session):
@@ -99,14 +99,14 @@ def alterTableUser(session):
 if __name__ == '__main__':
     cluster = Cluster()
     session = cluster.connect('twitter')
-    debug = True
+    debug = False
     if debug:
     	#alterTableUser(session)
         #clean_tweets(session)
         #creaTweets(session)
         creaIndexTweet(session)
     else:
-        clean(session)
+        #clean(session)
         creaUsersTwitter(session)
         creaIndexUsersTwitter(session)
         #print "************usuario creado **************"
@@ -114,6 +114,6 @@ if __name__ == '__main__':
         creaIndexTweet(session)
         
         #print "************tweet creado **************"
-        getSchemas(session)
-        getTables(session)
+        #getSchemas(session)
+        #getTables(session)
     

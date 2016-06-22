@@ -21,7 +21,7 @@ class ConexionCassandra():
 			servers = Conf().getCassandraServers()
 			cluster_cass = Cluster(servers)
 			self.session = cluster_cass.connect(Conf().getCassandraKeyspace())
-			self.session_instagram = cluster_cass.connect(Conf().getCassandraKeyspaceInstagram())
+			#self.session_instagram = cluster_cass.connect(Conf().getCassandraKeyspaceInstagram())
 
 		def getSession(self):
 			""" Test method, return singleton conexion"""

@@ -16,7 +16,8 @@ class ConexionNeo4j(object):
 		def __init__(self):
 			#remote_graph = Graph("http://remotehost.com:6789/db/data/")
 			#secure_graph = Graph("https://arthur:excalibur@camelot:1150/db/data/")
-			authenticate("localhost:7474", "neo4j", Conf().getNeo4jPassword())
+			url = Conf().getNeo4jUrl()
+			authenticate(url + ":7474", "neo4j", Conf().getNeo4jPassword())
 			self.graph = Graph()
 			
 		def getGraph(self):

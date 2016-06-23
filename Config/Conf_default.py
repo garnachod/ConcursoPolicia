@@ -25,6 +25,7 @@ class Conf():
 			self.spark_home = '/home/dani/spark-1.4.0'
 			#Neo4j
 			self.neo4j_password = 'tfg_neo4j'
+			self.neo4j_url = "localhost"
 			#vectors
 			self.dimVectors = 200
 
@@ -56,6 +57,9 @@ class Conf():
 
 		def getNeo4jPassword(self):
 			return self.neo4j_password
+
+		def getNeo4jUrl(self):
+			return self.neo4j_url
 
 		def getDimVectors(self):
 			return self.dimVectors

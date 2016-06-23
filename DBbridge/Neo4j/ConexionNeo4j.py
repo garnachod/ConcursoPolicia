@@ -18,7 +18,7 @@ class ConexionNeo4j(object):
 			#secure_graph = Graph("https://arthur:excalibur@camelot:1150/db/data/")
 			url = Conf().getNeo4jUrl()
 			authenticate(url + ":7474", "neo4j", Conf().getNeo4jPassword())
-			self.graph = Graph()
+			self.graph = Graph("http://"+url+":7474/db/data/")
 			
 		def getGraph(self):
 			return self.graph

@@ -29,6 +29,9 @@ class Conf():
 			#vectors
 			self.dimVectors = 200
 
+			#venv set "" if not venv
+			self.venv_path = ""
+
 		def getDomain(self):
 			return self.domain
 
@@ -66,6 +69,9 @@ class Conf():
 
 		def getAnnoyTimePath(self):
 			return self.annoyTimePath
+
+		def getVenvPath(self):
+			return self.venv_path
 
 
 

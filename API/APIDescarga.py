@@ -24,7 +24,8 @@ class _generateTwitterUser(multiprocessing.Process):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "luigi --module LuigiTasks.GenerateSim " 
+		venv = conf.getVenvPath()
+		comand = venv + "/bin/luigi --module LuigiTasks.GenerateSim " 
 		if self.semantic == True:
 			comand += "GenerateSimAll_semantic "
 		else:
@@ -46,7 +47,8 @@ class _generateTwitterRelations(multiprocessing.Process):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "luigi --module LuigiTasks.GenerateSim " 
+		venv = conf.getVenvPath()
+		comand = venv + "/bin/luigi --module LuigiTasks.GenerateSim " 
 		if self.semantic == True:
 			comand += "GenerateSimRelations_semantic "
 		else:

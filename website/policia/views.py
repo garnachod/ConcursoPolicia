@@ -20,6 +20,7 @@ import math
 lib_path = os.path.abspath('../../')
 sys.path.append(lib_path)
 from API.APITextos import APITextos
+from API.APITiempo import APITiempo
 from .models import Tarea
 
 #########################
@@ -59,6 +60,8 @@ def _getUsersSimilarMethod(isByUsername, searchIn, searchBy):
             return APITextos.getUsersSimilar_user_relations_topic
         elif searchIn == 'relations' and searchBy == 'semantic':
             return APITextos.getUsersSimilar_user_relations_semantic
+        elif searchIn == 'all' and searchBy == 'time':
+            return APITiempo.getUsersSimilar_user_all
         else:
             raise Exception('Parámetros searchIn o searchBy incorrectos')
     else:
@@ -101,7 +104,10 @@ def _getTipo(searchIn, searchBy, searchUsername, searchText):
     if searchUsername is None:
         return 'text_all_' + searchBy
     else:
-        return 'user_' + searchIn + "_" + searchBy
+        if searchBy == "time":
+            return 'user_' + searchIn + "_time"
+        else:
+            return 'user_' + searchIn + "_" + searchBy
 
 def _getSearchBy(tipo):
     if 'topic' in tipo:
@@ -180,6 +186,7 @@ def buscarSimilaresAPI(request):
         method = _getUsersSimilarMethod(True, searchIn, searchBy);
         result = method(searchUsername, searchLanguage, int(searchMax), idTarea)
     except Exception, e:
+        print e
         result = []
 
     if result == []:
@@ -193,6 +200,53 @@ def buscarSimilaresAPI(request):
         })
     else:
         return _formatUsersJson(result)
+
+@login_required
+def buscarTiempoAPI(request):
+    try:
+        searchUsername = request.GET['search-username']
+        searchLanguage = request.GET['search-language']
+        searchBy = "time"
+        searchMax = request.GET['search-max']
+        searchIn = request.GET['search-in']
+    except Exception, e:
+        return JsonResponse({
+            'status': "missing_params"
+        })
+
+    idTarea = None
+    if "id" in request.GET:
+        idTarea = request.GET["id"]
+    else:
+        idTarea = _buscarDuplicado(request, searchIn, searchBy, searchUsername, None, searchLanguage, searchMax)
+
+    if idTarea is None:
+        try:
+            idTarea = _crearTarea(request, searchIn, searchBy, searchUsername, None, searchLanguage, searchMax)
+        except:
+            return JsonResponse({
+                'status': "db_error"
+            })
+
+    try:
+        method = _getUsersSimilarMethod(True, searchIn, searchBy);
+        result = method(searchUsername, searchLanguage, int(searchMax), idTarea)
+    except Exception, e:
+        print e
+        result = []
+
+    if result == []:
+        return JsonResponse({
+            'status': "no_results"
+        })
+    elif result == False:
+        return JsonResponse({
+            'status': "downloading",
+            'taskId': idTarea
+        })
+    else:
+        return _formatUsersJson(result)
+
 
 @login_required
 def buscarTextoAPI(request):

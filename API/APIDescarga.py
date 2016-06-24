@@ -2,6 +2,7 @@ import os
 import luigi
 from LuigiTasks.RecolectorTwitter import RecolectorUsuarioTwitter, RecolectorCirculoUsuario
 from LuigiTasks.GenerateSim import GenerateSimRelations_semantic, GenerateSimRelations_topics, GenerateSimAll_topics, GenerateSimAll_semantic
+from LuigiTasks.TrainTime import GetSimilarUsers
 from DBbridge.ConsultasSQL_police import ConsultasSQL_police
 
 from Config.Conf import Conf
@@ -25,7 +26,10 @@ class _generateTwitterUser(multiprocessing.Process):
 		conf = Conf()
 		path = conf.getAbsPath()
 		venv = conf.getVenvPath()
-		comand = venv + "/bin/luigi --module LuigiTasks.GenerateSim " 
+		if venv == "":
+			comand = "luigi --module LuigiTasks.GenerateSim " 
+		else:
+			comand = venv + "/bin/luigi --module LuigiTasks.GenerateSim " 
 		if self.semantic == True:
 			comand += "GenerateSimAll_semantic "
 		else:
@@ -48,7 +52,10 @@ class _generateTwitterRelations(multiprocessing.Process):
 		conf = Conf()
 		path = conf.getAbsPath()
 		venv = conf.getVenvPath()
-		comand = venv + "/bin/luigi --module LuigiTasks.GenerateSim " 
+		if venv == "":
+			comand = "luigi --module LuigiTasks.GenerateSim "
+		else:
+			comand = venv + "/bin/luigi --module LuigiTasks.GenerateSim "
 		if self.semantic == True:
 			comand += "GenerateSimRelations_semantic "
 		else:
@@ -58,10 +65,10 @@ class _generateTwitterRelations(multiprocessing.Process):
 		
 		os.popen(comand)
 
-class _generateTwitterTime(object):
+class _generateTwitterTime(multiprocessing.Process):
 	"""docstring for GenerateTwitterTime"""
 	def __init__(self, username, lang, id_tarea):
-		super(GenerateTwitterTime, self).__init__()
+		super(_generateTwitterTime, self).__init__()
 		self.username = username
 		self.lang = lang
 		self.id_tarea = id_tarea
@@ -70,15 +77,16 @@ class _generateTwitterTime(object):
 		#configuracion del sistema
 		conf = Conf()
 		path = conf.getAbsPath()
-		comand = "luigi --module LuigiTasks.GenerateSim " 
-		if self.semantic == True:
-			comand += "GenerateSimRelations_semantic "
+		venv = conf.getVenvPath()
+		if venv == "":
+			comand = "luigi --module LuigiTasks.TrainTime GetSimilarUsers "
 		else:
-			comand += "GenerateSimRelations_topics "
-		comand += "--usuario " + self.username + " --lang " + self.lang + "  --idtarea " + str(self.id_tarea)
-		comand += " > /dev/null 2>&1"
+			comand = venv + "/bin/luigi --module LuigiTasks.TrainTime GetSimilarUsers "
+		comand += "--usuario " + self.username + " --idioma " + self.lang + "  --idtarea " + str(self.id_tarea)
+		#comand += " > /dev/null 2>&1"
 		
-		os.popen(comand)
+		salida = os.popen(comand)
+		print salida
 		
 		
  	   
@@ -165,7 +173,7 @@ class APIDescarga(object):
 		"""
 		recolector = None
 		#recolector = CLASS
-
+		recolector = GetSimilarUsers(usuario = username, idioma = lang, idtarea=id_tarea)
 		if os.path.isfile(recolector.output().path) == False:
 			p = _generateTwitterTime(username, lang, id_tarea)
 			p.start()

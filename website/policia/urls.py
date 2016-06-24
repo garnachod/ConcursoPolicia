@@ -8,6 +8,7 @@ urlpatterns = [
     # API REST
     url(r'^api/buscar/similares/$', views.buscarSimilaresAPI, name='buscarSimilaresAPI'),
     url(r'^api/buscar/texto/$', views.buscarTextoAPI, name='buscarTextoAPI'),
+    url(r'^api/buscar/tiempo/$', views.buscarTiempoAPI, name='buscarTiempoAPI'),
     url(r'^api/validar/usuario/(?P<usuarioTwitter>\w+)/$', views.validarUsuarioTwitterAPI, name='validarUsuarioTwitterAPI'),
     url(r'^api/tarea/notificar/(?P<idTarea>[0-9]+)/$', views.notificarAPI, name='notificarAPI'),
     url(r'^api/tarea/texto/(?P<idTarea>[0-9]+)/$', views.textoAPI, name='textoAPI'),

@@ -9,13 +9,13 @@ import luigi
 import datetime
 import numpy as np
 
-def calculateVector(ts):
+def calculateVector(ts, utc_offset = 0):
 	elems = 24 * 7
 	vector = np.zeros(elems)
 	for t in ts:
 		ca = t.created_at
 		#print ca.tzinfo
-		vector[ca.weekday() * 24 + ca.hour] += 1
+		vector[ca.weekday() * 24 + (ca.hour + (utc_offset/60/60))] += 1
 
 	return vector / np.linalg.norm(vector)
 
@@ -57,7 +57,8 @@ class GenerateVecsAnnoyLangTime(luigi.Task):
 		users = []
 		for user in langs[self.idioma]:
 			ts = c.getOrigTweetAndCreatedAtFromTweetsByUser(user)
-			users.append((user, calculateVector(ts)))
+			utc_offset = c.getUTCOffsetByUserID(user)
+			users.append((user, calculateVector(ts, utc_offset = utc_offset)))
 			#print user
 			
 		with self.output().open("w") as fout:
@@ -116,8 +117,8 @@ class GetSimilarUsers(luigi.Task):
 
 		ann = AnnoyModelTime(self.idioma, model_loc.replace("%s.ann"%self.idioma, ""))
 		ts = c.getOrigTweetAndCreatedAtFromTweetsByUser(self.usuario)
-		
-		users = ann.getSimilar(calculateVector(ts), numberOfSim)
+		utc_offset = c.getUTCOffsetByUserID(user)
+		users = ann.getSimilar(calculateVector(ts, utc_offset = utc_offset), numberOfSim)
 		users_long = []
 
 		for user in users:
@@ -161,10 +162,12 @@ class GetSimilarUsersCom(luigi.Task):
 	def run(self):
 		c = ConsultasCassandra()
 		ts = c.getOrigTweetAndCreatedAtFromTweetsByUser(self.usuario)
-		vector = calculateVector(ts)
+		
 		#se generan los vectores de todos los usuarios
 		consultasNeo4j = ConsultasNeo4j()
 		userID = c.getUserIDByScreenNameCassandra(self.usuario)
+		utc_offset = c.getUTCOffsetByUserID(userID)
+		vector = calculateVector(ts, utc_offset=utc_offset)
 		seguidoresysiguiendo = consultasNeo4j.getSiguiendoOrSeguidosByUserID(userID)
 		relaciones_coseno = []
 		for user in seguidoresysiguiendo:

@@ -657,6 +657,15 @@ class ConsultasCassandra(object):
 			print "getFollowingByUserID"
 			print e
 
+	def getUTCOffsetByUserID(self, user_id):
+		query = "SELECT utc_offset FROM users WHERE id_twitter = %s;"
+		try:
+			return self.session_cassandra.execute(query, [user_id])[0].utc_offset
+		except Exception, e:
+			print "getFollowingByUserID"
+			print e
+			return 0
+
 	"""Sentimientos"""
 	def getTweetsTextAndLang(self, lang, limit = 5000000):
 		query = "SELECT status, lang FROM tweets WHERE lang = %s AND orig_tweet = 0 Limit %s ALLOW FILTERING;"

@@ -129,7 +129,7 @@ class EscritorTweetsUsersCassandra(Escritor):
 		url_img_user = data["profile_image_url_https"]
 
 		query = """INSERT INTO users (id_twitter, name, screen_name, created_at, followers, location, profile_img, following, utc_offset)
-				   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+				   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
 				"""
 		try:
 			if self.asinc:

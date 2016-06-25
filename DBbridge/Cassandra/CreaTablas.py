@@ -11,6 +11,7 @@ def creaUsersTwitter(session):
              ', following int'
              ', location varchar'
              ', created_at timestamp '
+             ', utc_offset int'
              ', profile_img varchar'
              ', last_tweet_collected bigint);'
             )
@@ -92,20 +93,19 @@ def clean_tweets(session):
 
 def alterTableUser(session):
 	#friends_count
-	query = "ALTER TABLE users ADD following int;"
+	query = "ALTER TABLE users ADD utc_offset int;"
 	session.execute(query)
 	
 
     
 if __name__ == '__main__':
-    cluster = Cluster()
-    session = cluster.connect('twitter')
-    debug = False
+    session = ConexionCassandra().getSession()
+    debug = True
     if debug:
-    	#alterTableUser(session)
+    	alterTableUser(session)
         #clean_tweets(session)
         #creaTweets(session)
-        creaIndexTweet(session)
+        #creaIndexTweet(session)
     else:
         #clean(session)
         creaUsersTwitter(session)

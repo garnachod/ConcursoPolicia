@@ -1,5 +1,6 @@
 from Escritor import Escritor
 from Cassandra.ConexionCassandra import ConexionCassandra
+from dateutil import tz
 import datetime
 class EscritorTweetsCassandra(Escritor):
 	"""docstring for EscritorTweetsCassandra"""
@@ -108,6 +109,9 @@ class EscritorTweetsUsersCassandra(Escritor):
 	def escribe(self, data):
 		""" admite un solo usuario por escritura """
 		identificador = data["id"]
+		utc_offset = 0
+		if "utc_offset" in data:
+			utc_offset = data["utc_offset"]
 		#name
 		name = data["name"]
 		#screen name
@@ -124,15 +128,15 @@ class EscritorTweetsUsersCassandra(Escritor):
 		#url_img_user
 		url_img_user = data["profile_image_url_https"]
 
-		query = """INSERT INTO users (id_twitter, name, screen_name, created_at, followers, location, profile_img, following)
+		query = """INSERT INTO users (id_twitter, name, screen_name, created_at, followers, location, profile_img, following, utc_offset)
 				   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
 				"""
 		try:
 			if self.asinc:
 				self.session.execute_async(query,
-					(identificador, name, screen_name, created_at, followers_count, location, url_img_user, friends_count))
+					(identificador, name, screen_name, created_at, followers_count, location, url_img_user, friends_count, utc_offset))
 			else:
 				self.session.execute(query,
-					(identificador, name, screen_name, created_at, followers_count, location, url_img_user, friends_count))
+					(identificador, name, screen_name, created_at, followers_count, location, url_img_user, friends_count, utc_offset))
 		except Exception, e:
 			print e

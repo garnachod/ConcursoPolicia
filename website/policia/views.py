@@ -62,6 +62,8 @@ def _getUsersSimilarMethod(isByUsername, searchIn, searchBy):
             return APITextos.getUsersSimilar_user_relations_semantic
         elif searchIn == 'all' and searchBy == 'time':
             return APITiempo.getUsersSimilar_user_all
+        elif searchIn == 'relations' and searchBy == 'time':
+            return APITiempo.getUsersSimilar_user_relations
         else:
             raise Exception('Parámetros searchIn o searchBy incorrectos')
     else:

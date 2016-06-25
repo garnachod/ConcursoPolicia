@@ -14,6 +14,7 @@ def calculateVector(ts):
 	vector = np.zeros(elems)
 	for t in ts:
 		ca = t.created_at
+		#print ca.tzinfo
 		vector[ca.weekday() * 24 + ca.hour] += 1
 
 	return vector / np.linalg.norm(vector)

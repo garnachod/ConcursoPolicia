@@ -23,7 +23,9 @@ class EscritorTweetsCassandra(Escritor):
 		created_at = datetime.datetime.strptime(data["created_at"], '%a %b %d %H:%M:%S +0000 %Y')
 		identificador = data["id"]
 		text = data["text"]
-		lang = data["lang"]
+		lang = ""
+		if "lang" in data:
+			lang = data["lang"]
 		user_id = data["user"]["id"]
 		#Controla si existen RTs dentro del Tweet
 		retweet_count = 0

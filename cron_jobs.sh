@@ -1,5 +1,5 @@
 #!/bin/bash
-for lang in "fr" "ar" "es" "en"
+for lang in "fr" "ar" "es" "en" "ru"
 do
 	echo "Generando modelo "$lang
 	PYTHONPATH="${PYTHONPATH}:/home/dani/github/ConcursoPolicia/LuigiTasks"

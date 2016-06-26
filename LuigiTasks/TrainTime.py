@@ -97,7 +97,7 @@ class GetSimilarUsers(luigi.Task):
 		model_loc = "%s/%s/%s/%s.ann"%(path, anyo, mes, self.idioma)
 		months_minus = 1
 		while os.path.isfile(model_loc) == False and months_minus < 10:
-			now = datetime.datetime.now() - datetime.timedelta(months=months_minus)
+			now = datetime.datetime.now() - datetime.timedelta(days=months_minus*30)
 			dia = now.day
 			mes = now.month
 			anyo = now.year

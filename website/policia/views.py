@@ -114,6 +114,8 @@ def _getTipo(searchIn, searchBy, searchUsername, searchText):
 def _getSearchBy(tipo):
     if 'topic' in tipo:
         return 'topic'
+    elif 'time' in tipo:
+        return 'time'
     else:
         return 'semantic'
 
@@ -188,7 +190,6 @@ def buscarSimilaresAPI(request):
         method = _getUsersSimilarMethod(True, searchIn, searchBy);
         result = method(searchUsername, searchLanguage, int(searchMax), idTarea)
     except Exception, e:
-        print e
         result = []
 
     if result == []:

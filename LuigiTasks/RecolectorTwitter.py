@@ -68,7 +68,7 @@ class RecolectorUsuarioTwitter(luigi.Task):
 				if "LIMITE" in e:
 					sleep(1*60)
 				else:
-					raise e
+					print e
 
 		with self.output().open('w') as out_file:
 			out_file.write("OK")

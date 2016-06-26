@@ -15,7 +15,7 @@ def calculateVector(ts, utc_offset = 0):
 	for t in ts:
 		ca = t.created_at
 		#print ca.tzinfo
-		vector[ca.weekday() * 24 + (ca.hour + (utc_offset/60/60))] += 1
+		vector[(ca.weekday() * 24 + (ca.hour + (utc_offset/60/60)))%elems] += 1
 
 	return vector / np.linalg.norm(vector)
 

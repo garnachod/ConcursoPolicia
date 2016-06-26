@@ -91,7 +91,7 @@ class _generateTwitterTime(multiprocessing.Process):
 class _generateTwitterTimeCom(multiprocessing.Process):
 	"""docstring for GenerateTwitterTime"""
 	def __init__(self, username, lang, id_tarea):
-		super(_generateTwitterTime, self).__init__()
+		super(_generateTwitterTimeCom, self).__init__()
 		self.username = username
 		self.lang = lang
 		self.id_tarea = id_tarea

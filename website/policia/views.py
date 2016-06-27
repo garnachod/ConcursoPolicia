@@ -333,13 +333,21 @@ def resultados(request, idTarea=0):
     try:
         tarea = Tarea.objects.get(pk=idTarea)
         if tarea.username != None:
-            return HttpResponseRedirect(reverse('policia:buscarSimilares') +
-                '?username=' + tarea.username +
-                '&idioma=' + tarea.idioma +
-                '&max=' + str(tarea.num_usuarios) +
-                '&by=' + _getSearchBy(tarea.tipo) +
-                '&in=' + _getSearchIn(tarea.tipo) +
-                '&id=' + str(idTarea))
+            if "time" in tarea.tipo:
+                return HttpResponseRedirect(reverse('policia:buscarTiempo') +
+                    '?username=' + tarea.username +
+                    '&idioma=' + tarea.idioma +
+                    '&max=' + str(tarea.num_usuarios) +
+                    '&in=' + _getSearchIn(tarea.tipo) +
+                    '&id=' + str(idTarea))
+            else:
+                return HttpResponseRedirect(reverse('policia:buscarSimilares') +
+                    '?username=' + tarea.username +
+                    '&idioma=' + tarea.idioma +
+                    '&max=' + str(tarea.num_usuarios) +
+                    '&by=' + _getSearchBy(tarea.tipo) +
+                    '&in=' + _getSearchIn(tarea.tipo) +
+                    '&id=' + str(idTarea))
         else:
             return HttpResponseRedirect(reverse('policia:buscarTexto') +
                 '?id=' + str(tarea.id) +

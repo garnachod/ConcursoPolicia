@@ -12,6 +12,8 @@ import numpy as np
 def calculateVector(ts, utc_offset = 0):
 	elems = 24 * 7
 	vector = np.zeros(elems)
+	if utc_offset is None:
+		utc_offset = 0
 	for t in ts:
 		ca = t.created_at
 		#print ca.tzinfo

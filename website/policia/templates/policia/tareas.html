@@ -44,6 +44,8 @@
                         <strong>Por: </strong><br/>
                         {% if 'semantic' in tarea.tipo %}
                         Forma de hablar
+                        {% elif 'time' in tarea.tipo %}
+                        Tiempo
                         {% else %}
                         Temas
                         {% endif %}

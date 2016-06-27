@@ -83,6 +83,110 @@ class ConsultasCassandra(object):
 				print e
 				return []
 
+
+	def getRTweetsUsuarioCassandra(self, twitterUser, limit=10000):
+		"""
+		ReTweets de un usuario, informacion completa para la interfaz web y demas
+		status, favorite_count, retweet_count, orig_tweet, media_urls, screen_name, profile_img, id_twitter, created_at, lang
+
+		Parameters
+		----------
+		twitterUser : puede ser un identificador o un string del estilo "@usuario" con o sin @
+		limit : por defecto 10000 tweets, límite de tweets a retornar
+
+		Returns
+		-------
+		iterator de Row(status, favorite_count, retweet_count, orig_tweet, media_urls, screen_name, profile_img, id_twitter, created_at, lang)
+		"""
+
+		user_id = None
+		try:
+			user_id = long(twitterUser)
+		except Exception, e:
+			if twitterUser[0] == "@":
+				twitterUser = twitterUser[1:]
+			user_id = self.getUserIDByScreenNameCassandra(twitterUser)
+
+		if user_id is None:
+			return []
+
+		user = self.getUserByIDShortCassandra(user_id)
+		if user == None:
+			return []
+
+		Row = namedtuple('Row', 'status, favorite_count, retweet_count, orig_tweet, media_urls, screen_name, profile_img, id_twitter, created_at, lang')
+		
+		query = """SELECT status, favorite_count, retweet_count, orig_tweet, media_urls, id_twitter, created_at, lang FROM tweets WHERE tuser = %s AND orig_tweet != 0 ORDER BY id_twitter DESC LIMIT %s;"""
+
+		try:
+			retorno = blist([])
+			rows = self.session_cassandra.execute(query, [user_id, limit])
+			for row in rows:
+				nuevaFila = Row(row.status, row.favorite_count, row.retweet_count, row.orig_tweet, row.media_urls, user.screen_name, user.profile_img, row.id_twitter, row.created_at, row.lang)
+				retorno.append(nuevaFila)
+			return retorno
+		except Exception, e:
+			print "getRTweetsUsuarioCassandra"
+			print e
+			return []
+
+	def getUsersRTedByUser(self, twitterUser, limit=10000):
+		"""
+		Returns an array of users
+		"""
+		user_id = None
+		#print twitterUser
+		try:
+			user_id = long(twitterUser)
+		except Exception, e:
+			if twitterUser[0] == "@":
+				twitterUser = twitterUser[1:]
+			user_id = self.getUserIDByScreenNameCassandra(twitterUser)
+
+		if user_id is None:
+			return []
+
+		user = self.getUserByIDShortCassandra(user_id)
+		if user == None:
+			return []
+
+		cas = self.session_cassandra
+
+		def lambdaMap(row):
+			query_aux = """SELECT tuser FROM tweets WHERE id_twitter = %s LIMIT 1;"""
+			retorno_ = 0
+			#print row
+			if row > 0:
+				rows_ = cas.execute(query_aux, [row])
+				for row_ in rows_:
+					retorno_ = row_.tuser
+
+			return retorno_
+
+		query = """SELECT orig_tweet FROM tweets WHERE tuser = %s LIMIT %s;"""
+		
+		try:
+			retorno = {}
+			rows = self.session_cassandra.execute(query, [user_id, limit])
+			ts = [row.orig_tweet for row in rows]
+			#print "ts"
+			#print ts
+			users = map(lambdaMap, ts)
+			#print "users"
+			#print users
+			for user in users:
+				if user != 0:
+					if str(user) not in retorno:
+						retorno[str(user)] = True
+					
+			return [long(key) for key in retorno]
+		except Exception, e:
+			print "getUsersRTedByUser"
+			print e
+			return []
+
+
+
 	def getTweetsUsuarioCassandra_lang(self, twitterUser, limit=200):
 		"""
 		Tweets de un usuario, solo la informacion del lenguaje

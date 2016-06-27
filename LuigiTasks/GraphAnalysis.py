@@ -55,6 +55,43 @@ class GenerateCommunityGraph(luigi.Task):
 		with self.output().open("w") as fout:
 			nx.write_gexf(DG, fout)
 
+class GenerateRTGraph(luigi.Task):
+	usuario = luigi.Parameter()
+
+	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
+		"""
+		"""
+		now = datetime.datetime.now()
+	
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
+		#return luigi.LocalTarget('%s/LuigiTasks/graphs/gephi/%s/%s/%s_%s_%s'%(path, anyo, mes, self.usuario))
+		return luigi.LocalTarget('%s/graphs/gephi/%s/%s/RT_%s.gexf'%(path, anyo, mes, self.usuario))
+
+	def run(self):
+		consultas = ConsultasCassandra()
+		consultasNeo = ConsultasNeo4j()
+
+		user_id = consultas.getUserIDByScreenNameCassandra(self.usuario)
+		seguidores_ini = consultasNeo.getListaIDsSeguidoresByUserID(user_id)
+		DG=nx.DiGraph()
+
+		for seguidor_ini in seguidores_ini:
+			rteds = consultas.getUsersRTedByUser(seguidor_ini)
+			DG.add_edges_from([(seguidor_ini, rted) for rted in rteds])
+
+		with self.output().open("w") as fout:
+			nx.write_gexf(DG, fout)
+
+
 class AnalyticsCommunity(luigi.Task):
 	"""
 		Clase abstracta que solo necesita de un metodo de analisis y donde almacenarlo
@@ -128,3 +165,17 @@ class ClosenessCommunity(AnalyticsCommunity):
 
 	def getComputedDictionary(self, graph):
 		return nx.closeness_centrality(graph)
+
+class PagerankRT(PagerankCommunity):
+	def getFolderAnalysis(self):
+		return "pagerank_rt"
+
+	def requires(self):
+		return GenerateRTGraph(self.usuario)
+
+class ClosenessRT(ClosenessCommunity):
+	def getFolderAnalysis(self):
+		return "closeness_rt"
+
+	def requires(self):
+		return GenerateRTGraph(self.usuario)

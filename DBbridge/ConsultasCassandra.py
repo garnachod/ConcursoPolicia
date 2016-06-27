@@ -544,6 +544,7 @@ class ConsultasCassandra(object):
 		except Exception, e:
 			print "getTweetUserByTweetIDCassandra"
 			print e
+			return None
 
 	def getTweetByIDLargeCassandra(self, identificador):
 		"""

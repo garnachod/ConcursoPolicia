@@ -4,6 +4,7 @@ import networkx as nx
 
 from DBbridge.ConsultasCassandra import ConsultasCassandra
 from DBbridge.ConsultasNeo4j import ConsultasNeo4j
+from RecolectorTwitter import RecolectorUsuarioTwitter, RecolectorFavoritosTwitter
 
 from Config.Conf import Conf
 
@@ -88,6 +89,67 @@ class GenerateRTGraph(luigi.Task):
 			rteds = consultas.getUsersRTedByUser(seguidor_ini)
 			DG.add_edges_from([(seguidor_ini, rted) for rted in rteds])
 
+		with self.output().open("w") as fout:
+			nx.write_gexf(DG, fout)
+
+class GenerateConsumedInformationGraph(luigi.Task):
+	usuario = luigi.Parameter()
+
+	def requires(self):
+		return [RecolectorUsuarioTwitter(self.usuario), RecolectorFavoritosTwitter(self.usuario)]
+
+	def output(self):
+		conf = Conf()
+		path = conf.getAbsPath()
+		"""
+		"""
+		now = datetime.datetime.now()
+	
+		dia = now.day
+		mes = now.month
+		anyo = now.year
+		try:
+			usuario = self.usuario.replace("@", "")
+			self.usuario = usuario
+		except:
+			pass
+		#return luigi.LocalTarget('%s/LuigiTasks/graphs/gephi/%s/%s/%s_%s_%s'%(path, anyo, mes, self.usuario))
+		return luigi.LocalTarget('%s/graphs/gephi/%s/%s/ConInf_%s.gexf'%(path, anyo, mes, self.usuario))
+
+	def getUsersToExpand(self):
+		consultas = ConsultasCassandra()
+		user_id = consultas.getUserIDByScreenNameCassandra(self.usuario)
+		return self.getUserInfo(user_id)
+
+	def getUserInfo(self, user_id):
+		consultas = ConsultasCassandra()
+		consultasNeo = ConsultasNeo4j()
+		users_rt = {str(k):True for k in consultas.getUsersRTedByUser(user_id)}
+		favs = consultasNeo.getListaIDsFavsByUserID(user_id)
+		for fav in favs:
+			user = consultas.getTweetUserByTweetIDCassandra(fav)
+			if user is not None:
+				if str(user) not in users_rt:
+					users_rt[str(user)] = True
+
+		return users_rt
+		
+
+	def run(self):
+		users = self.getUsersToExpand()
+		consultas = ConsultasCassandra()
+		user_id = consultas.getUserIDByScreenNameCassandra(self.usuario)
+		#print users
+		for k in users:
+			yield RecolectorUsuarioTwitter(k)
+			yield RecolectorFavoritosTwitter(k)
+
+		print "creando DG"
+		DG=nx.DiGraph()
+		DG.add_edges_from([(user_id, user) for user in users])
+		for k in users:
+			DG.add_edges_from([(k, user) for user in self.getUserInfo(k)])
+			
 		with self.output().open("w") as fout:
 			nx.write_gexf(DG, fout)
 
@@ -179,3 +241,17 @@ class ClosenessRT(ClosenessCommunity):
 
 	def requires(self):
 		return GenerateRTGraph(self.usuario)
+
+class PagerankCI(PagerankCommunity):
+	def getFolderAnalysis(self):
+		return "pagerank_CI"
+
+	def requires(self):
+		return GenerateConsumedInformationGraph(self.usuario)
+
+class ClosenessCI(ClosenessCommunity):
+	def getFolderAnalysis(self):
+		return "closeness_CI"
+
+	def requires(self):
+		return GenerateConsumedInformationGraph(self.usuario)

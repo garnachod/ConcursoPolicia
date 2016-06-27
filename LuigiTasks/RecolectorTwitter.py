@@ -282,6 +282,9 @@ class RecolectorSiguiendoDeSeguidores(luigi.Task):
 class RecolectorFavoritosTwitter(luigi.Task):
 	usuario = luigi.Parameter()
 
+	def requires(self):
+		return RecolectorUsuarioTwitter(self.usuario)
+
 	def output(self):
 		conf = Conf()
 		path = conf.getAbsPath()

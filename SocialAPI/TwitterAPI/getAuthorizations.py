@@ -21,7 +21,7 @@ class GetAuthorizations():
             query = "INSERT INTO tokens_count (id_token, id_tipo_query, simulado) VALUES (%s, %s,true);"
             self.cur.execute(query, [row[0],tipo_id])
 
-        query = "SELECT id_token, count(id_token) as cuenta from (select id_token from tokens_count  where id_tipo_query = %s AND tiempo > current_timestamp - interval '15 minutes') as A  GROUP BY id_token order by cuenta Limit 1;"
+        query = "SELECT id_token, count(id_token) as cuenta from (select id_token from tokens_count  where id_tipo_query = %s AND tiempo > (current_timestamp - interval '15 minutes')) as A  GROUP BY id_token order by cuenta Limit 1;"
         self.cur.execute(query, [tipo_id, ])
         rows = self.cur.fetchall()
         for row in rows:
@@ -52,7 +52,7 @@ class GetAuthorizations():
 
     #mira a ver cuantas consultas se han realizado con ese apik
     def is_limit_api(self, tipo):
-        query = "SELECT count(id_token) as cuenta from (select id_token from tokens_count where id_token = %s AND id_tipo_query = %s AND simulado = false  AND tiempo > current_timestamp - interval '15 minutes') as A  GROUP BY id_token;"
+        query = "SELECT count(id_token) as cuenta from (select id_token from tokens_count where id_token = %s AND id_tipo_query = %s AND simulado = false  AND tiempo > (current_timestamp - interval '15 minutes')) as A  GROUP BY id_token;"
 
         self.cur.execute(query, [self.id, tipo])
         row = self.cur.fetchone()

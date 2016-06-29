@@ -6,11 +6,9 @@ def clean_api_count():
     conn = conSql.getConexion()
     cur = conSql.getCursor()
 
-    query = ('DELETE FROM tokens_count '
-    		 'WHERE tiempo < current_timestamp - interval \'15 minutes\''
-            ';'
-        )
+    query = """DELETE FROM tokens_count WHERE tiempo < (current_timestamp - interval \'15 minutes\');"""
     cur.execute(query)
+    conn.commit()
 
     query = 'VACUUM FULL tokens_count'
     old_isolation_level = conn.isolation_level

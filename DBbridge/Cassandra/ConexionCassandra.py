@@ -21,6 +21,7 @@ class ConexionCassandra():
 			servers = Conf().getCassandraServers()
 			cluster_cass = Cluster(servers)
 			self.session = cluster_cass.connect(Conf().getCassandraKeyspace())
+			self.session.default_fetch_size = 2000
 			#self.session_instagram = cluster_cass.connect(Conf().getCassandraKeyspaceInstagram())
 
 		def getSession(self):

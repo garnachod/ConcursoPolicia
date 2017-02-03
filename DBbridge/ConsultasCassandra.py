@@ -786,7 +786,7 @@ class ConsultasCassandra(object):
 		query = "SELECT status, lang, id_twitter FROM tweets WHERE lang = %s AND orig_tweet = 0 Limit %s ALLOW FILTERING;"
 
 		try:
-			rows = self.session_cassandra.execute(query, [lang, limit])
+			rows = self.session_cassandra.execute(query, [lang, limit], timeout=200000)
 			return rows
 		except Exception, e:
 			print str(e)

@@ -782,6 +782,16 @@ class ConsultasCassandra(object):
 			print str(e)
 			return False
 
+	def getTweetsTextAndLangAndID(self, lang, limit = 5000000):
+		query = "SELECT status, lang, id_twitter FROM tweets WHERE lang = %s AND orig_tweet = 0 Limit %s ALLOW FILTERING;"
+
+		try:
+			rows = self.session_cassandra.execute(query, [lang, limit])
+			return rows
+		except Exception, e:
+			print str(e)
+			return False
+
 	"""fin de Sentimientos"""
 
 	def getAllUsers(self):

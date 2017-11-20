@@ -83,14 +83,6 @@ class ConsultasWeb(ConsultasGeneral):
 			return self.getTweetsEntrenamientoListarSQL(identificador)
 
 
-	def getTweetsTopics(self, topics, use_max_id=False, max_id=0, limit=100):
-		#SELECT * from tweets WHERE status LIKE '%beta%' or status LIKE '%@garnachod%'
-		if self.cassandra_active:
-			return self.getTweetsTopicsCassandra(topics, use_max_id, max_id, limit)
-		else:
-			return self.getTweetsTopicsSQL(topics)
-
-
 	#TODO Cassandra
 	def getTweetsAsincSearc(self, searchID, last_id, limit):
 		query = "SELECT t.status, t.favorite_count, t.retweet_count, t.is_retweet, t.media_url, u.screen_name, t.id_twitter "

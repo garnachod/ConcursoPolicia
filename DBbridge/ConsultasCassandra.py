@@ -565,67 +565,6 @@ class ConsultasCassandra(object):
 			print str(e)
 			return False
 
-	#TODO Problemas de seguridad?
-	def getTweetsTopicsCassandra(self, topics, use_max_id=False, max_id=0, limit=100):
-		"""
-			Realiza una consulta por topic en Cassandra lucene
-
-			El formato de tweet es el común:
-				status, favorite_count, retweet_count, orig_tweet, media_urls, screen_name, profile_img, id_twitter
-		"""
-		query = "SELECT status, favorite_count, retweet_count, orig_tweet, media_urls, tuser, id_twitter, created_at FROM tweets WHERE lucene =\'{"
-		if use_max_id:
-			query += "filter : {type:\"boolean\", must:["
-			query += "{type:\"match\", field:\"orig_tweet\", value:0}, "
-			query += "{type:\"range\", field:\"id_twitter\", upper: "+str(max_id)+", include_upper:false} ] },"
-		else:
-			query += """filter : {type:\"boolean\", must:[
-				   {type:"match", field:"orig_tweet", value:0} ] },"""
-		query += "query : {type:\"phrase\", field:\"status\", value:\""+topics+"\", slop:1}, "
-		query += "sort : {fields: [ {field:\"created_at\", reverse:true} ] }"
-		query += "}\' limit %s;"
-		
-
-		Row = namedtuple('Row', 'status, favorite_count, retweet_count, orig_tweet, media_urls, screen_name, profile_img, id_twitter, created_at')
-
-		try:
-			rows = self.session_cassandra.execute(query, [limit])
-			retorno = blist([])
-			#JOIN
-			for row in rows:
-				user = self.getUserByIDShortCassandra(row.tuser)
-				fila = Row(row.status, row.favorite_count, row.retweet_count, row.orig_tweet, row.media_urls, user.screen_name, user.profile_img, row.id_twitter, row.created_at)
-				retorno.append(fila)
-			return retorno
-		except Exception, e:
-			print "getTweetsTopicsCassandra"
-			print str(e)
-			return False
-
-	def getStatusTopicsCassandra(self, topics, limit=100, rts=False):
-		"""
-			Realiza una consulta por topic en Cassandra lucene
-
-			El formato de tweet es solo el status y el idioma:
-				status, lang
-		"""
-		query = "SELECT status, lang, created_at FROM tweets WHERE lucene =\'{"
-		if rts == False:
-			query += """filter : {type:\"boolean\", must:[
-					   {type:"match", field:"orig_tweet", value:0} ] },"""
-		query += "query : {type:\"phrase\", field:\"status\", value:\""+topics+"\", slop:1}, "
-		query += "sort : {fields: [ {field:\"created_at\", reverse:true} ] }"
-		query += "}\' limit %s;"
-		
-
-		try:
-			rows = self.session_cassandra.execute(query, [limit])
-			return rows
-		except Exception, e:
-			print "getTweetsTopicsCassandra"
-			print str(e)
-			return False
-
 	def getUsersHasRetweetedByOrigTweetCassandra(self, identificador):
 		query = "SELECT tuser, created_at FROM tweets WHERE orig_tweet = %s;"
 		try:
@@ -888,10 +827,6 @@ if __name__ == '__main__':
 	print "Es un namedtuple, por lo que haremos un join a mano"
 	print "test de getTweetByIDLargeCassandra"
 	print consultas.getTweetByIDLargeCassandra(631260309026553856)
-	print "test de getTweetsTopicsCassandra"
-	print consultas.getTweetsTopicsCassandra("galletas")[0]
-	print consultas.getTweetsTopicsCassandra("@WillyrexYT Esto es mi día a día")[0]
-	print consultas.getTweetsTopicsCassandra("galletas", use_max_id=True, max_id=631260309026553856, limit=100)[0]
 	print "test de getIDsTweetsTrainCassandra"
 	print consultas.getIDsTweetsTrainCassandra("galletas", 100)[0]
 	tiempo_inicio = time.time()

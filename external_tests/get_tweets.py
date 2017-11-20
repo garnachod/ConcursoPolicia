@@ -10,6 +10,6 @@ if __name__ == '__main__':
             f_out.write(str(i) + ";")
             f_out.write(str(tweet.id_twitter) + ";")
             text = tweet.status.replace("\n", ". ").replace("\r", ". ").replace(u"\u0085", ". ").replace(u"\u2028", ". ").replace(u"\u2029", ". ").replace(";", ",")
-            f_out.write(str(text) + u"\n")
+            f_out.write(text + u"\n")
             i += 1
 

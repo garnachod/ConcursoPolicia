@@ -52,24 +52,6 @@ def creaIndexTweet(session):
     ###usa el plugin "https://github.com/Stratio/cassandra-lucene-index" que usa LUCENE
     #query = "DROP INDEX tweets_index;"
     #session.execute(query)
-    query = (
-        "CREATE CUSTOM INDEX tweets_index ON tweets (lucene)"
-        "USING 'com.stratio.cassandra.lucene.Index'"
-        "WITH OPTIONS = {"
-        "'refresh_seconds' : '60',"
-        "'schema' : '{"
-        "fields : {"
-        "   id_twitter : {type : \"bigint\"},"
-        "   tuser  : {type : \"bigint\"},"
-        "   orig_tweet: {type : \"bigint\"},"
-        "   status  : {type : \"text\", analyzer : \"english\"},"
-        "   created_at  : {type : \"date\", pattern : \"yyyy-MM-dd HH:mm:ss\",sorted:true},"
-        " place : {type : \"geo_point\", latitude:\"latitude\", longitude:\"longitude\"}"
-        "}"
-    "}'"
-    "};"
-    )
-    session.execute(query)
     
     query = "CREATE INDEX indx_id_twitter ON tweets (id_twitter);"
     session.execute(query)
@@ -100,7 +82,7 @@ def alterTableUser(session):
     
 if __name__ == '__main__':
     session = ConexionCassandra().getSession()
-    debug = True
+    debug = False
     if debug:
     	alterTableUser(session)
         #clean_tweets(session)

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 sudo docker network create --gateway 172.16.0.1 --subnet 172.16.0.0/21 mynet
 sudo docker run --ulimit nofile=100000:100000 --ulimit nproc=32768:32768 --log-opt max-size=50m --name cassandra1 -v $HOME/cassandra1/data:/var/lib/cassandra -e MAX_HEAP_SIZE=8G -e HEAP_NEWSIZE=512M --net=mynet --ip 172.16.0.2 --restart=always -d cassandra:3
 sudo docker run --ulimit nofile=100000:100000 --ulimit nproc=32768:32768 --log-opt max-size=50m --name cassandra2 -e CASSANDRA_SEEDS=172.16.0.2 -v $HOME/cassandra2/data:/var/lib/cassandra -e MAX_HEAP_SIZE=8G -e HEAP_NEWSIZE=512M --net=mynet --ip 172.16.0.5 --restart=always -d cassandra:3
